@@ -545,7 +545,7 @@ Procedures linked to audit questions.
 | status | pendente / em_execucao / concluido / nao_aplicavel |
 
 #### BancoProcedimentos
-Reusable procedure templates (from Domain 3.1).
+Reusable procedure templates. Part of the "Base Metodológica" (PRD section 3.1) — the institutional knowledge base of audit procedures, stored in the Foundation domain but referenced by Execution.
 
 | Attribute | Description |
 |-----------|-------------|
@@ -553,7 +553,10 @@ Reusable procedure templates (from Domain 3.1).
 | descricao | Description |
 | objetivo | Objective |
 | tipo | Generic categorization |
+| area_conhecimento | Subject area (for classification) |
 | ativo | boolean |
+
+**Note:** BancoProcedimentos and BancoQuestoes (question bank) are Foundation-domain entities that serve the Execution module. They should be stored alongside catalogs in the Foundation schema.
 
 #### ProgramaAuditoria + VersaoPrograma
 Versioned audit program.
@@ -570,11 +573,11 @@ Information requests to audited units.
 #### PapelTrabalho + RevisaoPapel
 Working papers with review workflow.
 
-**PapelTrabalho**: auditoria_id, titulo, conteudo, tipo (memorando/analise/planilha/fluxograma/outro), status (elaboracao/revisao/aprovado/rejeitado/arquivado), versao, classificacao_sigilo
+**PapelTrabalho**: auditoria_id, titulo, conteudo, tipo (memorando/analise/planilha/fluxograma/outro), status (elaboracao/revisao/aprovado/rejeitado/arquivado), versao, classificacao_sigilo, autor_id (FK to Usuario — the team member who authored the paper), papel_equipe_id (FK to PapelEquipe — the role the author held in this audit)
 
-**RevisaoPapel**: papel_id, revisor_id, tipo (aprovacao/rejeicao/devolucao), observacao, data
+**RevisaoPapel**: papel_id, revisor_id (FK to Usuario — must be different from autor_id), tipo (aprovacao/rejeicao/devolucao), observacao, data
 
-**Business rule:** Author cannot approve their own working paper (segredo de funções).
+**Business rule:** revisor_id must differ from PapelTrabalho.autor_id — author cannot approve their own working paper (segregação de funções).
 
 #### Evidencia + ArquivoEvidencia + TipoEvidencia
 Evidence management with immutability guarantee.
@@ -1210,8 +1213,11 @@ Immutable, append-only audit log.
 #### EntidadeVersionavel + VersaoEntidade
 Polymorphic versioning for PALP, PAA, Programs, Working Papers, Reports, Action Plans.
 
-**EntidadeVersionavel**: entidade_tipo, entidade_id (composite key)
-**VersaoEntidade**: entidade_tipo, entidade_id, versao, dados (JSON), data, usuario_id
+**Note:** `EntidadeVersionavel` is not a concrete table — it is a conceptual pattern. Any entity that requires version history uses the `VersaoEntidade` table with `entidade_tipo` + `entidade_id` as a polymorphic reference. The application layer enforces which entity types are versionable.
+
+**VersaoEntidade**: entidade_tipo (string — e.g., "PALP", "ProgramaAuditoria", "PapelTrabalho", "Relatorio", "PlanoAcao"), entidade_id (integer), versao (integer, auto-incremented per entity), dados (JSON snapshot of full entity state), data (timestamp), usuario_id (FK to Usuario — who created this version)
+
+**Versionable entities (per PRD):** PALP, PAA, ProgramaAuditoria, PapelTrabalho, Relatorio, PlanoAcao, PlanejamentoEspecifico
 
 #### Notificacao + TipoNotificacao + CanalNotificacao
 Multi-channel notification system.
