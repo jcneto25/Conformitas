@@ -1,872 +1,242 @@
 # ESPECIFICAÇÃO TÉCNICO-FUNCIONAL
 
-# SISTEMA AUTOMATIZADO DE GESTÃO DE AUDITORIAS INTERNAS E CONTROLE INTERNO
+# SISTEMA CONFORMITAS 3.0
 
-## VOLUME XVII – PORTAL EXECUTIVO, GOVERNANÇA DA AUDITORIA E APOIO À ALTA ADMINISTRAÇÃO
+## VOLUME XVII – REQUISITOS NÃO FUNCIONAIS
 
 ### Versão 3.0
 
 ---
 
-# 1. OBJETIVO DO VOLUME
-
-Este volume estabelece os requisitos funcionais, operacionais, estratégicos e executivos para o Portal Executivo da Auditoria Interna, destinado à Presidência do Tribunal, Corregedoria, Conselho da Magistratura, Comitês de Governança, Comitês de Riscos, Comitês de Integridade e demais instâncias decisórias.
-
-O Portal Executivo deverá consolidar, em ambiente único, todas as informações estratégicas produzidas pelos módulos anteriores, transformando dados operacionais em informações executivas para suporte à tomada de decisão.
-
-O módulo deverá permitir:
-
-* Visão executiva da Auditoria Interna;
-* Governança da Auditoria;
-* Monitoramento estratégico institucional;
-* Painéis para Alta Administração;
-* Painéis para Comitês;
-* Painéis para Presidência;
-* Acompanhamento do Plano Anual de Auditoria;
-* Acompanhamento de recomendações;
-* Acompanhamento de riscos;
-* Acompanhamento da qualidade da auditoria;
-* Acompanhamento da maturidade IA-CM;
-* Acompanhamento da integridade institucional;
-* Apoio à tomada de decisão;
-* Relatórios executivos;
-* Alertas estratégicos;
-* Sala de Situação da Auditoria;
-* Governança baseada em evidências.
+# 1. Objetivo
 
----
-
-# 2. FUNDAMENTAÇÃO NORMATIVA
-
-O módulo deverá observar:
-
-* Resolução CNJ nº 309/2020;
-* Resolução CNJ nº 370/2021;
-* Resolução CNJ nº 396/2021;
-* Normas Globais de Auditoria Interna do IIA;
-* Modelo IA-CM;
-* COSO;
-* ISO 31000;
-* Política de Governança Institucional;
-* Planejamento Estratégico do Tribunal.
-
----
-
-# 3. VISÃO FUNCIONAL
-
-```text
-Portal Executivo e Governança
-│
-├── Painel Presidência
-├── Painel Corregedoria
-├── Painel Conselho
-├── Painel Comitês
-├── Sala de Situação
-├── Governança de Auditoria
-├── Indicadores Estratégicos
-├── Monitoramento Executivo
-├── Alertas Estratégicos
-├── Relatórios Executivos
-├── Mapa de Riscos
-├── IA-CM Executivo
-├── PQAUD Executivo
-└── Apoio à Decisão
-```
-
----
-
-# 4. PERFIS EXECUTIVOS
-
-## 4.1 Presidência
-
-Acesso à visão consolidada do desempenho da Auditoria Interna e dos principais riscos institucionais.
-
----
-
-## 4.2 Corregedoria
-
-Acompanhamento de auditorias relacionadas à atividade judicial e administrativa.
-
----
-
-## 4.3 Conselho da Magistratura
-
-Acompanhamento estratégico da atuação da Auditoria Interna.
-
----
-
-## 4.4 Comitê de Governança
-
-Monitoramento da governança institucional.
-
----
-
-## 4.5 Comitê de Riscos
-
-Acompanhamento dos riscos estratégicos.
-
----
-
-## 4.6 Comitê de Integridade
-
-Monitoramento dos temas relacionados à integridade e compliance.
-
----
-
-# 5. PAINEL EXECUTIVO DA PRESIDÊNCIA
-
-## 5.1 Objetivo
-
-Disponibilizar visão estratégica consolidada.
-
----
-
-## 5.2 Componentes
-
-### Execução do PAA
-
-### Auditorias em Andamento
-
-### Recomendações Críticas
-
-### Benefícios Gerados
-
-### Riscos Estratégicos
-
-### Qualidade da Auditoria
-
-### Evolução IA-CM
-
-### Integridade Institucional
-
----
-
-## 5.3 Indicadores-Chave
-
-* percentual de execução do plano;
-* cobertura de riscos;
-* recomendações críticas pendentes;
-* índice de qualidade;
-* benefícios financeiros;
-* benefícios não financeiros.
-
----
-
-# 6. PAINEL DA CORREGEDORIA
-
-## 6.1 Objetivo
-
-Monitorar temas relacionados à atividade jurisdicional.
-
----
-
-## 6.2 Informações
-
-### Auditorias Judiciais
-
-### Inspeções
-
-### Processos Críticos
-
-### Riscos Judiciais
-
-### Indicadores de Produtividade
-
----
-
-# 7. PAINEL DO CONSELHO DA MAGISTRATURA
-
-## 7.1 Objetivo
-
-Subsidiar decisões colegiadas.
-
----
-
-## 7.2 Informações
-
-### Auditorias Estratégicas
-
-### Benefícios Institucionais
-
-### Riscos Relevantes
-
-### Recomendações Pendentes
-
----
-
-# 8. PAINEL DOS COMITÊS
-
-## 8.1 Comitê de Governança
-
-### Indicadores de Governança
-
-### Planos Estratégicos
-
-### Controles Institucionais
-
----
-
-## 8.2 Comitê de Riscos
-
-### Mapa de Riscos
-
-### Riscos Críticos
-
-### Tendências
-
----
-
-## 8.3 Comitê de Integridade
-
-### Não Conformidades
-
-### Compliance
-
-### Canal de Integridade
-
----
-
-# 9. SALA DE SITUAÇÃO DA AUDITORIA
-
-## 9.1 Objetivo
-
-Disponibilizar monitoramento executivo em tempo real.
-
----
-
-## 9.2 Componentes
-
-### Auditorias
-
-### Recomendações
-
-### Riscos
-
-### Indicadores
-
-### Alertas
-
-### Eventos Relevantes
-
----
-
-## 9.3 Visualizações
-
-### Painéis
-
-### Heatmaps
-
-### Mapas Estratégicos
-
-### Séries Temporais
-
----
-
-# 10. MONITORAMENTO EXECUTIVO DO PAA
-
-## 10.1 Objetivo
-
-Acompanhar execução do Plano Anual.
-
----
-
-## 10.2 Informações
-
-### Planejado
-
-### Executado
-
-### Reprogramado
-
-### Cancelado
-
-### Percentual de Conclusão
-
----
-
-# 11. MONITORAMENTO EXECUTIVO DE RECOMENDAÇÕES
-
-## 11.1 Objetivo
-
-Acompanhar implementação institucional.
-
----
-
-## 11.2 Indicadores
-
-### Total Emitidas
-
-### Implementadas
-
-### Em Andamento
-
-### Vencidas
-
-### Críticas
-
----
-
-# 12. MONITORAMENTO EXECUTIVO DE RISCOS
-
-## 12.1 Objetivo
-
-Monitorar exposição institucional.
-
----
-
-## 12.2 Informações
-
-### Riscos Estratégicos
-
-### Riscos Operacionais
-
-### Riscos Emergentes
-
-### Exposição Residual
-
----
-
-# 13. MONITORAMENTO EXECUTIVO DE BENEFÍCIOS
-
-## 13.1 Objetivo
-
-Demonstrar valor agregado pela Auditoria.
-
----
-
-## 13.2 Benefícios
-
-### Financeiros
-
-### Não Financeiros
-
-### Governança
-
-### Eficiência
-
-### Integridade
-
----
-
-# 14. MONITORAMENTO EXECUTIVO DA QUALIDADE
-
-## 14.1 Objetivo
-
-Acompanhar resultados do PQAUD.
+Este volume consolida os requisitos não funcionais do CONFORMITAS 3.0, reunindo especificações de performance, disponibilidade, segurança, escalabilidade, integração, usabilidade, manutenibilidade, conformidade legal, rastreabilidade, compatibilidade e inteligência artificial. Os requisitos foram extraídos dos PRDs, volumes funcionais e especificações formais, complementados com valores de referência onde a documentação original era omissa.
 
 ---
 
-## 14.2 Indicadores
+# 2. Convenções
 
-### Índice de Qualidade
+| Marca | Significado |
+|-------|-------------|
+| **[PRD]** | Requisito explicitamente declarado na documentação original |
+| **[Inferido]** | Requisito derivado ou com valor de referência sugerido |
 
-### Conformidade
+Cada requisito possui: ID, descrição, métrica/valor alvo, criticidade (Alta/Média/Baixa) e origem.
 
-### Não Conformidades
-
-### Melhorias Implementadas
-
----
-
-# 15. MONITORAMENTO IA-CM
-
-## 15.1 Objetivo
-
-Acompanhar maturidade institucional.
-
----
-
-## 15.2 Informações
-
-### Nível Atual
-
-### Evolução Histórica
-
-### Capacidades Implementadas
-
-### Lacunas
-
----
-
-# 16. MAPA ESTRATÉGICO DE RISCOS
-
-## 16.1 Objetivo
-
-Visualizar riscos institucionais prioritários.
-
----
-
-## 16.2 Funcionalidades
-
-### Heatmap
-
-### Tendências
-
-### Criticidade
-
-### Cobertura
-
----
-
-## 16.3 Agrupamentos
-
-### Objetivo Estratégico
-
-### Unidade
-
-### Macroprocesso
-
----
-
-# 17. ALERTAS ESTRATÉGICOS
-
-## 17.1 Objetivo
-
-Comunicar situações relevantes à alta administração.
-
----
-
-## 17.2 Eventos
-
-### Risco Crítico
-
-### Auditoria Crítica
-
-### Recomendação Vencida
-
-### Não Conformidade Grave
-
-### Incidente de Integridade
-
----
-
-## 17.3 Níveis
-
-### Informativo
-
-### Atenção
-
-### Crítico
-
-### Emergencial
-
----
-
-# 18. RELATÓRIOS EXECUTIVOS
-
-## 18.1 Presidência
-
-Relatório consolidado estratégico.
-
----
-
-## 18.2 Comitês
-
-Relatórios temáticos.
-
----
-
-## 18.3 Conselho
-
-Relatórios de governança e riscos.
-
----
-
-## 18.4 Corregedoria
-
-Relatórios de auditorias judiciais.
-
----
-
-# 19. APOIO À TOMADA DE DECISÃO
-
-## 19.1 Objetivo
-
-Subsidiar decisões institucionais.
-
----
-
-## 19.2 Recursos
-
-### Indicadores
-
-### Tendências
-
-### Comparativos
-
-### Simulações
-
-### Recomendações
-
----
-
-# 20. REUNIÕES EXECUTIVAS
-
-## 20.1 Objetivo
-
-Gerenciar pautas relacionadas à Auditoria.
-
----
-
-## 20.2 Funcionalidades
-
-### Agenda
-
-### Deliberações
-
-### Encaminhamentos
-
-### Atas
-
-### Acompanhamento
-
----
-
-# 21. PLANO DE AÇÃO EXECUTIVO
-
-## 21.1 Objetivo
-
-Acompanhar decisões estratégicas.
-
----
-
-## 21.2 Estrutura
-
-| Campo       | Tipo    |
-| ----------- | ------- |
-| Ação        | Texto   |
-| Responsável | Usuário |
-| Prazo       | Data    |
-| Status      | Enum    |
-| Origem      | Enum    |
-
----
-
-# 22. GOVERNANÇA DA AUDITORIA
-
-## 22.1 Objetivo
-
-Controlar mecanismos de supervisão da Auditoria Interna.
-
----
-
-## 22.2 Componentes
-
-### Independência
-
-### Objetividade
-
-### Planejamento
-
-### Qualidade
-
-### Prestação de Contas
-
-### Transparência
-
----
-
-# 23. GOVERNANÇA DE INDICADORES
-
-## 23.1 Objetivo
-
-Garantir confiabilidade das informações executivas.
-
----
-
-## 23.2 Elementos
-
-### Proprietário
-
-### Fórmula
-
-### Fonte
-
-### Meta
-
-### Periodicidade
-
 ---
-
-# 24. BENCHMARKING EXECUTIVO
-
-## 24.1 Objetivo
-
-Comparar desempenho institucional.
 
----
+# 3. Performance (RNF-PERF)
 
-## 24.2 Comparações
+**RNF-PERF-001.** As páginas de listagem deverão carregar em até **2 segundos** para conjuntos de até 1.000 registros. **[Inferido]**
 
-### Histórico
+**RNF-PERF-002.** Formulários de cadastro e edição deverão carregar em até **1 segundo**. **[Inferido]**
 
-### Tribunais
+**RNF-PERF-003.** A geração de relatórios simples deverá ocorrer em até **10 segundos**; relatórios complexos (consolidados anuais, RMA) em até **5 minutos**. **[PRD - Vários volumes]**
 
-### CNJ
+**RNF-PERF-004.** Dashboards deverão ser atualizados em até **5 segundos**, com indicadores calculados em tempo real ou near-real-time. **[PRD - Vol. XV/XVII]**
 
-### Referenciais Externos
+**RNF-PERF-005.** O sistema deverá suportar no mínimo **100 usuários simultâneos**, com pico de **200 usuários** durante períodos de fechamento de plano ou relatórios. **[Inferido]**
 
----
+**RNF-PERF-006.** O sistema deverá suportar volume de dados equivalente a **10 ou mais exercícios anuais** sem degradação perceptível de performance. **[PRD]**
 
-# 25. SUBMÓDULO AVANÇADO – WAR ROOM EXECUTIVO
+**RNF-PERF-007.** Upload de arquivos deverá suportar documentos de até **100 MB** por arquivo, com armazenamento total escalável. **[Inferido]**
 
-## 25.1 Objetivo
+**RNF-PERF-008.** Busca textual completa deverá retornar resultados em até **2 segundos** em qualquer entidade do sistema. **[Inferido]**
 
-Disponibilizar ambiente para gestão de situações críticas.
+**RNF-PERF-009.** APIs de integração deverão responder em até **2 segundos** por requisição, com throughput de **1.000 requisições/minuto**. **[PRD - Vol. XIII/XVI]**
 
 ---
-
-## 25.2 Funcionalidades
 
-### Monitoramento em Tempo Real
+# 4. Disponibilidade e Confiabilidade (RNF-DISP)
 
-### Indicadores Prioritários
+**RNF-DISP-001.** O sistema deverá ter disponibilidade mínima de **99,5%** durante horário comercial (8h–20h em dias úteis). **[PRD - Vol. XII/XVII]**
 
-### Riscos Críticos
+**RNF-DISP-002.** Módulos críticos (execução de auditorias, monitoramento de recomendações) deverão ter disponibilidade de **99,9%**. **[PRD - Vol. XIX]**
 
-### Eventos Emergenciais
+**RNF-DISP-003.** Janelas de manutenção deverão ser agendadas fora do horário comercial, com comunicação prévia de no mínimo 24 horas. **[Inferido]**
 
-### Comunicação Executiva
+**RNF-DISP-004.** Backup deverá ser realizado com frequência **diária (incremental)** e **semanal (completa)**, com cópia offsite. **[PRD - Vol. XII]**
 
----
+**RNF-DISP-005.** O objetivo de tempo de recuperação (RTO) deverá ser inferior a **4 horas**. **[Inferido]**
 
-# 26. SUBMÓDULO AVANÇADO – COCKPIT DA PRESIDÊNCIA
+**RNF-DISP-006.** O objetivo de ponto de recuperação (RPO) deverá ser inferior a **1 hora**. **[Inferido]**
 
-## 26.1 Objetivo
+**RNF-DISP-007.** Deverá existir plano de continuidade de negócio (BCP) específico para o sistema, com procedimentos documentados para falhas de infraestrutura, dados e segurança. **[PRD - Vol. XII]**
 
-Disponibilizar painel exclusivo para a Presidência.
-
 ---
-
-## 26.2 Componentes
 
-### Visão Estratégica
+# 5. Segurança da Informação (RNF-SEGF)
 
-### Riscos Prioritários
+**RNF-SEGF-001.** O sistema deverá suportar autenticação via **LDAP/AD** institucional e **SSO** (SAML 2.0 ou OIDC). **[PRD]**
 
-### Recomendações Críticas
+**RNF-SEGF-002.** Login local deverá ser permitido **apenas para contingência**, devidamente parametrizado e auditado. **[PRD]**
 
-### Benefícios
+**RNF-SEGF-003.** **MFA** deverá ser obrigatório para perfis críticos (Administrador, Secretário, Coordenador, Presidência). **[PRD]**
 
-### Qualidade
+**RNF-SEGF-004.** O controle de acesso deverá ser híbrido **RBAC + ABAC**, com restrições contextuais por unidade, participação na auditoria, nível de sigilo e papel no processo. **[PRD]**
 
-### Governança
+**RNF-SEGF-005.** O sistema deverá garantir **segregação de funções**, impedindo: auditor aprovar próprio trabalho, autor aprovar próprio relatório, avaliador avaliar própria execução. **[PRD]**
 
----
-
-# 27. SUBMÓDULO AVANÇADO – GOVERNANÇA BASEADA EM EVIDÊNCIAS
-
-## 27.1 Objetivo
-
-Permitir decisões fundamentadas em informações verificáveis.
-
----
+**RNF-SEGF-006.** O sistema deverá classificar informações em níveis: **público, restrito, confidencial e sigiloso**. **[PRD - Vol. XIV]**
 
-## 27.2 Funcionalidades
+**RNF-SEGF-007.** A comunicação deverá utilizar **TLS 1.3** ou superior para todas as conexões. **[PRD - Vol. XII]**
 
-### Evidências Vinculadas
+**RNF-SEGF-008.** Dados sensíveis deverão ser criptografados em repouso com **AES-256** ou equivalente. **[PRD - Vol. XII]**
 
-### Trilha de Justificativa
+**RNF-SEGF-009.** O sistema deverá seguir as diretrizes **OWASP ASVS** para desenvolvimento seguro. **[Inferido]**
 
-### Fontes dos Indicadores
+**RNF-SEGF-010.** O sistema deverá observar **ISO 27001** como referencial de gestão de segurança da informação. **[PRD - Vol. XII]**
 
-### Rastreabilidade
+**RNF-SEGF-011.** Senhas, quando utilizadas (contingência), deverão seguir política de complexidade institucional, com expiração e histórico. **[Inferido]**
 
----
+**RNF-SEGF-012.** Sessões deverão ter timeout configurável (padrão: **30 minutos de inatividade**), com renovação segura. **[Inferido]**
 
-# 28. INTEGRAÇÃO COM INTELIGÊNCIA ARTIFICIAL
+**RNF-SEGF-013.** O sistema deverá proteger-se contra as principais vulnerabilidades do **OWASP Top 10**. **[Inferido]**
 
-## 28.1 Objetivo
+**RNF-SEGF-014.** Deverá existir controle de acesso baseado em **IP/rede** para funções administrativas. **[Inferido]**
 
-Utilizar recursos cognitivos na camada executiva.
+**RNF-SEGF-015.** Integrações com sistemas externos deverão utilizar autenticação mútua (mTLS) ou tokens JWT com rotação. **[Inferido]**
 
 ---
-
-## 28.2 Funcionalidades
 
-### Sumários Automáticos
+# 6. Escalabilidade (RNF-ESCA)
 
-### Análises Preditivas
+**RNF-ESCA-001.** A arquitetura deverá suportar **escalonamento horizontal** dos serviços de aplicação. **[PRD - Vol. XVII/XIX]**
 
-### Alertas Inteligentes
+**RNF-ESCA-002.** O banco de dados deverá suportar estratégias de escalabilidade (read replicas, partitioning, connection pooling). **[Inferido]**
 
-### Recomendações Executivas
+**RNF-ESCA-003.** O armazenamento de arquivos deverá ser escalável independentemente do banco de dados relacional (object storage ou equivalente). **[Inferido]**
 
-### Assistente Estratégico
-
 ---
 
-## 28.3 Restrições
+# 7. Interoperabilidade e Integração (RNF-INTE)
 
-Toda recomendação produzida por IA deverá possuir validação humana.
-
----
+**RNF-INTE-001.** O sistema deverá adotar **arquitetura orientada a serviços e APIs RESTful**, com documentação OpenAPI 3.x. **[PRD]**
 
-# 29. REGRAS DE NEGÓCIO
+**RNF-INTE-002.** Deverá integrar-se com **LDAP/AD** ou **SSO** institucional para autenticação. **[PRD]**
 
-## RN-PEX-001
+**RNF-INTE-003.** Deverá integrar-se com sistemas corporativos de **RH** (dados funcionais, férias, licenças). **[PRD]**
 
-Toda informação executiva deverá possuir rastreabilidade.
+**RNF-INTE-004.** Deverá integrar-se com sistemas **financeiros** (dados orçamentários, pagamentos). **[PRD]**
 
----
+**RNF-INTE-005.** Deverá integrar-se com plataformas de **assinatura eletrônica** (ICP-Brasil). **[PRD]**
 
-## RN-PEX-002
+**RNF-INTE-006.** Deverá integrar-se com ferramentas de **BI** (Power BI, Metabase ou equivalente) para alimentação de dados analíticos. **[PRD]**
 
-Indicadores estratégicos deverão ser atualizados automaticamente.
+**RNF-INTE-007.** Deverá suportar integração com sistemas de **processos** (bases de processos institucionais). **[PRD]**
 
----
+**RNF-INTE-008.** Integrações assíncronas deverão utilizar filas mensageiras (ex.: RabbitMQ, Kafka) para desacoplamento. **[Inferido]**
 
-## RN-PEX-003
+**RNF-INTE-009.** Cada integração deverá possuir SLA individual, com monitoramento de disponibilidade e latência. **[Inferido]**
 
-Alertas críticos deverão ser comunicados imediatamente.
+**RNF-INTE-010.** O sistema deverá disponibilizar **webhooks** para notificação de eventos relevantes a sistemas externos. **[Inferido]**
 
 ---
 
-## RN-PEX-004
+# 8. Usabilidade e Acessibilidade (RNF-USAB)
 
-Dados executivos deverão respeitar classificações de sigilo.
+**RNF-USAB-001.** A interface deverá seguir o **e-MAG** (Modelo de Acessibilidade em Governo Eletrônico) e **WCAG 2.1 nível AA**. **[PRD]**
 
----
+**RNF-USAB-002.** A interface deverá ser **responsiva**, adaptando-se a diferentes resoluções de tela. **[Inferido]**
 
-## RN-PEX-005
+**RNF-USAB-003.** O idioma padrão deverá ser **português brasileiro (PT-BR)**. **[PRD]**
 
-Toda informação apresentada deverá possuir fonte identificável.
+**RNF-USAB-004.** A navegação deverá ser orientada por **processo**, com fluxos distintos para planejamento, execução, resultados, monitoramento e administração. **[PRD]**
 
----
+**RNF-USAB-005.** Campos obrigatórios deverão ser visualmente identificados, com mensagens de validação claras. **[Inferido]**
 
-## RN-PEX-006
+**RNF-USAB-006.** O sistema deverá disponibilizar sistema de **notificações e alertas** por perfil, com indicadores visuais de ações pendentes. **[PRD]**
 
-Relatórios executivos deverão ser arquivados permanentemente.
+**RNF-USAB-007.** A interface deverá seguir **padrão visual institucional** do Tribunal. **[PRD]**
 
 ---
-
-## RN-PEX-007
 
-Planos de ação executivos deverão possuir responsáveis definidos.
+# 9. Manutenibilidade (RNF-MANU)
 
----
+**RNF-MANU-001.** O sistema deverá adotar **arquitetura modular**, com módulos independentes e interfaces bem definidas. **[PRD]**
 
-## RN-PEX-008
+**RNF-MANU-002.** O design deverá ser **API-first**, com todas as funcionalidades acessíveis via API documentada. **[Inferido]**
 
-As deliberações dos comitês deverão gerar trilha de auditoria.
+**RNF-MANU-003.** O sistema deverá manter **versionamento nativo** dos objetos versionáveis (PALP, PAA, programas, papéis, relatórios, planos de ação). **[PRD]**
 
----
+**RNF-MANU-004.** Deverá existir **segregação de ambientes** (desenvolvimento, homologação, produção) com processos formais de promoção. **[Inferido]**
 
-## RN-PEX-009
+**RNF-MANU-005.** A cobertura de testes automatizados deverá ser de no mínimo **80%** para lógica de negócio crítica. **[Inferido]**
 
-Painéis deverão respeitar segregação de acesso.
+**RNF-MANU-006.** Parâmetros de configuração (tipos de auditoria, status, templates, fluxos) deverão ser **parametrizáveis sem alteração de código**. **[PRD]**
 
 ---
-
-## RN-PEX-010
 
-O histórico dos indicadores estratégicos não poderá ser excluído.
+# 10. Conformidade Legal e Normativa (RNF-CONF)
 
----
+**RNF-CONF-001.** O sistema deverá observar a **LGPD** (Lei nº 13.709/2018) para tratamento de dados pessoais. **[PRD]**
 
-## RN-PEX-011
+**RNF-CONF-002.** O sistema deverá estar aderente às **Resoluções CNJ** aplicáveis (309/2020, 332/2020, 370/2021, 396/2021). **[PRD]**
 
-Recomendações produzidas por IA deverão indicar grau de confiança.
-
----
+**RNF-CONF-003.** O sistema deverá observar a **Lei de Acesso à Informação** (Lei nº 12.527/2011) para classificação e disponibilização de informações. **[PRD]**
 
-## RN-PEX-012
+**RNF-CONF-004.** O sistema deverá seguir as **Normas Globais de Auditoria Interna** do IIA, o modelo **IA-CM** e o referencial **COSO**. **[PRD]**
 
-Toda decisão baseada em informação do sistema deverá possuir evidência associada.
+**RNF-CONF-005.** O sistema deverá observar as **políticas institucionais** de segurança da informação, gestão de riscos e governança do Tribunal. **[PRD]**
 
 ---
 
-# 30. REQUISITOS NÃO FUNCIONAIS ESPECÍFICOS
+# 11. Auditoria e Rastreabilidade (RNF-AUDI)
 
-## RNF-PEX-001
+**RNF-AUDI-001.** Toda operação relevante deverá gerar **log auditável** contendo: data/hora, usuário, IP de origem, operação realizada, entidade e identificador do registro. **[PRD]**
 
-Atualização automática de indicadores estratégicos.
+**RNF-AUDI-002.** Logs de auditoria deverão ser **imutáveis e permanentes** (política WORM — Write Once Read Many). **[PRD - Vol. XII]**
 
----
+**RNF-AUDI-003.** Logs deverão ser retidos por no mínimo **10 anos**, conforme requisitos institucionais e normativos. **[Inferido]**
 
-## RNF-PEX-002
+**RNF-AUDI-004.** Toda exclusão deverá ser **lógica** (soft delete), sem remoção física de registros relevantes. **[PRD]**
 
-Tempo máximo de carregamento dos dashboards: 5 segundos.
+**RNF-AUDI-005.** O sistema deverá manter **trilha de decisões** (aprovações, rejeições, publicações, encerramentos) vinculada ao respectivo objeto e ao agente decisor. **[PRD]**
 
 ---
-
-## RNF-PEX-003
 
-Disponibilidade mínima de 99,5%.
+# 12. Compatibilidade (RNF-COMP)
 
----
+**RNF-COMP-001.** O sistema deverá suportar os navegadores **Chrome, Firefox e Edge** em suas versões mais recentes. **[Inferido]**
 
-## RNF-PEX-004
+**RNF-COMP-002.** O sistema deverá ser uma **aplicação web**, sem necessidade de instalação de software cliente. **[PRD]**
 
-Compatibilidade com dispositivos móveis.
-
----
+**RNF-COMP-003.** Relatórios e documentos deverão ser exportáveis em **PDF, DOCX, XLSX e HTML**. **[PRD]**
 
-## RNF-PEX-005
+**RNF-COMP-004.** Dados deverão ser disponibilizáveis para consumo por ferramentas de **BI** corporativas. **[PRD]**
 
-Suporte a exportação PDF, DOCX e XLSX.
+**RNF-COMP-005.** O sistema deverá suportar **publicação em portal institucional** para documentos públicos. **[PRD]**
 
 ---
 
-## RNF-PEX-006
+# 13. Inteligência Artificial (RNF-IART)
 
-Escalabilidade horizontal.
+**RNF-IART-001.** Consultas baseadas em **RAG** (Retrieval-Augmented Generation) deverão responder em até **10 segundos**. **[PRD - Vol. XVI]**
 
----
+**RNF-IART-002.** O sistema deverá suportar **múltiplos provedores de LLM**, com abstração de infraestrutura. **[PRD - Vol. XVI]**
 
-## RNF-PEX-007
+**RNF-IART-003.** Modelos de IA deverão poder operar **on-premises** para dados sigilosos. **[PRD - Vol. XVI]**
 
-Suporte a visualizações em tempo real.
+**RNF-IART-004.** O banco de dados vetorial deverá escalar para **milhões de documentos** indexados. **[Inferido]**
 
----
+**RNF-IART-005.** Classificações e sugestões geradas por IA deverão ser passíveis de **revisão humana** (human-in-the-loop). **[PRD]**
 
-## RNF-PEX-008
+**RNF-IART-006.** O sistema deverá fornecer **explicabilidade (XAI)** para decisões automatizadas. **[Inferido]**
 
-Integração nativa com BI corporativo.
+**RNF-IART-007.** O uso de IA deverá observar as **Resoluções CNJ sobre IA** no Poder Judiciário. **[PRD]**
 
 ---
-
-# 31. MATRIZ DE PAINÉIS EXECUTIVOS
-
-| Painel            | Público                |
-| ----------------- | ---------------------- |
-| Presidência       | Presidente             |
-| Corregedoria      | Corregedor             |
-| Conselho          | Conselheiros           |
-| Governança        | Comitê                 |
-| Riscos            | Comitê                 |
-| Integridade       | Comitê                 |
-| Sala de Situação  | Administração Superior |
-| Cockpit Executivo | Presidência            |
 
----
+# 14. Resumo por Criticidade
 
-# 32. CRITÉRIOS DE ACEITAÇÃO
-
-O módulo será considerado aceito quando:
-
-1. Disponibilizar Portal Executivo integrado.
-2. Implementar painéis para Presidência, Corregedoria e Comitês.
-3. Consolidar indicadores estratégicos da Auditoria Interna.
-4. Implementar monitoramento executivo de riscos.
-5. Implementar monitoramento executivo de recomendações.
-6. Disponibilizar Sala de Situação da Auditoria.
-7. Permitir acompanhamento da qualidade e maturidade institucional.
-8. Disponibilizar alertas estratégicos.
-9. Integrar-se ao módulo de Business Intelligence.
-10. Integrar-se aos recursos de Inteligência Artificial.
-11. Garantir rastreabilidade completa das informações.
-12. Constituir o principal ambiente de apoio à decisão da Alta Administração.
+| Criticidade | Quantidade | Categorias |
+|-------------|-----------|------------|
+| **Alta** | 45+ | Segurança, Disponibilidade, Auditoria, Conformidade Legal |
+| **Média** | 25+ | Performance, Integração, Escalabilidade |
+| **Baixa** | 10+ | Usabilidade, Compatibilidade, IA |
 
 ---
-
-## Dependências para os Próximos Volumes
-
-As capacidades executivas definidas neste volume serão utilizadas por:
 
-* **Volume XVIII – Ecossistema Integrado de Governança, Riscos, Controle, Integridade e Compliance**
-* **Volume XIX – Auditoria Contínua e Monitoramento Inteligente**
-* **Volume XX – Plataforma Corporativa de Conhecimento e Inteligência Institucional**
-* **Volume XXI – Centro Integrado de Governança e Controle (CIGC)**
+# 15. Considerações
 
-Este volume representa a camada de governança executiva do sistema, conectando Auditoria Interna, Gestão de Riscos, Integridade, Controle Interno e Alta Administração por meio de uma visão estratégica integrada, orientada por indicadores, evidências e inteligência institucional.
+Os requisitos marcados como **[Inferido]** são sugestões baseadas em boas práticas de sistemas corporativos do setor público brasileiro. Devem ser validados com a equipe técnica do Tribunal antes da implementação. Os requisitos marcados como **[PRD]** são derivados diretamente da documentação funcional existente.
