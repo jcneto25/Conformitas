@@ -1,0 +1,54 @@
+{
+  "planos_auditoria": [
+    {
+      "id": "plano-001",
+      "tipo": "PAA",
+      "ano_inicio": 2026,
+      "ano_fim": 2026,
+      "status": "APROVADO",
+      "versao": 1,
+      "data_submissao": "2025-11-15T10:00:00Z",
+      "data_aprovacao": "2025-11-28T14:30:00Z",
+      "data_publicacao": "2025-12-10T09:00:00Z",
+      "criado_por": "mock-user-001"
+    },
+    {
+      "id": "plano-002",
+      "tipo": "PALP",
+      "ano_inicio": 2025,
+      "ano_fim": 2028,
+      "status": "APROVADO",
+      "versao": 2,
+      "data_submissao": "2024-11-10T08:00:00Z",
+      "data_aprovacao": "2024-11-25T11:00:00Z",
+      "data_publicacao": "2024-12-05T10:00:00Z",
+      "criado_por": "mock-user-001"
+    },
+    {
+      "id": "plano-003",
+      "tipo": "PAA",
+      "ano_inicio": 2025,
+      "ano_fim": 2025,
+      "status": "PUBLICADO",
+      "versao": 1,
+      "data_submissao": "2024-11-20T09:00:00Z",
+      "data_aprovacao": "2024-11-29T15:00:00Z",
+      "data_publicacao": "2024-12-12T08:00:00Z",
+      "criado_por": "mock-user-001"
+    }
+  ],
+  "itens_plano": [
+    { "id": "item-001", "plano_id": "plano-001", "universo_auditavel_id": "univ-001", "tipo_auditoria": "FINANCEIRA", "forma_execucao": "DIRETA", "horas_estimadas": 320, "equipe_ids": ["mock-user-002", "mock-user-003"], "escopo": "Auditoria financeira na Secretaria de Finanças — exercício 2025", "objetivo": "Verificar conformidade da execução orçamentária e financeira", "resultados_esperados": "Relatório com achados de conformidade", "questoes_auditoria": ["Os empenhos estão em conformidade com a LOA?", "As conciliações bancárias estão atualizadas?"], "testes_previstos": ["Amostragem de 50 empenhos", "Circularização de saldos bancários"], "cronograma_inicio": "2026-02-01", "cronograma_fim": "2026-04-30", "prioridade": 1 },
+    { "id": "item-002", "plano_id": "plano-001", "universo_auditavel_id": "univ-002", "tipo_auditoria": "CONFORMIDADE", "forma_execucao": "DIRETA", "horas_estimadas": 280, "equipe_ids": ["mock-user-004", "mock-user-005"], "escopo": "Auditoria de conformidade na folha de pagamento — Secretaria de Gestão de Pessoas", "objetivo": "Verificar legalidade dos pagamentos e benefícios", "resultados_esperados": "Identificação de pagamentos irregulares se houver", "questoes_auditoria": ["As progressões funcionais seguem o PCCS?", "Há acúmulo ilegal de cargos?"], "testes_previstos": ["Cruzamento de bases CPF", "Amostragem de 100 contracheques"], "cronograma_inicio": "2026-03-01", "cronograma_fim": "2026-06-30", "prioridade": 2 },
+    { "id": "item-003", "plano_id": "plano-001", "universo_auditavel_id": "univ-007", "tipo_auditoria": "OPERACIONAL", "forma_execucao": "INTEGRADA", "horas_estimadas": 200, "equipe_ids": ["mock-user-002"], "escopo": "Avaliação operacional do processo de contratações públicas — 2024-2025", "objetivo": "Avaliar economicidade, eficiência e eficácia das contratações", "resultados_esperados": "Recomendações de melhoria no processo licitatório", "questoes_auditoria": ["O tempo médio de licitação está dentro do benchmark?"], "testes_previstos": ["Análise de 20 processos licitatórios"], "cronograma_inicio": "2026-05-01", "cronograma_fim": "2026-07-31", "prioridade": 3 },
+    { "id": "item-004", "plano_id": "plano-001", "universo_auditavel_id": "univ-008", "tipo_auditoria": "CONFORMIDADE", "forma_execucao": "DIRETA", "horas_estimadas": 160, "equipe_ids": ["mock-user-003"], "escopo": "Verificação de conformidade da folha de magistrados — 2025", "objetivo": "Verificar teto constitucional e verbas indenizatórias", "resultados_esperados": "Relatório de conformidade", "questoes_auditoria": ["Os subsídios respeitam o teto constitucional?"], "testes_previstos": ["Análise de 100% dos contracheques de magistrados"], "cronograma_inicio": "2026-06-01", "cronograma_fim": "2026-08-31", "prioridade": 4 },
+    { "id": "item-005", "plano_id": "plano-001", "universo_auditavel_id": "univ-003", "tipo_auditoria": "OPERACIONAL", "forma_execucao": "DIRETA", "horas_estimadas": 240, "equipe_ids": ["mock-user-005"], "escopo": "Auditoria operacional na Secretaria de TI — governança e segurança", "objetivo": "Avaliar maturidade da governança de TI e segurança da informação", "resultados_esperados": "Diagnóstico de maturidade e recomendações", "questoes_auditoria": ["A EGTIC está implementada?", "Há plano de continuidade de negócios?"], "testes_previstos": ["Entrevistas com gestores", "Análise documental de políticas"], "cronograma_inicio": "2026-08-01", "cronograma_fim": "2026-10-31", "prioridade": 5 },
+    { "id": "item-006", "plano_id": "plano-001", "universo_auditavel_id": "univ-004", "tipo_auditoria": "GESTAO", "forma_execucao": "DIRETA", "horas_estimadas": 200, "equipe_ids": ["mock-user-004"], "escopo": "Auditoria de gestão na Secretaria de Administração", "objetivo": "Avaliar regularidade de contratos e gestão patrimonial", "resultados_esperados": "Relatório de auditoria de gestão", "questoes_auditoria": ["Os contratos têm fiscal efetivo designado?"], "testes_previstos": ["Amostragem de 30 contratos ativos"], "cronograma_inicio": "2026-09-01", "cronograma_fim": "2026-11-30", "prioridade": 6 }
+  ],
+  "forca_trabalho": [
+    { "id": "ft-001", "plano_id": "plano-001", "usuario_id": "mock-user-002", "horas_disponiveis_ano": 1600, "horas_alocadas_auditoria": 520, "horas_alocadas_consultoria": 80, "horas_alocadas_capacitacao": 40, "ano": 2026 },
+    { "id": "ft-002", "plano_id": "plano-001", "usuario_id": "mock-user-003", "horas_disponiveis_ano": 1600, "horas_alocadas_auditoria": 480, "horas_alocadas_consultoria": 60, "horas_alocadas_capacitacao": 40, "ano": 2026 },
+    { "id": "ft-003", "plano_id": "plano-001", "usuario_id": "mock-user-004", "horas_disponiveis_ano": 1600, "horas_alocadas_auditoria": 480, "horas_alocadas_consultoria": 40, "horas_alocadas_capacitacao": 60, "ano": 2026 },
+    { "id": "ft-004", "plano_id": "plano-001", "usuario_id": "mock-user-005", "horas_disponiveis_ano": 1600, "horas_alocadas_auditoria": 520, "horas_alocadas_consultoria": 40, "horas_alocadas_capacitacao": 40, "ano": 2026 }
+  ]
+}

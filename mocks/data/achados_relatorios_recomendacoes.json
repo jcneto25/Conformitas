@@ -1,0 +1,98 @@
+{
+  "achados_auditoria": [
+    {
+      "id": "ach-001",
+      "auditoria_id": "aud-001",
+      "codigo": "ACH-001",
+      "tipo": "NEGATIVO",
+      "situacao_encontrada": "Divergência de R$ 45.230,00 entre saldo contábil e extrato bancário na conta 1234-5",
+      "criterio": "Art. 85 da Lei 4.320/64 — conciliações bancárias mensais obrigatórias",
+      "causa": "Falta de procedimento formal de conciliação bancária mensal na Secretaria de Finanças",
+      "efeito": "Impossibilidade de assegurar a fidedignidade dos saldos contábeis, com risco de distorção material nas demonstrações",
+      "status": "EM_MANIFESTACAO",
+      "evidencia_ids": ["evd-002"],
+      "autor_id": "mock-user-002",
+      "prazo_manifestacao": "2026-02-27",
+      "data_consolidacao": null
+    },
+    {
+      "id": "ach-002",
+      "auditoria_id": "aud-001",
+      "codigo": "ACH-002",
+      "tipo": "NEGATIVO",
+      "situacao_encontrada": "3 empenhos da amostra de 50 sem pré-empenho correspondente",
+      "criterio": "Art. 60 da Lei 4.320/64 — empenho prévio obrigatório",
+      "causa": "Processo de empenho realizado sem observância da ordem cronológica de pré-empenho",
+      "efeito": "Risco de assunção de obrigações sem lastro orçamentário formalizado",
+      "status": "PRELIMINAR",
+      "evidencia_ids": ["evd-001", "evd-003"],
+      "autor_id": "mock-user-002",
+      "prazo_manifestacao": null,
+      "data_consolidacao": null
+    },
+    {
+      "id": "ach-003",
+      "auditoria_id": "aud-001",
+      "codigo": "ACH-003",
+      "tipo": "POSITIVO",
+      "situacao_encontrada": "100% dos processos de pagamento analisados possuem conformidade documental completa",
+      "criterio": "Manual de Procedimentos de Auditoria — 4ª Edição, Seção III",
+      "causa": "Implementação de checklist de conformidade documental pela SEC-FIN em 2024",
+      "efeito": "Redução do risco de pagamentos indevidos e aumento da confiabilidade dos processos",
+      "status": "PRELIMINAR",
+      "evidencia_ids": ["evd-001"],
+      "autor_id": "mock-user-002",
+      "prazo_manifestacao": null,
+      "data_consolidacao": null
+    },
+    {
+      "id": "ach-004",
+      "auditoria_id": "aud-003",
+      "codigo": "ACH-001",
+      "tipo": "NEGATIVO",
+      "situacao_encontrada": "3 de 5 contratos de serviços terceirizados não possuem fiscal formalmente designado",
+      "criterio": "Art. 117 da Lei 14.133/2021 — designação obrigatória de fiscal de contrato",
+      "causa": "Insuficiência de servidores na SEC-ADM para cobertura de todos os contratos ativos",
+      "efeito": "Risco de execução contratual sem supervisão adequada, com potencial prejuízo ao erário",
+      "status": "CONSOLIDADO",
+      "evidencia_ids": ["evd-005", "evd-006"],
+      "autor_id": "mock-user-005",
+      "prazo_manifestacao": "2025-10-15",
+      "data_consolidacao": "2025-10-20"
+    }
+  ],
+  "manifestacoes": [
+    { "id": "man-001", "achado_id": "ach-001", "conteudo": "A divergência identificada refere-se a um depósito judicial transitório na conta 1234-5, cuja regularização contábil estava programada para fev/2026. Documento comprobatório anexo.", "tipo": "JUSTIFICATIVA", "autor_id": "mock-user-008", "data_manifestacao": "2026-02-22T14:00:00Z" },
+    { "id": "man-002", "achado_id": "ach-004", "conteudo": "Concordamos com o achado. A SEC-ADM já está em processo de nomeação de 2 novos fiscais, com conclusão prevista para jan/2026.", "tipo": "CONCORDANCIA", "autor_id": "mock-user-011", "data_manifestacao": "2025-10-18T10:00:00Z" }
+  ],
+  "relatorios_auditoria": [
+    {
+      "id": "rel-001",
+      "auditoria_id": "aud-003",
+      "tipo": "FINAL",
+      "conteudo": "Relatório Final de Auditoria — AUD-2025-005. Contratos de serviços terceirizados. 4 achados identificados, sendo 3 negativos e 1 positivo. Principais recomendações: designar fiscais para todos os contratos, implementar checklist de fiscalização mensal.",
+      "data_emissao": "2025-11-25",
+      "assinado_por": "mock-user-001",
+      "status": "ASSINADO"
+    },
+    {
+      "id": "rel-002",
+      "auditoria_id": "aud-004",
+      "tipo": "FINAL",
+      "conteudo": "Relatório Final — Auditoria Especial AUD-2025-003. Denúncia de irregularidades em pagamentos. Denúncia parcialmente procedente. 2 achados negativos. Recomendação: instauração de TCE para apuração de responsabilidade.",
+      "data_emissao": "2025-06-15",
+      "assinado_por": "mock-user-001",
+      "status": "ASSINADO"
+    }
+  ],
+  "recomendacoes": [
+    { "id": "rec-001", "relatorio_id": "rel-001", "achado_id": "ach-004", "descricao": "Designar formalmente fiscal para cada contrato de serviço terceirizado ativo", "criticidade": "ALTA", "prazo": "2026-03-01", "responsavel_id": "mock-user-011", "status": "EM_ANDAMENTO" },
+    { "id": "rec-002", "relatorio_id": "rel-001", "achado_id": "ach-004", "descricao": "Implementar checklist de fiscalização mensal para todos os contratos terceirizados", "criticidade": "MEDIA", "prazo": "2026-04-01", "responsavel_id": "mock-user-011", "status": "PENDENTE" },
+    { "id": "rec-003", "relatorio_id": "rel-001", "achado_id": null, "descricao": "Realizar inventário físico de bens patrimoniais da SEC-ADM", "criticidade": "MEDIA", "prazo": "2026-06-01", "responsavel_id": "mock-user-011", "status": "PENDENTE" },
+    { "id": "rec-004", "relatorio_id": "rel-002", "achado_id": null, "descricao": "Instaurar Tomada de Contas Especial para apuração de responsabilidade pelos pagamentos irregulares identificados", "criticidade": "CRITICA", "prazo": "2025-08-15", "responsavel_id": "mock-user-008", "status": "CUMPRIDA" }
+  ],
+  "providencias": [
+    { "id": "prv-001", "recomendacao_id": "rec-001", "descricao": "Publicada portaria de designação de 2 novos fiscais em 15/01/2026. Aguardando nomeação dos demais.", "data": "2026-01-20", "autor_id": "mock-user-011", "evidencia_path": null },
+    { "id": "prv-002", "recomendacao_id": "rec-004", "descricao": "TCE instaurada — Processo 456/2025. Enviado ao TCE-CE em 20/07/2025.", "data": "2025-07-20", "autor_id": "mock-user-008", "evidencia_path": null }
+  ]
+}

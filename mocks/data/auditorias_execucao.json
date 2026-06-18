@@ -1,0 +1,84 @@
+{
+  "auditorias": [
+    {
+      "id": "aud-001",
+      "item_plano_id": "item-001",
+      "numero": "AUD-2026-001",
+      "tipo": "FINANCEIRA",
+      "forma": "DIRETA",
+      "status": "EM_EXECUCAO",
+      "unidade_auditada": "Secretaria de Finanças",
+      "objetivo": "Verificar conformidade da execução orçamentária e financeira — exercício 2025",
+      "escopo": "Empenhos, liquidações, pagamentos e conciliações bancárias de 2025",
+      "data_inicio": "2026-02-01",
+      "data_fim_prevista": "2026-04-30",
+      "data_fim_real": null,
+      "criado_por": "mock-user-001"
+    },
+    {
+      "id": "aud-002",
+      "item_plano_id": "item-002",
+      "numero": "AUD-2026-002",
+      "tipo": "CONFORMIDADE",
+      "forma": "DIRETA",
+      "status": "EM_EXECUCAO",
+      "unidade_auditada": "Secretaria de Gestão de Pessoas",
+      "objetivo": "Verificar legalidade dos pagamentos e benefícios",
+      "escopo": "Folha de pagamento, progressões e benefícios — 2025",
+      "data_inicio": "2026-03-01",
+      "data_fim_prevista": "2026-06-30",
+      "data_fim_real": null,
+      "criado_por": "mock-user-001"
+    },
+    {
+      "id": "aud-003",
+      "item_plano_id": null,
+      "numero": "AUD-2025-005",
+      "tipo": "CONFORMIDADE",
+      "forma": "DIRETA",
+      "status": "CONCLUIDA",
+      "unidade_auditada": "Secretaria de Administração",
+      "objetivo": "Auditoria de conformidade em contratos de serviços terceirizados — 2024",
+      "escopo": "Contratos de limpeza, vigilância e apoio administrativo",
+      "data_inicio": "2025-08-01",
+      "data_fim_prevista": "2025-11-30",
+      "data_fim_real": "2025-11-25",
+      "criado_por": "mock-user-001"
+    },
+    {
+      "id": "aud-004",
+      "item_plano_id": null,
+      "numero": "AUD-2025-003",
+      "tipo": "ESPECIAL",
+      "forma": "DIRETA",
+      "status": "CONCLUIDA",
+      "unidade_auditada": "Secretaria de Finanças",
+      "objetivo": "Auditoria especial — denúncia de irregularidades em pagamentos",
+      "escopo": "Apuração de denúncia recebida pela Ouvidoria em 03/2025",
+      "data_inicio": "2025-04-01",
+      "data_fim_prevista": "2025-06-30",
+      "data_fim_real": "2025-06-15",
+      "criado_por": "mock-user-001"
+    }
+  ],
+  "evidencias": [
+    { "id": "evd-001", "auditoria_id": "aud-001", "tipo": "DOCUMENTO", "descricao": "Relatório de execução orçamentária — jan/2025", "fonte": "SIAFI/TJCE", "data_obtencao": "2026-02-10", "arquivo_path": "/evidencias/aud-001/relatorio_orcamentario_jan2025.pdf", "atributos": { "autenticidade": true, "confiabilidade": true, "exatidao": true } },
+    { "id": "evd-002", "auditoria_id": "aud-001", "tipo": "PLANILHA", "descricao": "Extrato de conciliação bancária — dez/2025", "fonte": "Banco do Brasil", "data_obtencao": "2026-02-15", "arquivo_path": "/evidencias/aud-001/conciliacao_dez2025.xlsx", "atributos": { "autenticidade": true, "confiabilidade": true, "exatidao": true } },
+    { "id": "evd-003", "auditoria_id": "aud-001", "tipo": "EMAIL", "descricao": "Resposta do Secretário de Finanças sobre questionamento de empenhos", "fonte": "fernando.gestor@tjce.jus.br", "data_obtencao": "2026-02-20", "arquivo_path": null, "atributos": { "autenticidade": true, "confiabilidade": true, "exatidao": false } },
+    { "id": "evd-004", "auditoria_id": "aud-002", "tipo": "DOCUMENTO", "descricao": "Relatório de auditoria anterior — folha 2023", "fonte": "AUDIN", "data_obtencao": "2026-03-05", "arquivo_path": "/evidencias/aud-002/auditoria_anterior_folha2023.pdf", "atributos": { "autenticidade": true, "confiabilidade": true, "exatidao": true } },
+    { "id": "evd-005", "auditoria_id": "aud-003", "tipo": "DOCUMENTO", "descricao": "Contrato de prestação de serviços de limpeza nº 045/2024", "fonte": "SEC-ADM", "data_obtencao": "2025-08-15", "arquivo_path": "/evidencias/aud-003/contrato_045_2024.pdf", "atributos": { "autenticidade": true, "confiabilidade": true, "exatidao": true } },
+    { "id": "evd-006", "auditoria_id": "aud-003", "tipo": "PLANILHA", "descricao": "Planilha de fiscalização contratual — 2024", "fonte": "SEC-ADM", "data_obtencao": "2025-09-01", "arquivo_path": "/evidencias/aud-003/fiscalizacao_2024.xlsx", "atributos": { "autenticidade": true, "confiabilidade": false, "exatidao": false } },
+    { "id": "evd-007", "auditoria_id": "aud-004", "tipo": "DOCUMENTO", "descricao": "Denúncia anônima protocolada na Ouvidoria — Protocolo 1234/2025", "fonte": "Ouvidoria TJCE", "data_obtencao": "2025-04-02", "arquivo_path": "/evidencias/aud-004/denuncia_1234_2025.pdf", "atributos": { "autenticidade": true, "confiabilidade": false, "exatidao": false } }
+  ],
+  "papeis_trabalho": [
+    { "id": "pt-001", "auditoria_id": "aud-001", "codigo": "PT-001", "descricao": "Análise de empenhos — amostra de 50 itens. Metodologia: seleção aleatória estratificada por valor. Verificação: conformidade com LOA 2025, classificação orçamentária correta, existência de pré-empenho. 3 divergências encontradas.", "evidencia_ids": ["evd-001"], "autor_id": "mock-user-002" },
+    { "id": "pt-002", "auditoria_id": "aud-001", "codigo": "PT-002", "descricao": "Circularização de saldos bancários — 5 contas. Metodologia: solicitação de extratos diretamente aos bancos e conciliação com registros contábeis. Divergência de R$ 45.230,00 na conta 1234-5.", "evidencia_ids": ["evd-002"], "autor_id": "mock-user-003" },
+    { "id": "pt-003", "auditoria_id": "aud-002", "codigo": "PT-001", "descricao": "Análise preliminar da folha de pagamento — jan/2025. Metodologia: cruzamento de CPF com bases externas (TCU, SIAPE). 12 CPFs com indícios de acúmulo ilegal.", "evidencia_ids": ["evd-004"], "autor_id": "mock-user-004" },
+    { "id": "pt-004", "auditoria_id": "aud-003", "codigo": "PT-005", "descricao": "Análise contratual — limpeza. Metodologia: verificação de repactuação, reajuste e fiscalização. Fiscal não designado formalmente para 3 dos 5 contratos analisados.", "evidencia_ids": ["evd-005", "evd-006"], "autor_id": "mock-user-005" }
+  ],
+  "requisicoes": [
+    { "id": "req-001", "auditoria_id": "aud-001", "descricao": "Solicitação de relatórios de execução orçamentária mensal de 2025", "prazo": 10, "data_resposta": "2026-02-12", "respondida": true },
+    { "id": "req-002", "auditoria_id": "aud-001", "descricao": "Solicitação de extratos bancários de todas as contas do TJCE — dez/2025", "prazo": 15, "data_resposta": null, "respondida": false },
+    { "id": "req-003", "auditoria_id": "aud-002", "descricao": "Solicitação de relação completa de servidores com progressão funcional em 2024-2025", "prazo": 10, "data_resposta": "2026-03-10", "respondida": true }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "consultorias": [
+    { "id": "cst-001", "solicitacao_id": null, "tipo": "ASSESSORAMENTO", "escopo": "Orientação sobre implantação de controles internos na nova unidade de patrimônio", "horas_utilizadas": 24, "resultado": "Minuta de normativo de controle interno patrimonial entregue em 15/01/2026", "equipe_ids": ["mock-user-002"], "plano_id": "plano-001", "created_at": "2026-01-10T08:00:00Z" },
+    { "id": "cst-002", "solicitacao_id": null, "tipo": "TREINAMENTO", "escopo": "Capacitação: Noções de Controle Interno para gestores do TJCE — turma 1/2026", "horas_utilizadas": 16, "resultado": "40 gestores capacitados em 25/02/2026", "equipe_ids": ["mock-user-001", "mock-user-002"], "plano_id": "plano-001", "created_at": "2026-02-25T08:00:00Z" }
+  ],
+  "riscos": [
+    { "id": "rsc-001", "codigo": "RISCO-001", "descricao": "Perda de auditores experientes por aposentadoria ou remoção", "categoria": "OPERACIONAL", "causa": "Quadro reduzido de auditores efetivos na AUDIN", "evento": "Saída de auditor sênior sem substituição programada", "consequencia": "Redução da capacidade de execução do PAA", "probabilidade": 3, "impacto": 4, "nivel": "ALTO", "estrategia": "MITIGAR", "plano_acao": "Programa de retenção e plano de sucessão", "status": "ATIVO" },
+    { "id": "rsc-002", "codigo": "RISCO-002", "descricao": "Não cumprimento de prazos de auditoria por demanda excessiva", "categoria": "OPERACIONAL", "causa": "Acúmulo de auditorias especiais não planejadas", "evento": "3 auditorias especiais simultâneas", "consequencia": "Atraso no PAA e risco de recomendações vencidas", "probabilidade": 4, "impacto": 3, "nivel": "ALTO", "estrategia": "MITIGAR", "plano_acao": "Reserva de 20% da força de trabalho para demandas extraordinárias", "status": "EM_TRATAMENTO" }
+  ],
+  "capacitacoes": [
+    { "id": "cap-001", "titulo": "Auditoria Baseada em Risco (RBIA) — Avançado", "instituicao": "IIA Brasil", "carga_horaria": 40, "tipo": "CURSO", "data_inicio": "2026-03-15", "data_fim": "2026-03-20", "participante_ids": ["mock-user-002", "mock-user-003"], "certificado_path": null, "competencias_cobertas": ["RBIA", "COSO"] },
+    { "id": "cap-002", "titulo": "Nova Lei de Licitações (14.133/2021) — Aplicação Prática", "instituicao": "ENAP", "carga_horaria": 20, "tipo": "CURSO", "data_inicio": "2026-04-01", "data_fim": "2026-04-05", "participante_ids": ["mock-user-004"], "certificado_path": null, "competencias_cobertas": ["LICITACOES"] }
+  ],
+  "avaliacoes_qualidade": [
+    { "id": "avl-001", "tipo": "MONITORAMENTO_CONTINUO", "periodo_inicio": "2025-01-01", "periodo_fim": "2025-06-30", "resultado": "89% de conformidade com padrões DIRAUD-Jud. Principais pontos: papéis de trabalho bem documentados. Melhoria necessária: cumprimento de prazos de relatório.", "nota": 8.9, "status": "CONCLUIDA" },
+    { "id": "avl-002", "tipo": "AUTOAVALIACAO", "periodo_inicio": "2025-01-01", "periodo_fim": "2025-12-31", "resultado": "Autoavaliação anual. Qualidade do trabalho: 9.0. Supervisão: 8.5. Infraestrutura: 7.0. Valor agregado: 9.2.", "nota": 8.4, "status": "HOMOLOGADA" }
+  ],
+  "nao_conformidades": [
+    { "id": "ncf-001", "avaliacao_id": "avl-001", "descricao": "3 relatórios de auditoria emitidos com atraso superior a 15 dias em relação ao cronograma", "norma_referencia": "DIRAUD-Jud art. 40 — tempo suficiente para planejamento", "severidade": "MEDIA", "acao_corretiva": "Implementar alerta automático de prazo 15 dias antes do vencimento do cronograma", "prazo": "2026-03-01", "status": "CORRIGIDA" }
+  ]
+}

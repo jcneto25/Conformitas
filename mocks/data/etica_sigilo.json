@@ -1,0 +1,14 @@
+{
+  "declaracoes_independencia": [
+    { "id": "dec-001", "usuario_id": "mock-user-001", "ano": 2026, "declaracao": "Declaro, para os devidos fins, que no exercício de minhas funções como Auditor-Chefe da AUDIN/TJCE, mantenho independência e objetividade, não possuindo conflitos de interesse que comprometam minha imparcialidade.", "data_assinatura": "2026-01-05" },
+    { "id": "dec-002", "usuario_id": "mock-user-002", "ano": 2026, "declaracao": "Declaro independência para o exercício de 2026.", "data_assinatura": "2026-01-06" },
+    { "id": "dec-003", "usuario_id": "mock-user-003", "ano": 2026, "declaracao": "Declaro independência para o exercício de 2026.", "data_assinatura": "2026-01-06" }
+  ],
+  "impedimentos": [
+    { "id": "imp-001", "usuario_id": "mock-user-004", "auditoria_id": "aud-002", "motivo": "Atuei na Secretaria de Gestão de Pessoas até 10/2025 (6 meses)", "status": "ACEITO" }
+  ],
+  "classificacoes_documento": [
+    { "id": "cls-001", "entidade_tipo": "Auditoria", "entidade_id": "aud-004", "nivel_sigilo": "SIGILOSO", "justificativa": "Auditoria especial baseada em denúncia — envolve investigação de pessoas físicas", "classificado_por": "mock-user-001" },
+    { "id": "cls-002", "entidade_tipo": "Evidencia", "entidade_id": "evd-007", "nivel_sigilo": "SIGILOSO", "justificativa": "Denúncia anônima com identificação de denunciante", "classificado_por": "mock-user-001" }
+  ]
+}

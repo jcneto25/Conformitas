@@ -1,0 +1,645 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Autenticação ──────────────────────────────────
+model Usuario {
+  id               String   @id @default(uuid()) @db.Uuid
+  nome             String
+  email            String   @unique
+  matricula        String   @unique
+  cargo            String
+  unidade          String
+  senhaHash        String
+  mfaEnabled       Boolean  @default(false)
+  mfaSecret        String?
+  ativo            Boolean  @default(true)
+  dataDesativacao  DateTime?
+  tentativasLogin  Int      @default(0)
+  bloqueadoAte     DateTime?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  deletedAt        DateTime? @map("deleted_at")
+
+  refreshTokens       RefreshToken[]
+  usuariosPerfis      UsuarioPerfil[]
+  mandatos            MandatoAuditorChefe[]
+
+  @@map("usuarios")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  tokenHash String
+  usuarioId String   @map("usuario_id") @db.Uuid
+  expiresAt DateTime @map("expires_at")
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@index([usuarioId])
+  @@index([tokenHash])
+  @@map("refresh_tokens")
+}
+
+// ── Perfis e RBAC ───────────────────────────────
+model Perfil {
+  id          String   @id @default(uuid()) @db.Uuid
+  codigo      String   @unique
+  nome        String
+  descricao   String
+  permissoes  Json
+  nivelAcesso String   @map("nivel_acesso")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  usuariosPerfis UsuarioPerfil[]
+
+  @@map("perfis")
+}
+
+model UsuarioPerfil {
+  id             String    @id @default(uuid()) @db.Uuid
+  usuarioId      String    @map("usuario_id") @db.Uuid
+  perfilId       String    @map("perfil_id") @db.Uuid
+  unidadeEscopo  String?   @map("unidade_escopo")
+  dataInicio     DateTime  @default(now()) @map("data_inicio")
+  dataFim        DateTime? @map("data_fim")
+  ativo          Boolean   @default(true)
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  perfil  Perfil  @relation(fields: [perfilId], references: [id])
+
+  @@index([usuarioId])
+  @@index([perfilId])
+  @@map("usuarios_perfis")
+}
+
+model MandatoAuditorChefe {
+  id              String    @id @default(uuid()) @db.Uuid
+  usuarioId       String    @map("usuario_id") @db.Uuid
+  numeroMandato   Int       @map("numero_mandato")
+  dataInicio      DateTime  @map("data_inicio")
+  dataFimPrevista DateTime  @map("data_fim_prevista")
+  dataFimReal     DateTime? @map("data_fim_real")
+  atoDesignacao   String    @map("ato_designacao")
+  status          String
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@map("mandatos_auditor_chefe")
+}
+
+model LogSistema {
+  id           String   @id @default(uuid()) @db.Uuid
+  usuarioId    String?  @map("usuario_id") @db.Uuid
+  acao         String
+  entidadeTipo String?  @map("entidade_tipo")
+  entidadeId   String?  @map("entidade_id") @db.Uuid
+  detalhes     Json?
+  ip           String?
+  userAgent    String?  @map("user_agent")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([usuarioId])
+  @@index([acao])
+  @@index([createdAt])
+  @@map("logs_sistema")
+}
+
+model ConfiguracaoSistema {
+  chave      String   @id
+  valor      String
+  descricao  String
+  editavel   Boolean  @default(true)
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("configuracoes_sistema")
+}
+
+// ── Planejamento ────────────────────────────────
+model UniversoAuditavel {
+  id                  String   @id @default(uuid()) @db.Uuid
+  nome                String
+  descricao           String?
+  tipo                String
+  unidadeResponsavel  String   @map("unidade_responsavel")
+  materialidade       Int
+  relevancia          Int
+  criticidade         Int
+  risco               Int
+  indicePriorizacao   Float?   @map("indice_priorizacao")
+  ativo               Boolean  @default(true)
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+  deletedAt           DateTime? @map("deleted_at")
+
+  itensPlano ItemPlano[]
+
+  @@index([tipo])
+  @@index([ativo])
+  @@map("universo_auditavel")
+}
+
+model PlanoAuditoria {
+  id              String    @id @default(uuid()) @db.Uuid
+  tipo            String
+  anoInicio       Int       @map("ano_inicio")
+  anoFim          Int       @map("ano_fim")
+  status          String
+  versao          Int       @default(1)
+  dataSubmissao   DateTime? @map("data_submissao")
+  dataAprovacao   DateTime? @map("data_aprovacao")
+  dataPublicacao  DateTime? @map("data_publicacao")
+  criadoPorId     String    @map("criado_por_id") @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+
+  itensPlano     ItemPlano[]
+  forcTrabalho   ForcaTrabalho[]
+  consultorias   Consultoria[]
+
+  @@map("planos_auditoria")
+}
+
+model ItemPlano {
+  id                   String    @id @default(uuid()) @db.Uuid
+  planoId              String    @map("plano_id") @db.Uuid
+  universoAuditavelId  String    @map("universo_auditavel_id") @db.Uuid
+  tipoAuditoria        String?   @map("tipo_auditoria")
+  formaExecucao        String?   @map("forma_execucao")
+  horasEstimadas       Int?      @map("horas_estimadas")
+  equipeIds            Json?     @map("equipe_ids")
+  escopo               String?
+  objetivo             String?
+  resultadosEsperados  String?   @map("resultados_esperados")
+  questoesAuditoria    Json?     @map("questoes_auditoria")
+  testesPrevistos      Json?     @map("testes_previstos")
+  cronogramaInicio     DateTime? @map("cronograma_inicio")
+  cronogramaFim        DateTime? @map("cronograma_fim")
+  prioridade           String?
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  plano      PlanoAuditoria    @relation(fields: [planoId], references: [id])
+  universo   UniversoAuditavel @relation(fields: [universoAuditavelId], references: [id])
+  auditorias Auditoria[]
+
+  @@map("itens_plano")
+}
+
+model ForcaTrabalho {
+  id                      String   @id @default(uuid()) @db.Uuid
+  planoId                 String   @map("plano_id") @db.Uuid
+  usuarioId               String   @map("usuario_id") @db.Uuid
+  horasDisponiveisAno     Int      @map("horas_disponiveis_ano")
+  horasAlocadasAuditoria  Int      @default(0) @map("horas_alocadas_auditoria")
+  horasAlocadasConsultoria Int     @default(0) @map("horas_alocadas_consultoria")
+  horasAlocadasCapacitacao Int     @default(0) @map("horas_alocadas_capacitacao")
+  ano                     Int
+  createdAt               DateTime @default(now()) @map("created_at")
+
+  plano PlanoAuditoria @relation(fields: [planoId], references: [id])
+
+  @@map("forca_trabalho")
+}
+
+// ── Execução ────────────────────────────────────
+model Auditoria {
+  id              String    @id @default(uuid()) @db.Uuid
+  itemPlanoId     String    @map("item_plano_id") @db.Uuid
+  numero          String    @unique
+  tipo            String
+  forma           String
+  status          String
+  unidadeAuditada String?   @map("unidade_auditada")
+  objetivo        String?
+  escopo          String?
+  dataInicio      DateTime? @map("data_inicio")
+  dataFimPrevista DateTime? @map("data_fim_prevista")
+  dataFimReal     DateTime? @map("data_fim_real")
+  sigilosa        Boolean   @default(false)
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+
+  itemPlano     ItemPlano        @relation(fields: [itemPlanoId], references: [id])
+  comunicados   ComunicadoAuditoria[]
+  evidencias    Evidencia[]
+  papeisTrabalho PapelTrabalho[]
+  requisicoes   Requisicao[]
+  achados       AchadoAuditoria[]
+  relatorios    RelatorioAuditoria[]
+
+  @@map("auditorias")
+}
+
+model ComunicadoAuditoria {
+  id          String   @id @default(uuid()) @db.Uuid
+  auditoriaId String   @map("auditoria_id") @db.Uuid
+  numero      String
+  dataEmissao DateTime @default(now()) @map("data_emissao")
+  conteudo    String
+  assinadoPor String   @map("assinado_por") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  auditoria Auditoria @relation(fields: [auditoriaId], references: [id])
+
+  @@map("comunicados_auditoria")
+}
+
+model Evidencia {
+  id           String   @id @default(uuid()) @db.Uuid
+  auditoriaId  String   @map("auditoria_id") @db.Uuid
+  tipo         String
+  descricao    String
+  fonte        String?
+  dataObtencao DateTime @default(now()) @map("data_obtencao")
+  arquivoPath  String   @map("arquivo_path")
+  atributos    Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  auditoria Auditoria @relation(fields: [auditoriaId], references: [id])
+
+  @@map("evidencias")
+}
+
+model PapelTrabalho {
+  id           String   @id @default(uuid()) @db.Uuid
+  auditoriaId  String   @map("auditoria_id") @db.Uuid
+  codigo       String
+  descricao    String
+  evidenciaIds Json?    @map("evidencia_ids")
+  autorId      String   @map("autor_id") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  auditoria Auditoria @relation(fields: [auditoriaId], references: [id])
+
+  @@map("papeis_trabalho")
+}
+
+model Requisicao {
+  id           String    @id @default(uuid()) @db.Uuid
+  auditoriaId  String    @map("auditoria_id") @db.Uuid
+  descricao    String
+  prazo        DateTime
+  dataResposta DateTime? @map("data_resposta")
+  respondida   Boolean   @default(false)
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  auditoria Auditoria @relation(fields: [auditoriaId], references: [id])
+
+  @@map("requisicoes")
+}
+
+// ── Achados e Recomendações ────────────────────
+model AchadoAuditoria {
+  id                 String    @id @default(uuid()) @db.Uuid
+  auditoriaId        String    @map("auditoria_id") @db.Uuid
+  codigo             String
+  tipo               String
+  situacaoEncontrada String    @map("situacao_encontrada")
+  criterio           String
+  causa              String
+  efeito             String
+  status             String
+  evidenciaIds       Json?     @map("evidencia_ids")
+  autorId            String    @map("autor_id") @db.Uuid
+  prazoManifestacao  DateTime? @map("prazo_manifestacao")
+  dataConsolidacao   DateTime? @map("data_consolidacao")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  auditoria      Auditoria       @relation(fields: [auditoriaId], references: [id])
+  manifestacoes  Manifestacao[]
+  recomendacoes  Recomendacao[]
+
+  @@map("achados_auditoria")
+}
+
+model Manifestacao {
+  id               String   @id @default(uuid()) @db.Uuid
+  achadoId         String   @map("achado_id") @db.Uuid
+  conteudo         String
+  tipo             String
+  autorId          String   @map("autor_id") @db.Uuid
+  dataManifestacao DateTime @default(now()) @map("data_manifestacao")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  achado AchadoAuditoria @relation(fields: [achadoId], references: [id])
+
+  @@map("manifestacoes")
+}
+
+model RelatorioAuditoria {
+  id           String    @id @default(uuid()) @db.Uuid
+  auditoriaId  String    @map("auditoria_id") @db.Uuid
+  tipo         String
+  conteudo     String?
+  dataEmissao  DateTime? @map("data_emissao")
+  assinadoPor  String?   @map("assinado_por") @db.Uuid
+  status       String
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  auditoria      Auditoria       @relation(fields: [auditoriaId], references: [id])
+  recomendacoes  Recomendacao[]
+
+  @@map("relatorios_auditoria")
+}
+
+model Recomendacao {
+  id              String    @id @default(uuid()) @db.Uuid
+  relatorioId     String    @map("relatorio_id") @db.Uuid
+  achadoId        String?   @map("achado_id") @db.Uuid
+  descricao       String
+  criticidade     String
+  prazo           DateTime
+  responsavelId   String    @map("responsavel_id") @db.Uuid
+  status          String
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  relatorio    RelatorioAuditoria @relation(fields: [relatorioId], references: [id])
+  achado       AchadoAuditoria?   @relation(fields: [achadoId], references: [id])
+  providencias Providencia[]
+
+  @@map("recomendacoes")
+}
+
+model Providencia {
+  id              String   @id @default(uuid()) @db.Uuid
+  recomendacaoId  String   @map("recomendacao_id") @db.Uuid
+  descricao       String
+  data            DateTime @default(now())
+  autorId         String   @map("autor_id") @db.Uuid
+  evidenciaPath   String?  @map("evidencia_path")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  recomendacao Recomendacao @relation(fields: [recomendacaoId], references: [id])
+
+  @@map("providencias")
+}
+
+// ── Ética e Sigilo ─────────────────────────────
+model DeclaracaoIndependencia {
+  id            String   @id @default(uuid()) @db.Uuid
+  usuarioId     String   @map("usuario_id") @db.Uuid
+  ano           Int
+  declaracao    String?
+  dataAssinatura DateTime @default(now()) @map("data_assinatura")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("declaracoes_independencia")
+}
+
+model Impedimento {
+  id          String   @id @default(uuid()) @db.Uuid
+  usuarioId   String   @map("usuario_id") @db.Uuid
+  auditoriaId String   @map("auditoria_id") @db.Uuid
+  motivo      String
+  status      String
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("impedimentos")
+}
+
+model ClassificacaoDocumento {
+  id              String   @id @default(uuid()) @db.Uuid
+  entidadeTipo    String   @map("entidade_tipo")
+  entidadeId      String   @map("entidade_id") @db.Uuid
+  nivelSigilo     String   @map("nivel_sigilo")
+  justificativa   String?
+  classificadoPor String   @map("classificado_por") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("classificacoes_documento")
+}
+
+model LogAcessoSigiloso {
+  id           String   @id @default(uuid()) @db.Uuid
+  usuarioId    String   @map("usuario_id") @db.Uuid
+  entidadeTipo String   @map("entidade_tipo")
+  entidadeId   String   @map("entidade_id") @db.Uuid
+  acao         String
+  dataAcesso   DateTime @default(now()) @map("data_acesso")
+
+  @@map("log_acesso_sigiloso")
+}
+
+// ── Consultorias ───────────────────────────────
+model SolicitacaoConsultoria {
+  id                  String   @id @default(uuid()) @db.Uuid
+  unidadeSolicitante  String   @map("unidade_solicitante")
+  tema                String
+  duvida              String
+  fundamentacao       String?
+  status              String
+  solicitanteId       String   @map("solicitante_id") @db.Uuid
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  @@map("solicitacoes_consultoria")
+}
+
+model Consultoria {
+  id              String    @id @default(uuid()) @db.Uuid
+  solicitacaoId   String?   @map("solicitacao_id") @db.Uuid
+  tipo            String
+  escopo          String?
+  horasUtilizadas Int?      @map("horas_utilizadas")
+  resultado       String?
+  equipeIds       Json?     @map("equipe_ids")
+  planoId         String?   @map("plano_id") @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  plano PlanoAuditoria? @relation(fields: [planoId], references: [id])
+
+  @@map("consultorias")
+}
+
+// ── Qualidade ──────────────────────────────────
+model AvaliacaoQualidade {
+  id            String    @id @default(uuid()) @db.Uuid
+  tipo          String
+  periodoInicio DateTime  @map("periodo_inicio")
+  periodoFim    DateTime  @map("periodo_fim")
+  resultado     String?
+  nota          Float?
+  status        String
+  homologadaPor String?   @map("homologada_por") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  naoConformidades NaoConformidade[]
+
+  @@map("avaliacoes_qualidade")
+}
+
+model NaoConformidade {
+  id               String   @id @default(uuid()) @db.Uuid
+  avaliacaoId      String   @map("avaliacao_id") @db.Uuid
+  descricao        String
+  normaReferencia  String?  @map("norma_referencia")
+  severidade       String
+  acaoCorretiva    String?  @map("acao_corretiva")
+  prazo            DateTime?
+  status           String
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  avaliacao AvaliacaoQualidade @relation(fields: [avaliacaoId], references: [id])
+
+  @@map("nao_conformidades")
+}
+
+model IndicadorQualidade {
+  id            String   @id @default(uuid()) @db.Uuid
+  nome          String
+  descricao     String?
+  periodicidade String
+  meta          Float?
+  valorAtual    Float?   @map("valor_atual")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("indicadores_qualidade")
+}
+
+// ── Riscos e Competências ─────────────────────
+model Risco {
+  id           String   @id @default(uuid()) @db.Uuid
+  codigo       String
+  descricao    String
+  categoria    String?
+  causa        String?
+  evento       String?
+  consequencia String?
+  probabilidade Int
+  impacto      Int
+  nivel        String
+  estrategia   String?
+  planoAcao    String?  @map("plano_acao")
+  status       String
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("riscos")
+}
+
+model Competencia {
+  id            String   @id @default(uuid()) @db.Uuid
+  nome          String
+  tipo          String
+  areaAuditoria String?  @map("area_auditoria")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("competencias")
+}
+
+model Capacitacao {
+  id              String    @id @default(uuid()) @db.Uuid
+  titulo          String
+  instituicao     String?
+  cargaHoraria    Int       @map("carga_horaria")
+  tipo            String
+  dataInicio      DateTime  @map("data_inicio")
+  dataFim         DateTime? @map("data_fim")
+  participanteIds Json      @map("participante_ids")
+  certificadoPath String?   @map("certificado_path")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  @@map("capacitacoes")
+}
+
+model DocumentoMetodologico {
+  id             String    @id @default(uuid()) @db.Uuid
+  titulo         String
+  tipo           String
+  categoria      String?
+  versao         String
+  arquivoPath    String    @map("arquivo_path")
+  vigenciaInicio DateTime? @map("vigencia_inicio")
+  vigenciaFim    DateTime? @map("vigencia_fim")
+  status         String
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  @@map("documentos_metodologicos")
+}
+
+// ── Governança ────────────────────────────────
+model DeterminacaoExterna {
+  id               String    @id @default(uuid()) @db.Uuid
+  orgao            String
+  numero           String
+  descricao        String
+  dataRecebimento  DateTime  @default(now()) @map("data_recebimento")
+  prazoResposta    DateTime? @map("prazo_resposta")
+  status           String
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  @@map("determinacoes_externas")
+}
+
+model RegistroFraude {
+  id                       String    @id @default(uuid()) @db.Uuid
+  auditoriaId              String?   @map("auditoria_id") @db.Uuid
+  descricao                String
+  classificacao            String
+  dataComunicacaoSuperior  DateTime? @map("data_comunicacao_superior")
+  dataComunicacaoTce       DateTime? @map("data_comunicacao_tce")
+  createdAt                DateTime  @default(now()) @map("created_at")
+
+  @@map("registros_fraude")
+}
+
+// ── Integrações ───────────────────────────────
+model Integracao {
+  id                String   @id @default(uuid()) @db.Uuid
+  nome              String
+  sistemaExterno    String   @map("sistema_externo")
+  tipo              String
+  protocolo         String
+  endpoint          String?
+  metodoAutenticacao String? @map("metodo_autenticacao")
+  frequencia        String?
+  status            String
+  healthStatus      String?  @map("health_status")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@map("integracoes")
+}
+
+model AcaoCoordenada {
+  id               String    @id @default(uuid()) @db.Uuid
+  codigoSiaud      String    @map("codigo_siaud")
+  titulo           String
+  descricao        String?
+  metodologia      String?
+  dataAprovacaoCpa DateTime? @map("data_aprovacao_cpa")
+  prazoExecucao    DateTime? @map("prazo_execucao")
+  status           String
+  auditoriaId      String?   @map("auditoria_id") @db.Uuid
+  resultadoReportado Boolean  @default(false) @map("resultado_reportado")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  @@map("acoes_coordenadas")
+}
+
+model LogIntegracao {
+  id            String   @id @default(uuid()) @db.Uuid
+  integracaoId  String   @map("integracao_id") @db.Uuid
+  status        String
+  requisicao    Json?
+  resposta      Json?
+  erro          String?
+  duracaoMs     Int?     @map("duracao_ms")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("logs_integracao")
+}

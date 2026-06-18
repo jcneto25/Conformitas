@@ -1,0 +1,153 @@
+version: "3.9"
+
+services:
+  # ── PostgreSQL 16 ─────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: conformitas-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-conformitas_dev}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-conformitas_dev}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - conformitas-net
+
+  # ── Redis 7 ───────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: conformitas-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - conformitas-net
+
+  # ── NestJS API ────────────────────────────────────
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      target: ${API_BUILD_TARGET:-development}
+    container_name: conformitas-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-conformitas_dev}
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-change-in-production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1800}
+      REFRESH_EXPIRES_IN: ${REFRESH_EXPIRES_IN:-28800}
+      TOTP_ISSUER: ${TOTP_ISSUER:-CONFORMITAS-DEV}
+      AUTH_PROVIDER: ${AUTH_PROVIDER:-local}
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
+      UPLOAD_MAX_SIZE: ${UPLOAD_MAX_SIZE:-25mb}
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+      - uploads_data:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: npm run start:dev
+    networks:
+      - conformitas-net
+
+  # ── Angular SPA ───────────────────────────────────
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      target: ${WEB_BUILD_TARGET:-development}
+    container_name: conformitas-web
+    restart: unless-stopped
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    environment:
+      API_BASE_URL: ${API_BASE_URL:-http://localhost:3001}
+    command: ng serve --host 0.0.0.0 --port 4200 --poll 2000
+    depends_on:
+      - api
+    networks:
+      - conformitas-net
+
+  # ── Nginx Reverse Proxy ───────────────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: conformitas-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - api
+      - web
+    networks:
+      - conformitas-net
+
+  # ── Keycloak 26 (Opcional) ────────────────────────
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1
+    container_name: conformitas-keycloak
+    restart: unless-stopped
+    profiles:
+      - keycloak
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${KEYCLOAK_DB:-keycloak}
+      KC_DB_USERNAME: ${POSTGRES_USER:-postgres}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-localhost}
+      KC_HOSTNAME_PORT: 8080
+      KC_HTTP_ENABLED: "true"
+    ports:
+      - "8080:8080"
+    command: start-dev
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - conformitas-net
+
+volumes:
+  postgres_data:
+  redis_data:
+  uploads_data:
+  keycloak_data:
+
+networks:
+  conformitas-net:
+    driver: bridge

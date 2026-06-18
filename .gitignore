@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+.pnp/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Angular
+web/.angular/
+web/.angular/cache/
+
+# Environment files (secrets)
+.env
+.env.local
+.env.staging
+.env.production
+*.env
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Coverage
+coverage/
+
+# Docker
+docker-compose.override.yml
+
+# Prisma
+api/prisma/migrations/
+!api/prisma/migrations/.keep
+
+# ACE sessions (keep structure, ignore content)
+.ace/sessions/*
+!.ace/sessions/.gitkeep
+
+# Keycloak data
+keycloak/data/
+
+.commandcode/
+.claude/
+.omc/
+.opencode/
+.ace/.venv/

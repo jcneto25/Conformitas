@@ -1,0 +1,179 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [master, develop, 'release/*']
+  pull_request:
+    branches: [master, develop]
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  # ── Lint & TypeCheck ──────────────────────────
+  lint-and-typecheck:
+    name: Lint & TypeCheck
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        project: [api, web]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ${{ matrix.project }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.project }}
+        run: npm ci
+
+      - name: Lint
+        working-directory: ${{ matrix.project }}
+        run: npm run lint
+
+      - name: TypeCheck
+        working-directory: ${{ matrix.project }}
+        run: npx tsc --noEmit
+
+  # ── Unit Tests ────────────────────────────────
+  unit-tests:
+    name: Unit Tests
+    runs-on: self-hosted
+    needs: lint-and-typecheck
+    strategy:
+      matrix:
+        project: [api, web]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ${{ matrix.project }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.project }}
+        run: npm ci
+
+      - name: Run tests
+        working-directory: ${{ matrix.project }}
+        run: npm run test -- --coverage
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.project }}
+          path: ${{ matrix.project }}/coverage/
+
+  # ── Integration Tests (API only) ──────────────
+  integration-tests:
+    name: Integration Tests
+    runs-on: self-hosted
+    needs: unit-tests
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: conformitas_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+
+      - name: Install dependencies
+        working-directory: api
+        run: npm ci
+
+      - name: Run Prisma migrations
+        working-directory: api
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/conformitas_test
+
+      - name: Run integration tests
+        working-directory: api
+        run: npm run test:e2e
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/conformitas_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test-jwt-secret
+
+  # ── Build ────────────────────────────────────
+  build:
+    name: Build
+    runs-on: self-hosted
+    needs: integration-tests
+    strategy:
+      matrix:
+        project: [api, web]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ${{ matrix.project }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.project }}
+        run: npm ci
+
+      - name: Build
+        working-directory: ${{ matrix.project }}
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.project }}
+          path: ${{ matrix.project }}/dist/
+
+  # ── Security Scan ────────────────────────────
+  security-scan:
+    name: Security Scan
+    runs-on: self-hosted
+    needs: lint-and-typecheck
+    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: npm audit
+        working-directory: api
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+      - name: npm audit
+        working-directory: web
+        run: npm audit --audit-level=high
+        continue-on-error: true
