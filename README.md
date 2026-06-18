@@ -4,7 +4,7 @@
 
 **Sistema Integrado de Gestão de Auditoria Interna Governamental**
 
-Plataforma corporativa para gestão do ciclo completo de auditoria interna da AUDIN/TJCE, em conformidade com a Lei Estadual 18.561/2023 e as Resoluções CNJ 308/2020 e 309/2020 (DIRAUD-Jud).
+Plataforma corporativa para gestão do ciclo completo de auditoria interna, em conformidade com a Lei Estadual 18.561/2023 e as Resoluções CNJ 308/2020 e 309/2020 (DIRAUD-Jud).
 
 ---
 
