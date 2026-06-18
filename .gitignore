@@ -55,3 +55,4 @@ keycloak/data/
 .omc/
 .opencode/
 .ace/.venv/
+.vscode/
