@@ -1,4 +1,4 @@
-# CONFORMITAS 3.0 (SGI)
+# CONFORMITAS
 
 ![Versão](https://img.shields.io/badge/versão-3.0-blue) ![Status](https://img.shields.io/badge/status-Planejamento%20Concluído-green) ![Pipeline](https://img.shields.io/badge/LLC-Step%2010-8A2BE2)
 
