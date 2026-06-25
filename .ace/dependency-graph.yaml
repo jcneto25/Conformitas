@@ -1,0 +1,260 @@
+version: "1.2.0"
+generated_by: "manual-setup"
+last_updated: "2026-06-16"
+
+artifacts:
+  ingestion_raw:
+    path: "docs/business/ingestion/"
+    depends_on: []
+    triggers_update:
+      - ingestion_converted
+
+  ingestion_converted:
+    path: "docs/business/ingestion/converted/"
+    depends_on:
+      - ingestion_raw
+    triggers_update:
+      - visao_estrategica
+
+  visao_estrategica:
+    path: "docs/business/specs/visao_estrategica_e_negocio.md"
+    depends_on:
+      - ingestion_converted
+    triggers_update:
+      - module_specs
+      - glossario
+      - requisitos_funcionais
+      - prd_executivo
+      - prd_tecnico
+
+  module_specs:
+    path_pattern: "docs/business/specs/MOD-*.md"
+    depends_on:
+      - visao_estrategica
+    triggers_update:
+      - prp
+
+  glossario:
+    path: "docs/business/specs/glossario.md"
+    depends_on:
+      - visao_estrategica
+      - module_specs
+    triggers_update:
+      - prd_executivo
+      - prd_tecnico
+
+  requisitos_funcionais:
+    path: "docs/business/specs/requisitos_funcionais.md"
+    depends_on:
+      - visao_estrategica
+      - module_specs
+    triggers_update:
+      - prd_tecnico
+      - prp
+
+  requisitos_nao_funcionais:
+    path: "docs/business/specs/requisitos_nao_funcionais.md"
+    depends_on:
+      - visao_estrategica
+    triggers_update:
+      - prd_tecnico
+      - architecture
+
+  regras_negocio:
+    path: "docs/business/specs/regras_negocio.md"
+    depends_on:
+      - visao_estrategica
+      - module_specs
+    triggers_update:
+      - prd_tecnico
+      - prp
+
+  workflows_bpmn:
+    path: "docs/business/specs/workflows_bpmn.md"
+    depends_on:
+      - module_specs
+      - requisitos_funcionais
+    triggers_update:
+      - prp
+      - design_system
+
+  perfis_permissoes:
+    path: "docs/business/specs/perfis_permissoes.md"
+    depends_on:
+      - visao_estrategica
+      - module_specs
+    triggers_update:
+      - prd_executivo
+      - prd_tecnico
+      - design_system
+      - user_guide
+
+  catalogo_integracoes:
+    path: "docs/business/specs/catalogo_integracoes.md"
+    depends_on:
+      - requisitos_funcionais
+      - module_specs
+    triggers_update:
+      - architecture
+
+  prd_executivo:
+    path: "docs/prd/PRD_executivo.md"
+    depends_on:
+      - visao_estrategica
+      - glossario
+      - perfis_permissoes
+    triggers_update:
+      - prp
+
+  prd_tecnico:
+    path: "docs/prd/PRD.md"
+    depends_on:
+      - requisitos_funcionais
+      - requisitos_nao_funcionais
+      - regras_negocio
+      - glossario
+      - catalogo_integracoes
+    triggers_update:
+      - prp
+
+  prp:
+    path_pattern: "docs/prps/PRP-*.md"
+    depends_on:
+      - module_specs
+      - prd_tecnico
+      - requisitos_funcionais
+      - workflows_bpmn
+    triggers_update:
+      - dependency_matrix
+      - plan
+      - tasks
+
+  dependency_matrix:
+    path: "docs/planning/DEPENDENCY_MATRIX.md"
+    depends_on:
+      - prp
+    triggers_update:
+      - plan
+
+  plan:
+    path: "docs/planning/PLAN.md"
+    depends_on:
+      - prp
+      - dependency_matrix
+    triggers_update:
+      - execution_waves
+      - tasks
+
+  execution_waves:
+    path: "docs/planning/EXECUTION_WAVES.md"
+    depends_on:
+      - plan
+      - dependency_matrix
+    triggers_update:
+      - tasks
+
+  tasks:
+    path: "docs/planning/TASKS.md"
+    depends_on:
+      - prp
+      - plan
+      - execution_waves
+    triggers_update:
+      - architecture
+
+  architecture:
+    path: "docs/architecture/ARCHITECTURE.md"
+    depends_on:
+      - requisitos_nao_funcionais
+      - catalogo_integracoes
+      - tasks
+    triggers_update:
+      - design_system
+      - setup_mock
+
+  design_system:
+    path: "docs/design/DESIGN_SYSTEM.md"
+    depends_on:
+      - architecture
+      - perfis_permissoes
+      - workflows_bpmn
+    triggers_update:
+      - setup_mock
+
+  setup_mock:
+    path: "mocks/"
+    depends_on:
+      - architecture
+      - design_system
+      - tasks
+    triggers_update:
+      - testing_guide
+
+  testing_guide:
+    path: "docs/testing/TESTING_GUIDE.md"
+    depends_on:
+      - architecture
+      - tasks
+      - setup_mock
+    triggers_update: []
+
+  coverage_baseline:
+    path: "docs/testing/COVERAGE_BASELINE.md"
+    depends_on:
+      - testing_guide
+    triggers_update: []
+
+  coverage_progress:
+    path: "docs/testing/COVERAGE_PROGRESS.md"
+    depends_on:
+      - testing_guide
+    triggers_update: []
+
+  user_guide:
+    path: "docs/user-guide/"
+    depends_on:
+      - prp
+      - perfis_permissoes
+      - workflows_bpmn
+      - glossario
+    triggers_update: []
+
+  security_audit:
+    path: "docs/security/SECURITY_AUDIT_REPORT.md"
+    depends_on:
+      - setup_mock
+    triggers_update: []
+
+  null_safety:
+    path: "docs/security/NULL_SAFETY_REPORT.md"
+    depends_on:
+      - prp
+    triggers_update: []
+
+  readme:
+    path: "README.md"
+    depends_on:
+      - architecture
+      - design_system
+      - testing_guide
+    triggers_update: []
+
+  deployment:
+    path: "docs/DEPLOYMENT.md"
+    depends_on:
+      - architecture
+    triggers_update: []
+
+  claude_steering:
+    path: "CLAUDE.md"
+    depends_on:
+      - architecture
+      - design_system
+    triggers_update: []
+
+  agents_steering:
+    path: "AGENTS.md"
+    depends_on:
+      - architecture
+      - tasks
+    triggers_update: []
