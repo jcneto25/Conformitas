@@ -1,6 +1,6 @@
 # Execution Waves — Ondas de Execução
 
-> **Versão:** 1.0 | **Data:** 2026-06-16 | **Status:** Planejado (Step 4)
+> **Versão:** 1.1 | **Data:** 2026-06-25 | **Status:** Atualizado (Pós Onda-0)
 > **Projeto:** CONFORMITAS 3.0 | **Autor:** IA (Step 4)
 > **Referências:** `DEPENDENCY_MATRIX.md`, `PLAN.md`, `docs/prps/PRP-*.md`
 
@@ -9,22 +9,50 @@
 ## 1. Visão Geral da Execução
 
 ### 1.1 Propósito
-Este documento define o plano tático de execução em 4 ondas, detalhando para cada onda: PRPs incluídos, pré-condições, time alocado, riscos e critérios de saída.
+Este documento define o plano tático de execução em 5 ondas (Onda 0 concluída, Ondas 1-4 planejadas), detalhando para cada onda: PRPs incluídos, pré-condições, time alocado, riscos e critérios de saída.
 
 ### 1.2 Resumo Executivo
 
 | Métrica | Valor |
 |---------|-------|
-| Ondas planejadas | 4 |
+| Ondas planejadas | 5 (Onda 0 ✅ concluída) |
 | PRPs totais | 14 |
-| Dias total (paralelo — 3 devs) | 45 |
-| Dias com folga 20% | 54 |
+| Dias total (paralelo — 3 devs) | 48 (inclui ~3 dias Onda 0) |
+| Dias com folga 20% | 58 |
 | PRPs sem dependências na Onda 1 | 2 (PRP-001 e após PRP-002, PRP-003/005/009 em paralelo) |
 | Máximo PRPs simultâneos | 3 (Onda 1: PRP-003 + PRP-005 + PRP-009) |
 
 ---
 
 ## 2. Ondas de Execução
+
+---
+
+### Onda 0: Setup e Scaffolding (Concluída)
+
+#### 2.0 Metadados
+
+| Atributo | Valor |
+|----------|-------|
+| **PRPs** | Transversal (nenhum) |
+| **Pré-condição** | — |
+| **Paralelo** | Até 3 tarefas simultâneas (dev, dev, dev) |
+| **Duração real** | ~3 dias |
+| **Status** | ✅ Concluída (7/9 tarefas executadas, 2 parciais) |
+
+#### 2.0 Resultados Entregues
+
+| Item | Status | Detalhe |
+|------|--------|---------|
+| Git + estrutura de pastas | ✅ | Repositório, .gitignore, pastas api/web/docs/mocks |
+| Docker Compose | ✅ | PostgreSQL 16, Redis 7, API NestJS, Web Angular, Nginx, Keycloak |
+| ESLint + TypeScript | ✅ | ESLint configurado com prettier plugin, tsconfig strict |
+| CI/CD GitHub Actions | ✅ | Pipeline lint, type-check, test, build |
+| Scaffolding NestJS | ✅ | 20 módulos, guards (auth, roles), interceptors, decorators, pipes, Swagger |
+| Scaffolding Angular | 🔄 | App bootstrap, rotas, login component — pendente layout shell, auth interceptor |
+| Schema Prisma | ✅ | 645 linhas, ~30 entidades, datasource PostgreSQL |
+| Mock data | ✅ | 8 arquivos JSON, 16 usuários (P01-P10) |
+| Keycloak | 🔄 | Docker configurado, strategy OIDC stub — não funcional |
 
 ---
 
@@ -145,14 +173,15 @@ Este documento define o plano tático de execução em 4 ondas, detalhando para 
 
 ## 3. Análise de Paralelismo
 
-Execução sequencial: 74 dias
+Execução sequencial: 77 dias (inclui 3 dias Onda 0)
 
-Execução em paralelo com 3 devs: 45 dias
+Execução em paralelo com 3 devs: 48 dias
 
-**Economia: 39% (29 dias)**
+**Economia: 38% (29 dias)**
 
 | Semana | Dev 1 | Dev 2 | Dev 3 |
 |--------|-------|-------|-------|
+| 0 | Onda 0 — Setup + Scaffolding ✅ | Onda 0 — Setup + Scaffolding ✅ | Onda 0 — Setup + Scaffolding ✅ |
 | 1-2 | PRP-001 (Auth) | PRP-002 (RBAC) — após PRP-001 60% | — |
 | 3-4 | PRP-003 (Universo) | PRP-005 (Auditorias) | PRP-009 (Ética/Sigilo) |
 | 4 | PRP-004 (PALP/PAA) | PRP-005 (cont.) | — |
@@ -164,4 +193,4 @@ Execução em paralelo com 3 devs: 45 dias
 
 ---
 
-**Versão:** 1.0 | **Data:** 2026-06-16
+**Versão:** 1.1 | **Data:** 2026-06-25

@@ -1,6 +1,6 @@
 # Plano de Entregas — CONFORMITAS 3.0
 
-> **Versão:** 1.0 | **Data:** 2026-06-16 | **Status:** Gerado (Step 4)
+> **Versão:** 1.1 | **Data:** 2026-06-25 | **Status:** Atualizado (Pós Onda-0)
 > **Projeto:** CONFORMITAS 3.0 | **Codename:** SGI
 > **Autor:** IA (Step 4) | **Referências:** PRD, SPEC, 14 PRPs, DEPENDENCY_MATRIX
 
@@ -8,7 +8,7 @@
 
 ## 1. Visão Geral do Plano
 
-Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 4 ondas de execução, abrangendo 15 módulos funcionais decompostos em 14 PRPs. O plano serve ao time de desenvolvimento e stakeholders da AUDIN/TJCE. Metodologia: **PRP-Based Development** com execução paralela onde as dependências permitirem. Horizonte: MVP com todos os módulos Must, estendendo-se a Should/Could nas ondas 3 e 4.
+Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 5 ondas de execução (Onda 0 concluída, Ondas 1-4 planejadas), abrangendo 15 módulos funcionais decompostos em 14 PRPs. O plano serve ao time de desenvolvimento e stakeholders da AUDIN/TJCE. Metodologia: **PRP-Based Development** com execução paralela onde as dependências permitirem. Horizonte: MVP com todos os módulos Must, estendendo-se a Should/Could nas ondas 3 e 4.
 
 ### 1.1 Metodologia
 
@@ -22,6 +22,26 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 4 ondas de exe
 ---
 
 ## 2. Roadmap e Marcos
+
+### Onda 0: Setup e Scaffolding (Concluída) — 3 dias
+
+**Objetivo:** Infraestrutura do projeto, scaffolding do backend NestJS e frontend Angular, schema Prisma, Docker Compose, CI/CD e ferramentas de desenvolvimento.
+
+**PRPs:** Transversal (nenhum PRP de negócio)
+
+**Status:** ✅ Concluída — 7/9 tarefas executadas, 2 parciais
+
+| # | Deliverable | Status | Critério de aceitação |
+|---|-------------|--------|----------------------|
+| 0.1 | Repositório Git + estrutura de pastas | ✅ | Projeto inicializado, .gitignore, pastas api/web/docs/mocks |
+| 0.2 | Docker Compose (PostgreSQL, Redis, API, Web, Nginx, Keycloak) | ✅ | Todos os serviços prontos para docker compose up |
+| 0.3 | ESLint + TypeScript strict | ✅ | ESLint configurado, tsconfig strict em api e web |
+| 0.4 | CI/CD GitHub Actions | ✅ | Pipeline lint, type-check, test, build configurado |
+| 0.5 | Scaffolding NestJS (20 módulos, guards, interceptors, pipes) | ✅ | Módulos criados com controllers/services stubs, guards RBAC, Swagger |
+| 0.6 | Scaffolding Angular (app module, routing, login) | 🔄 | App bootstrap, rotas, login component — falta layout shell e auth interceptor |
+| 0.7 | Schema Prisma (~30 entidades) | ✅ | 645 linhas, migrations prontas |
+| 0.8 | Mock data (8 arquivos JSON, 16 usuários) | ✅ | Dados mockados para todos os perfis P01-P10 |
+| 0.9 | Keycloak (opcional) | 🔄 | Docker configurado, strategy OIDC stub — não funcional |
 
 ### Onda 1: Fundação e Core (Must) — 22 dias com 3 devs
 
@@ -77,22 +97,23 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 4 ondas de exe
 
 ## 3. Master PRP List
 
-| PRP | Nome | Onda | Dias | Complexidade | Prioridade | Dependências |
-|-----|------|------|------|--------------|------------|-------------|
-| 001 | Autenticação e Usuários | 1 | 8 | Alta | Crítico | — |
-| 002 | Perfis, RBAC e Configurações | 1 | 5 | Média | Crítico | 001 |
-| 003 | Universo Auditável e Matriz | 1 | 6 | Média | Alto | 001, 002 |
-| 004 | PALP, PAA e Força de Trabalho | 1 | 8 | Alta | Alto | 001, 002, 003 |
-| 005 | Auditorias, Evidências e Papéis | 1 | 8 | Alta | Crítico | 001, 002, 004 |
-| 006 | Achados e Manifestações | 1 | 5 | Média | Crítico | 001, 002, 005 |
-| 009 | Ética, Sigilo e Impedimentos | 1 | 4 | Baixa | Alto | 001, 002 |
-| 007 | Relatórios de Auditoria | 2 | 6 | Média | Alto | 001, 002, 006 |
-| 008 | Recomendações e Monitoramento | 2 | 6 | Média | Alto | 001, 002, 007 |
-| 010 | Consultorias e Assessoramento | 2 | 4 | Baixa | Média | 001, 002, 004 |
-| 011 | Qualidade e PQAUD | 3 | 5 | Média | Média | 001, 002, 005, 007 |
-| 012 | Riscos, Competências e Biblioteca | 3 | 6 | Média | Média | 001, 002 |
-| 013 | Governança e Fraudes | 3 | 4 | Baixa | Média | 001, 002, 007, 008 |
-| 014 | Dashboards, BI e Integrações | 4 | 7 | Média | Média | 001, 002, 004, 005, 008 |
+| PRP | Nome | Onda | Dias | Complexidade | Prioridade | Dependências | Status |
+|-----|------|------|------|--------------|------------|-------------|--------|
+| — | Setup + Scaffolding | 0 | 3 | — | Crítico | — | ✅ |
+| 001 | Autenticação e Usuários | 1 | 8 | Alta | Crítico | — | ⏳ |
+| 002 | Perfis, RBAC e Configurações | 1 | 5 | Média | Crítico | 001 | ⏳ |
+| 003 | Universo Auditável e Matriz | 1 | 6 | Média | Alto | 001, 002 | ⏳ |
+| 004 | PALP, PAA e Força de Trabalho | 1 | 8 | Alta | Alto | 001, 002, 003 | ⏳ |
+| 005 | Auditorias, Evidências e Papéis | 1 | 8 | Alta | Crítico | 001, 002, 004 | ⏳ |
+| 006 | Achados e Manifestações | 1 | 5 | Média | Crítico | 001, 002, 005 | ⏳ |
+| 009 | Ética, Sigilo e Impedimentos | 1 | 4 | Baixa | Alto | 001, 002 | ⏳ |
+| 007 | Relatórios de Auditoria | 2 | 6 | Média | Alto | 001, 002, 006 | ⏳ |
+| 008 | Recomendações e Monitoramento | 2 | 6 | Média | Alto | 001, 002, 007 | ⏳ |
+| 010 | Consultorias e Assessoramento | 2 | 4 | Baixa | Média | 001, 002, 004 | ⏳ |
+| 011 | Qualidade e PQAUD | 3 | 5 | Média | Média | 001, 002, 005, 007 | ⏳ |
+| 012 | Riscos, Competências e Biblioteca | 3 | 6 | Média | Média | 001, 002 | ⏳ |
+| 013 | Governança e Fraudes | 3 | 4 | Baixa | Média | 001, 002, 007, 008 | ⏳ |
+| 014 | Dashboards, BI e Integrações | 4 | 7 | Média | Média | 001, 002, 004, 005, 008 | ⏳ |
 
 ---
 
@@ -100,11 +121,12 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 4 ondas de exe
 
 | Métrica | Valor |
 |---------|-------|
+| Ondas totais | 5 (Onda 0 concluída ✅) |
 | PRPs totais | 14 |
 | Dias total (sequencial) | 74 |
-| Dias total (paralelo — 3 devs) | ~45 |
-| Dias com folga 20% | ~54 |
-| Semanas (~5 dias/semana) | ~11 semanas |
+| Dias total (paralelo — 3 devs) | ~48 (inclui ~3 dias Onda 0) |
+| Dias com folga 20% | ~58 |
+| Semanas (~5 dias/semana) | ~12 semanas |
 | **Previsão de conclusão (MVP)** | ~3 meses com 3 devs |
 
 ---
@@ -121,6 +143,7 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 4 ondas de exe
 
 ## 6. Definição de Pronto do Projeto (DoD Global)
 
+Onda 0 concluída. Pendente para as Ondas 1-4:
 - [ ] Todos os 14 PRPs com DoD individual aprovado
 - [ ] Cobertura de testes ≥ 80% unitários, ≥ 70% integração
 - [ ] Testes E2E para fluxos críticos passando

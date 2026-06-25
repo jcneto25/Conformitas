@@ -21,9 +21,11 @@
 
 | Símbolo | Significado |
 |---------|-------------|
-| ✅ | Paralelo — pode executar simultaneamente |
-| ⚠️ | Paralelo após setup — aguardar scaffolding |
+| ✅ | Paralelo — pode executar simultaneamente (coluna Paralelo) / Concluído (coluna Status) |
+| 🔄 | Parcialmente concluído — coluna Status |
+| ⚠️ | Paralelo após setup — aguardar scaffolding (coluna Paralelo) |
 | ❌ | Sequencial — depende de tarefa anterior |
+| ⏳ | Pendente — coluna Status |
 | `dev` | dev_agent |
 | `qa` | qa_agent |
 | `sec` | security_agent |
@@ -34,17 +36,17 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-001 | Inicializar repositório Git, estrutura de pastas, .gitignore | dev | — | — | 1 | ⏳ |
-| T-002 | Criar Docker Compose: PostgreSQL, Redis, API, Web, Nginx | dev | ✅ | T-001 | 3 | ⏳ |
-| T-003 | Configurar ESLint, Prettier, tsconfig strict | dev | ✅ | T-001 | 2 | ⏳ |
-| T-004 | Configurar GitHub Actions CI/CD (lint, type-check, test, build) | dev | ✅ | T-001 | 3 | ⏳ |
-| T-005 | Scaffolding NestJS: módulos base, guards, interceptors, pipes | dev | ⚠️ | T-002 | 4 | ⏳ |
-| T-006 | Scaffolding Angular: app module, routing, layout, auth interceptor | dev | ⚠️ | T-002 | 4 | ⏳ |
-| T-007 | Configurar Prisma: schema base, datasource, migration inicial | dev | ⚠️ | T-002 | 2 | ⏳ |
-| T-008 | Configurar Swagger/OpenAPI no NestJS | dev | ⚠️ | T-005 | 2 | ⏳ |
-| T-009 | Configurar Keycloak Docker (opcional) + strategy OIDC NestJS | dev | ✅ | T-002 | 4 | ⏳ |
+| T-001 | Inicializar repositório Git, estrutura de pastas, .gitignore | dev | — | — | 1 | ✅ |
+| T-002 | Criar Docker Compose: PostgreSQL, Redis, API, Web, Nginx | dev | ✅ | T-001 | 3 | ✅ |
+| T-003 | Configurar ESLint, Prettier, tsconfig strict | dev | ✅ | T-001 | 2 | ✅ |
+| T-004 | Configurar GitHub Actions CI/CD (lint, type-check, test, build) | dev | ✅ | T-001 | 3 | ✅ |
+| T-005 | Scaffolding NestJS: módulos base, guards, interceptors, pipes | dev | ⚠️ | T-002 | 4 | ✅ |
+| T-006 | Scaffolding Angular: app module, routing, layout, auth interceptor | dev | ⚠️ | T-002 | 4 | 🔄 |
+| T-007 | Configurar Prisma: schema base, datasource, migration inicial | dev | ⚠️ | T-002 | 2 | ✅ |
+| T-008 | Configurar Swagger/OpenAPI no NestJS | dev | ⚠️ | T-005 | 2 | ✅ |
+| T-009 | Configurar Keycloak Docker (opcional) + strategy OIDC NestJS | dev | ✅ | T-002 | 4 | 🔄 |
 
-**Onda 0 total: 25h**
+**Onda 0 total: 25h** | **Executado:** ~19h (7 concluídas ✅, 2 parciais 🔄)
 
 ---
 
@@ -300,15 +302,15 @@
 
 ## 9. Resumo por Onda
 
-| Onda | PRPs | Tarefas | Horas | Dias (~8h/dia, 3 devs) |
-|------|------|---------|-------|------------------------|
-| 0 — Setup | Transversal | 9 | 25 | ~3 |
-| 1 — Fundação e Core | 001,002,003,004,005,006,009 | 83 | 255 | ~11 |
-| 2 — Relatórios e Monitoramento | 007,008,010 | 20 | 72 | ~3 |
-| 3 — Qualidade e Governança | 011,012,013 | 21 | 66 | ~3 |
-| 4 — Dashboards e Integrações | 014 | 11 | 42 | ~2 |
-| Finalização | Transversal | 4 | 20 | ~1 |
-| **TOTAL** | **14 PRPs** | **148 tarefas** | **~480h** | **~23 dias (3 devs)** |
+| Onda | PRPs | Tarefas | Horas | Dias (~8h/dia, 3 devs) | Status |
+|------|------|---------|-------|------------------------|--------|
+| 0 — Setup | Transversal | 9 | 25 | ~3 | ✅ 7/9 concluídas |
+| 1 — Fundação e Core | 001,002,003,004,005,006,009 | 83 | 255 | ~11 | ⏳ |
+| 2 — Relatórios e Monitoramento | 007,008,010 | 20 | 72 | ~3 | ⏳ |
+| 3 — Qualidade e Governança | 011,012,013 | 21 | 66 | ~3 | ⏳ |
+| 4 — Dashboards e Integrações | 014 | 11 | 42 | ~2 | ⏳ |
+| Finalização | Transversal | 4 | 20 | ~1 | ⏳ |
+| **TOTAL** | **14 PRPs** | **148 tarefas** | **~480h** | **~23 dias (3 devs)** | **7% concluído** |
 
 ---
 
