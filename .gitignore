@@ -43,8 +43,6 @@ docker-compose.override.yml
 api/prisma/migrations/
 !api/prisma/migrations/.keep
 
-# ACE session files (tracked via sessions/.gitkeep)
-.ace/sessions/*.md
 
 # Keycloak data
 keycloak/data/

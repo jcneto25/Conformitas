@@ -2,5 +2,41 @@
   "version": "1.0.0",
   "project": "Conformitas",
   "created_at": "2026-06-16",
-  "sessions": []
+  "sessions": [
+    {
+      "session_id": "2026-06-18-001",
+      "file": "2026-06-18-001.md",
+      "status": "completed",
+      "llc_step": 11,
+      "tags": ["reconstructed", "git-backfill", "wave-0", "scaffolding"],
+      "timestamp": "2026-06-18T10:21:52-03:00",
+      "source": "git-backfill",
+      "source_commits": ["1665b97123f1484b7a2af9c8248ee871014bc942"]
+    },
+    {
+      "session_id": "2026-06-18-002",
+      "file": "2026-06-18-002.md",
+      "status": "completed",
+      "llc_step": 11,
+      "tags": ["reconstructed", "git-backfill", "wave-0", "housekeeping"],
+      "timestamp": "2026-06-18T12:43:37-03:00",
+      "source": "git-backfill",
+      "source_commits": [
+        "8219ed5df6329ca4879526dd0b08a34209d9ac9f",
+        "67d95691bf7e4ca4850b66d6c02e5e63bc3f9942",
+        "f91d1b4610587460406cb59548adc957059e43e9",
+        "3f4c9d498548752eebf60ffe2946abd6f95aaeac"
+      ]
+    },
+    {
+      "session_id": "2026-06-25-001",
+      "file": "2026-06-25-001.md",
+      "status": "completed",
+      "llc_step": 11,
+      "tags": ["reconstructed", "git-backfill", "wave-0", "planning-sync"],
+      "timestamp": "2026-06-25T15:44:35-03:00",
+      "source": "git-backfill",
+      "source_commits": ["6c5b53cb8d0c5fc7edda91b39ec97914d3193877"]
+    }
+  ]
 }
