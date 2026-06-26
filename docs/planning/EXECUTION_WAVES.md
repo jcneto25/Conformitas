@@ -66,31 +66,31 @@ Este documento define o plano tático de execução em 5 ondas (Onda 0 concluíd
 | **Pré-condição** | Stack definido (PRD Técnico §5), ambiente dev disponível |
 | **Paralelo** | Até 3 PRPs simultâneos |
 | **Duração estimada** | 22 dias (4-5 semanas) |
-| **Status** | Planejada |
+| **Status** | 🔄 Em andamento (PRPs 001-005,009 concluídos; PRP-006 pendente) |
 
 #### 2.2 Sequência de Execução
 
-**Semana 1-2 (PRP-001 + PRP-002):**
+**Semana 1-2 (PRP-001 + PRP-002):** ✅ Concluído
 - PRP-001 (8d): Dev 1 — Banco, autenticação JWT, MFA TOTP, CRUD usuários
 - PRP-002 (5d): Dev 2 — inicia após PRP-001 ~60% concluído. Perfis, RBAC, mandatos, configs
 
-**Semana 3-4 (paralelo PRP-003 + PRP-005 + PRP-009):**
+**Semana 3-4 (paralelo PRP-003 + PRP-005 + PRP-009):** ✅ Concluído
 - PRP-003 (6d): Dev 1 — Universo auditável, matriz de priorização
 - PRP-005 (8d): Dev 2 — Auditorias, evidências, papéis de trabalho (depende de PRP-004 parcial)
 - PRP-009 (4d): Dev 3 — Ética, sigilo, impedimentos
 
-**Semana 4-5:**
-- PRP-004 (8d): Dev 1 — PALP/PAA (inicia após PRP-003)
-- PRP-006 (5d): Dev 2 — Achados (inicia após PRP-005)
+**Semana 4-5:** 🔄 Em andamento
+- PRP-004 (8d): Dev 1 — PALP/PAA (inicia após PRP-003) ✅ Concluído
+- PRP-006 (5d): Dev 2 — Achados (inicia após PRP-005) ⏳ Pendente
 
 #### 2.3 Critérios de Saída
 
-- [ ] Login com MFA funcional para P01, P02, P10
-- [ ] RBAC com 10 perfis aplicado em todos os endpoints
-- [ ] PAA pode ser criado, submetido por P01 e aprovado por P03
-- [ ] Auditoria pode ser aberta, evidências uploaded, papéis de trabalho criados
+- [x] Login com MFA funcional para P01, P02, P10
+- [x] RBAC com 10 perfis aplicado em todos os endpoints
+- [x] PAA pode ser criado, submetido por P01 e aprovado por P03
+- [x] Auditoria pode ser aberta, evidências uploaded, papéis de trabalho criados
 - [ ] Achados registrados com 4 atributos e enviados para manifestação
-- [ ] Documentos classificáveis por sigilo
+- [x] Documentos classificáveis por sigilo
 
 ---
 

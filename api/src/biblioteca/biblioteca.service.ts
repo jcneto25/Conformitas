@@ -1,3 +1,7 @@
 import { Injectable } from '@nestjs/common';
 @Injectable()
-export class BibliotecaService { findAll() { return []; } }
+export class BibliotecaService {
+  findAll() {
+    return [];
+  }
+}

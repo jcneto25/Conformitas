@@ -6,5 +6,7 @@ import { RiscosService } from './riscos.service';
 @Controller('riscos')
 export class RiscosController {
   constructor(private readonly service: RiscosService) {}
-  @Get() @ApiOperation({ summary: 'Listar riscos' }) findAll() { return this.service.findAll(); }
+  @Get() @ApiOperation({ summary: 'Listar riscos' }) findAll() {
+    return this.service.findAll();
+  }
 }

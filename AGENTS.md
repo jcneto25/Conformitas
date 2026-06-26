@@ -194,6 +194,7 @@ api/src/
 - Antes de refatorar cross-module, execute `impact-analyzer.py`
 - Toda alteração em `docs/` deve ser registrada via ACE (append-only)
 - Artefatos LLC em zona 🔴: `docs/prd/`, `docs/prps/`, `docs/architecture/`, `docs/planning/`
+- **Placeholders de UI devem refletir o estado real do backend:** Antes de escrever "Dados disponíveis após PRP-X" em um componente, verifique se o service correspondente já está implementado. Se o endpoint retorna dados reais, consuma-o. Se é stub, marque como `Stub — PRP-X pendente`. Nunca hardcode mensagens de "não disponível" para serviços já implementados.
 
 ---
 
@@ -290,13 +291,93 @@ Reality doesn't care about your model. When reality contradicts your model, your
 Don't assume state. Derive it. Every session begins with orientation, not action.
 
 **SESSION START CHECKLIST:**
+0. **List `.ace/sessions/` e leia `.ace/index.json`** — internalize o estado atual antes de qualquer ação
 1. Execute `python .ace/scripts/initialize_session.py --step N --task "..." --project CONFORMITAS --json`
-2. Internalize `context_seed` do JSON de saída
+2. **Internalize `context_seed`** do JSON de saída — ele contém state/pending/blockers/next_action da sessão anterior
 3. Read this `AGENTS.md` (Seção A — contexto do projeto)
 4. Read `README.md`
 5. Se for step de especificação (0.5, 1, 2, 3), execute **Grill Me**
 6. State to the developer: current understanding of goal, last known state, and first intended action
 7. **Wait for explicit confirmation before any tool use.**
+
+### ⚠️ Critical Safeguard: ACE Session Files (Imutabilidade)
+
+**Arquivos de sessão ACE em `.ace/sessions/` são imutáveis após criação.** Nunca os sobrescreva.
+
+**Regras obrigatórias:**
+
+1. **SEMPRE use `initialize_session.py` para criar sessões.** Este script:
+   - Registra a sessão em `index.json` com status `in_progress`
+   - Cria o arquivo de sessão com numeração sequencial correta
+   - Carrega o `context_seed` da sessão anterior
+   - Retorna o `context_seed` como JSON para internalização
+   - **SEMPRE passe `--tags`** com palavras-chave da sessão (ex: `--tags wave-1 prp-003 universo`).
+     Isso garante que o index.json tenha tags pesquisáveis para consulta futura.
+
+2. **SEMPRE use `finalize_session.py` para encerrar sessões.** Este script:
+   - Gera o `context_seed` no schema de 4 campos (state/pending/blockers/next_action)
+   - Atualiza `index.json` (status → completed)
+   - Promove learning_points e skill_feedback
+   - Atualiza TASKS.md com tarefas concluídas
+   - Commit git automático (opcional)
+
+3. **NUNCA use `write_file` para criar/modificar arquivos em `.ace/sessions/` diretamente.** Os scripts `initialize_session.py` e `finalize_session.py` são os únicos meios válidos.
+
+4. **Se o `initialize_session.py` não estiver disponível**, determine o próximo nome executando:
+   ```bash
+   python .ace/scripts/validate-session-write.py --check-latest
+   ```
+   Depois de criar o arquivo manualmente com `write_file`, **edite `index.json`** para registrar a sessão.
+
+5. **Se o `finalize_session.py` não estiver disponível**, edite `index.json` manualmente para alterar o status da sessão para `completed` e adicione o `context_seed` no arquivo de sessão.
+
+6. **Violação destas regras = perda de histórico ACE + index.json inconsistente.** É considerado erro crítico (zona 🔴).
+
+---
+
+### 📋 LLC Compliance: Ciclo Obrigatório Durante a Sessão
+
+**O session file deve ser mantido EM TEMPO REAL durante toda a implementação.** O `finalize_session.py` depende das tags preenchidas para atualizar automaticamente a documentação de planejamento.
+
+#### Ciclo obrigatório para CADA operação de código:
+
+```
+1. Fazer alteração no código (write_file/edit_file)
+2. IMEDIATAMENTE: appendar entrada <action> no <action_log> da sessão ativa
+3. Se completou uma tarefa do TASKS.md: appendar <task_completed>
+4. Se identificou aprendizado relevante: appendar <learning_point>
+5. Se enfrentou bloqueador: appendar <blocker>
+```
+
+#### Formato das tags obrigatórias:
+
+```xml
+<!-- <action_log> - appendar a cada alteração de código -->
+<action_log>
+<action type="file_create|file_modify">
+  <description>Descrição clara do que foi feito</description>
+  <file_delta>caminho/do/arquivo.modificado</file_delta>
+</action>
+</action_log>
+
+<!-- <task_completed> - quando uma tarefa do TASKS.md for concluída -->
+<task_completed id="T-NNN" prp="PRP-NNN" status="done">Descrição da tarefa concluída</task_completed>
+
+<!-- <learning_point> - quando descobrir algo relevante -->
+<learning_point priority="high|medium|low">Lição aprendida</learning_point>
+```
+
+#### Checklist de finalização de sessão:
+
+Antes de rodar `finalize_session.py`, **verificar**:
+- [ ] `<action_log>` contém TODAS as alterações de código feitas na sessão
+- [ ] `<task_completed>` cobre todas as tarefas concluídas do TASKS.md
+- [ ] `files_touched` no frontmatter lista todos os arquivos alterados
+- [ ] `<context_seed>` na seção Encerramento preenchido com state/pending/blockers/next_action
+
+**Violação:** Se o `finalize_session.py` reportar `actions_count: 0` ou `tasks_updated: 0` quando houve alterações de código, a sessão está incompleta e viola o protocolo LLC.
+
+---
 
 ### Prompt Caching Strategy
 - **Static at top:** AGENTS.md (Seção A), tool schemas, project rules
@@ -349,7 +430,7 @@ This project STRICTLY requires Test-Driven Development.
 |------|-----------------|--------|
 | 🟢 **GREEN** | `/tmp/`, `mocks/data/`, test files, `.spec.ts` | Low blast radius, reversible |
 | 🟡 **YELLOW** | `api/src/`, `web/src/`, `docs/business/specs/` | Touches real logic; mistakes compound |
-| 🔴 **RED** | Prisma schema, `.env`, `docker-compose.yml`, auth modules, CI/CD, git operations, `docs/prd/`, `docs/prps/`, `docs/architecture/`, `docs/planning/` | Irreversible or high blast radius; LLC artifacts are append-only or require human validation |
+| 🔴 **RED** | Prisma schema, `.env`, `docker-compose.yml`, auth modules, CI/CD, git operations, `docs/prd/`, `docs/prps/`, `docs/architecture/`, `docs/planning/`, `.ace/sessions/` | Irreversible or high blast radius; LLC artifacts are append-only or require human validation |
 
 *When in doubt, treat the zone as RED.*
 

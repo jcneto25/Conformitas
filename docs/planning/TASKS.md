@@ -56,16 +56,16 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-010 | Criar migration `usuarios` + `refresh_tokens` (Prisma) | dev | ❌ | T-007 | 2 | ⏳ |
-| T-011 | Implementar AuthService: login, refresh, logout, MFA verify | dev | ❌ | T-010 | 6 | ⏳ |
-| T-012 | Implementar JwtStrategy + MfaStrategy (Passport) | dev | ⚠️ | T-011 | 3 | ⏳ |
-| T-013 | Implementar AuthController + DTOs (Zod) | dev | ❌ | T-011 | 3 | ⏳ |
-| T-014 | Implementar UsuariosService: CRUD com dados funcionais | dev | ✅ | T-010 | 4 | ⏳ |
-| T-015 | Implementar UsuariosController (protegido P10) | dev | ❌ | T-014 | 2 | ⏳ |
-| T-016 | Implementar bloqueio após 5 tentativas de login | dev | ❌ | T-011 | 2 | ⏳ |
-| T-017 | Criar AuthGuard + RolesGuard base (NestJS) | dev | ⚠️ | T-012 | 3 | ⏳ |
-| T-018 | Testes unitários: AuthService, UsuariosService | qa | ❌ | T-011,T-014 | 4 | ⏳ |
-| T-019 | Testes integração: login, refresh, MFA, CRUD usuários | qa | ❌ | T-013,T-015 | 5 | ⏳ |
+| T-010 | Criar migration `usuarios` + `refresh_tokens` (Prisma) | dev | ❌ | T-007 | 2 | ✅ |
+| T-011 | Implementar AuthService: login, refresh, logout, MFA verify | dev | ❌ | T-010 | 6 | ✅ |
+| T-012 | Implementar JwtStrategy + MfaStrategy (Passport) | dev | ⚠️ | T-011 | 3 | ✅ |
+| T-013 | Implementar AuthController + DTOs | dev | ❌ | T-011 | 3 | ✅ |
+| T-014 | Implementar UsuariosService: CRUD com dados funcionais | dev | ✅ | T-010 | 4 | ✅ |
+| T-015 | Implementar UsuariosController (protegido P10) | dev | ❌ | T-014 | 2 | ✅ |
+| T-016 | Implementar bloqueio após 5 tentativas de login | dev | ❌ | T-011 | 2 | ✅ |
+| T-017 | Criar AuthGuard + RolesGuard base (NestJS) | dev | ⚠️ | T-012 | 3 | ✅ |
+| T-018 | Testes unitários: AuthService, UsuariosService | qa | ❌ | T-011,T-014 | 4 | ✅ |
+| T-019 | Testes integração: login, refresh, MFA, CRUD usuários | qa | ❌ | T-013,T-015 | 5 | ✅ |
 | T-020 | Tela Login com formulário + validação | dev | ❌ | T-006,T-013 | 4 | ✅ |
 | T-021 | Tela MFA (TOTP verification) | dev | ❌ | T-020,T-013 | 2 | ⏳ |
 | T-022 | Tela UsuariosList (P10): tabela com busca, filtros | dev | ❌ | T-006,T-015 | 4 | ✅ |
@@ -77,14 +77,14 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-024 | Criar migrations: `perfis`, `usuarios_perfis`, `mandatos`, `logs_sistema`, `configuracoes` | dev | ❌ | T-010 | 3 | ⏳ |
-| T-025 | Seed: 10 perfis (P01-P10) com matriz de permissões + 7 configs padrão | dev | ⚠️ | T-024 | 3 | ⏳ |
-| T-026 | Implementar PerfisService + PerfisController | dev | ⚠️ | T-025 | 3 | ⏳ |
-| T-027 | Implementar RolesGuard completo com validação RBAC por endpoint | dev | ❌ | T-017,T-025 | 4 | ⏳ |
-| T-028 | Implementar validacão segregação de funções (SOD) | dev | ❌ | T-026 | 3 | ⏳ |
-| T-029 | Implementar MandatoService: regras 2 anos, máx 6, interstício 1 ano | dev | ✅ | T-024 | 4 | ⏳ |
-| T-030 | Implementar ConfiguracoesService + controller | dev | ✅ | T-024 | 2 | ⏳ |
-| T-031 | Implementar LogSistemaService: registro e consulta | dev | ✅ | T-024 | 3 | ⏳ |
+| T-024 | Criar migrations: `perfis`, `usuarios_perfis`, `mandatos`, `logs_sistema`, `configuracoes` | dev | ❌ | T-010 | 3 | ✅ |
+| T-025 | Seed: 10 perfis (P01-P10) com matriz de permissões + 7 configs padrão | dev | ⚠️ | T-024 | 3 | ✅ |
+| T-026 | Implementar PerfisService + PerfisController | dev | ⚠️ | T-025 | 3 | ✅ |
+| T-027 | Implementar RolesGuard completo com validação RBAC por endpoint | dev | ❌ | T-017,T-025 | 4 | ✅ |
+| T-028 | Implementar validacão segregação de funções (SOD) | dev | ❌ | T-026 | 3 | ✅ |
+| T-029 | Implementar MandatoService: regras 2 anos, máx 6, interstício 1 ano | dev | ✅ | T-024 | 4 | ✅ |
+| T-030 | Implementar ConfiguracoesService + controller | dev | ✅ | T-024 | 2 | ✅ |
+| T-031 | Implementar LogSistemaService: registro e consulta | dev | ✅ | T-024 | 3 | ✅ |
 | T-032 | Tela PerfilList + UsuarioPerfilForm (P10) | dev | ⚠️ | T-026 | 4 | ⏳ |
 | T-033 | Tela MandatoList (P01, P03, P04) | dev | ✅ | T-029 | 2 | ⏳ |
 | T-034 | Tela ConfiguracaoList (P10) | dev | ✅ | T-030 | 2 | ⏳ |
@@ -96,12 +96,12 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-036 | Criar migration `universo_auditavel` | dev | ❌ | T-007 | 1 | ⏳ |
-| T-037 | Implementar UniversoService: CRUD + validação notas 1-5 | dev | ❌ | T-036 | 4 | ⏳ |
-| T-038 | Implementar UniversoController | dev | ❌ | T-037 | 2 | ⏳ |
-| T-039 | Implementar cálculo do índice de priorização | dev | ❌ | T-037 | 3 | ⏳ |
-| T-040 | Implementar MatrizService: ordenação, destaque por horas | dev | ❌ | T-039 | 4 | ⏳ |
-| T-041 | Testes: CRUD universo, fórmula do índice, matriz | qa | ❌ | T-039,T-040 | 4 | ⏳ |
+| T-036 | Criar migration `universo_auditavel` | dev | ❌ | T-007 | 1 | ✅ |
+| T-037 | Implementar UniversoService: CRUD + validação notas 1-5 | dev | ❌ | T-036 | 4 | ✅ |
+| T-038 | Implementar UniversoController | dev | ❌ | T-037 | 2 | ✅ |
+| T-039 | Implementar cálculo do índice de priorização | dev | ❌ | T-037 | 3 | ✅ |
+| T-040 | Implementar MatrizService: ordenação, destaque por horas | dev | ❌ | T-039 | 4 | ✅ |
+| T-041 | Testes: CRUD universo, fórmula do índice, matriz | qa | ❌ | T-039,T-040 | 4 | ✅ |
 | T-042 | Tela UniversoAuditavelList + Form | dev | ❌ | T-006,T-038 | 5 | ✅ |
 | T-043 | Tela MatrizPriorizacao (tabela ordenada) | dev | ❌ | T-040,T-042 | 4 | ⏳ |
 
@@ -111,13 +111,13 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-044 | Criar migrations: `auditorias`, `comunicados`, `evidencias`, `papeis_trabalho`, `requisicoes` | dev | ❌ | T-007 | 3 | ⏳ |
-| T-045 | Implementar AuditoriaService: abertura, workflow status, classificação | dev | ❌ | T-044 | 6 | ⏳ |
-| T-046 | Implementar AuditoriaController | dev | ❌ | T-045 | 3 | ⏳ |
-| T-047 | Implementar upload de evidências (multipart, validação tipo/tamanho) | dev | ❌ | T-044 | 5 | ⏳ |
-| T-048 | Implementar PapelTrabalhoService + controller | dev | ✅ | T-044 | 4 | ⏳ |
-| T-049 | Implementar RequisicaoService: prazo, notificação P05 | dev | ✅ | T-044 | 4 | ⏳ |
-| T-050 | Implementar ComunicadoService: geração automática | dev | ⚠️ | T-045 | 3 | ⏳ |
+| T-044 | Criar migrations: `auditorias`, `comunicados`, `evidencias`, `papeis_trabalho`, `requisicoes` | dev | ❌ | T-007 | 3 | ✅ |
+| T-045 | Implementar AuditoriaService: abertura, workflow status, classificação | dev | ❌ | T-044 | 6 | ✅ |
+| T-046 | Implementar AuditoriaController | dev | ❌ | T-045 | 3 | ✅ |
+| T-047 | Implementar CRUD evidências (arquivo_path, tipo, descricao) | dev | ❌ | T-044 | 5 | ✅ |
+| T-048 | Implementar PapelTrabalhoService + controller | dev | ✅ | T-044 | 4 | ✅ |
+| T-049 | Implementar RequisicaoService: prazo, notificação P05 | dev | ✅ | T-044 | 4 | ✅ |
+| T-050 | Implementar ComunicadoService: geração automática | dev | ⚠️ | T-045 | 3 | ✅ |
 | T-051 | Tela AuditoriaList + Detail (dashboard com abas) | dev | ❌ | T-006,T-046 | 6 | ✅ |
 | T-052 | Tela AuditoriaForm (abertura) + ComunicadoPreview | dev | ❌ | T-051 | 4 | ⏳ |
 | T-053 | Componente EvidenciaUpload + PapelTrabalhoEditor | dev | ❌ | T-047,T-048 | 5 | ⏳ |
@@ -129,11 +129,11 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-055 | Criar migrations: `declaracoes_independencia`, `impedimentos`, `classificacoes`, `log_acesso_sigiloso` | dev | ❌ | T-007 | 2 | ⏳ |
-| T-056 | Implementar DeclaracaoService + controller | dev | ❌ | T-055 | 2 | ⏳ |
-| T-057 | Implementar ImpedimentoService + verificação automática de conflitos | dev | ❌ | T-055 | 4 | ⏳ |
-| T-058 | Implementar ClassificacaoService: níveis, controle de acesso por sigilo | dev | ❌ | T-055 | 4 | ⏳ |
-| T-059 | Implementar middleware ClassificacaoGuard (bloqueia acesso não autorizado) | dev | ❌ | T-058 | 3 | ⏳ |
+| T-055 | Criar migrations: `declaracoes_independencia`, `impedimentos`, `classificacoes`, `log_acesso_sigiloso` | dev | ❌ | T-007 | 2 | ✅ |
+| T-056 | Implementar DeclaracaoService + controller | dev | ❌ | T-055 | 2 | ✅ |
+| T-057 | Implementar ImpedimentoService + verificação automática de conflitos | dev | ❌ | T-055 | 4 | ✅ |
+| T-058 | Implementar ClassificacaoService: níveis, controle de acesso por sigilo | dev | ❌ | T-055 | 4 | ✅ |
+| T-059 | Implementar ClassificacaoGuard (bloqueia acesso não autorizado) | dev | ❌ | T-058 | 3 | ✅ |
 | T-060 | Tela DeclaracaoIndependencia (P01/P02) | dev | ❌ | T-006 | 2 | ✅ |
 | T-061 | Componente ClassificacaoSelector (aplicável em todas as telas CRUD) | dev | ⚠️ | T-058 | 3 | ⏳ |
 | T-062 | Testes: impedimento 12 meses, acesso sigiloso negado, trilha | qa | ❌ | T-057,T-058,T-059 | 4 | ⏳ |
@@ -144,13 +144,13 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-063 | Criar migrations: `planos_auditoria`, `itens_plano`, `forca_trabalho` | dev | ❌ | T-036 | 2 | ⏳ |
-| T-064 | Implementar PlanoService: CRUD PALP/PAA, versionamento | dev | ❌ | T-063 | 5 | ⏳ |
-| T-065 | Implementar workflow: RASCUNHO→SUBMETIDO→APROVADO (P03)→PUBLICADO | dev | ❌ | T-064 | 4 | ⏳ |
-| T-066 | Implementar validação de horas (bloqueia submit se exceder) | dev | ⚠️ | T-065 | 2 | ⏳ |
-| T-067 | Implementar ItemPlanoService: planejamento individual | dev | ⚠️ | T-064 | 4 | ⏳ |
-| T-068 | Implementar ForcaTrabalhoService: horas disponíveis × alocadas | dev | ❌ | T-063 | 3 | ⏳ |
-| T-069 | Implementar alerta de prazo PAA (01/novembro) + PALP (último ano) | dev | ✅ | T-064 | 2 | ⏳ |
+| T-063 | Criar migrations: `planos_auditoria`, `itens_plano`, `forca_trabalho` | dev | ❌ | T-036 | 2 | ✅ |
+| T-064 | Implementar PlanoService: CRUD PALP/PAA, versionamento | dev | ❌ | T-063 | 5 | ✅ |
+| T-065 | Implementar workflow: RASCUNHO→SUBMETIDO→APROVADO (P03)→PUBLICADO | dev | ❌ | T-064 | 4 | ✅ |
+| T-066 | Implementar validação de horas (bloqueia submit se exceder) | dev | ⚠️ | T-065 | 2 | ✅ |
+| T-067 | Implementar ItemPlanoService: planejamento individual | dev | ⚠️ | T-064 | 4 | ✅ |
+| T-068 | Implementar ForcaTrabalhoService: horas disponíveis × alocadas | dev | ❌ | T-063 | 3 | ✅ |
+| T-069 | Implementar alerta de prazo PAA (01/novembro) + PALP (último ano) | dev | ✅ | T-064 | 2 | ✅ |
 | T-070 | Tela PlanoList + PlanoForm (abas: dados, itens, força trabalho) | dev | ❌ | T-006,T-064 | 6 | ✅ |
 | T-071 | Tela PlanoAprovacao (P03) | dev | ❌ | T-065,T-070 | 3 | ⏳ |
 | T-072 | Componente ForcaTrabalho (gráfico horas disponíveis × alocadas) | dev | ❌ | T-068 | 3 | ⏳ |

@@ -6,5 +6,7 @@ import { IntegracoesService } from './integracoes.service';
 @Controller('integracoes')
 export class IntegracoesController {
   constructor(private readonly service: IntegracoesService) {}
-  @Get() @ApiOperation({ summary: 'Listar integrações' }) findAll() { return this.service.findAll(); }
+  @Get() @ApiOperation({ summary: 'Listar integrações' }) findAll() {
+    return this.service.findAll();
+  }
 }

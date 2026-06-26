@@ -6,5 +6,7 @@ import { GovernancaService } from './governanca.service';
 @Controller('governanca')
 export class GovernancaController {
   constructor(private readonly service: GovernancaService) {}
-  @Get() @ApiOperation({ summary: 'Listar determinações externas' }) findAll() { return this.service.findAll(); }
+  @Get() @ApiOperation({ summary: 'Listar determinações externas' }) findAll() {
+    return this.service.findAll();
+  }
 }

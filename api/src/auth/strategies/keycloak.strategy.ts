@@ -18,8 +18,14 @@ export class KeycloakStrategy extends PassportStrategy(Strategy, 'keycloak') {
     const keycloakUrl = appConfig.auth.keycloak.url;
     const realm = appConfig.auth.keycloak.realm;
 
+    // Se não configurado, registra como stub (não será usado se AUTH_PROVIDER=local)
     if (!keycloakUrl) {
-      throw new Error('KEYCLOAK_URL não configurada — necessário para AUTH_PROVIDER=keycloak');
+      super({ 
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), 
+        secretOrKey: 'stub' 
+      });
+      Logger.warn('KEYCLOAK_URL não configurada — KeycloakStrategy registrada como stub', 'KeycloakStrategy');
+      return;
     }
 
     const jwksUri = `${keycloakUrl}/realms/${realm}/protocol/openid-connect/certs`;

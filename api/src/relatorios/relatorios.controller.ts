@@ -9,5 +9,7 @@ export class RelatoriosController {
 
   @Get()
   @ApiOperation({ summary: 'Listar relatórios' })
-  findAll() { return this.service.findAll(); }
+  findAll() {
+    return this.service.findAll();
+  }
 }

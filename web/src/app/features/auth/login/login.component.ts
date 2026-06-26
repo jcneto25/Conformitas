@@ -1,49 +1,88 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+
+interface LoginResponse {
+  access_token: string;
+  refresh_token: string;
+  mfa_required?: boolean;
+  session_token?: string;
+}
+
+const API = 'http://localhost:3001/api/v1';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [CommonModule, FormsModule],
   template: `
     <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #1a1a2e;">
-      <mat-card style="width: 400px; padding: 2rem;">
-        <mat-card-header style="justify-content: center;">
-          <mat-card-title>CONFORMITAS 3.0</mat-card-title>
-          <mat-card-subtitle>SGI — AUDIN/TJCE</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <form (ngSubmit)="onSubmit()" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
-            <mat-form-field appearance="outline">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" [(ngModel)]="email" name="email" required />
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Senha</mat-label>
-              <input matInput type="password" [(ngModel)]="senha" name="senha" required />
-            </mat-form-field>
-            <button mat-raised-button color="primary" type="submit">Entrar</button>
-          </form>
-          <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #666;">Autenticação pendente — PRP-001</p>
-        </mat-card-content>
-      </mat-card>
+      <div style="background: #fff; border-radius: 8px; padding: 2rem; width: 380px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        <h2 style="text-align: center; margin: 0 0 0.25rem; color: #1a1a2e; font-family: sans-serif;">CONFORMITAS 3.0</h2>
+        <p style="text-align: center; margin: 0 0 1.5rem; color: #666; font-size: 0.85rem; font-family: sans-serif;">SGI — AUDIN/TJCE</p>
+
+        <form (ngSubmit)="onSubmit()" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div>
+            <label style="display: block; margin-bottom: 0.25rem; font-size: 0.85rem; font-weight: 500; font-family: sans-serif;">Email</label>
+            <input type="email"
+                   [(ngModel)]="email"
+                   name="email"
+                   required
+                   style="width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 1rem;" />
+          </div>
+
+          <div>
+            <label style="display: block; margin-bottom: 0.25rem; font-size: 0.85rem; font-weight: 500; font-family: sans-serif;">Senha</label>
+            <input type="password"
+                   [(ngModel)]="senha"
+                   name="senha"
+                   required
+                   style="width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 1rem;" />
+          </div>
+
+          <p *ngIf="error" style="color: #c62828; font-size: 0.85rem; margin: 0; text-align: center; font-family: sans-serif;">{{ error }}</p>
+
+          <button type="submit"
+                  style="width: 100%; padding: 0.75rem; background: #1a1a2e; color: #fff; border: none; border-radius: 4px; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: sans-serif;">
+            Entrar
+          </button>
+        </form>
+      </div>
     </div>
   `,
 })
 export class LoginComponent {
   email = '';
   senha = '';
+  error = '';
 
-  constructor(private readonly router: Router) {}
+  constructor(
+    private readonly router: Router,
+    private readonly http: HttpClient,
+  ) {}
 
-  onSubmit() {
-    if (this.email && this.senha) {
-      this.router.navigate(['/']);
+  async onSubmit() {
+    if (!this.email || !this.senha) return;
+    this.error = '';
+
+    try {
+      const res = await firstValueFrom(
+        this.http.post<LoginResponse>(`${API}/auth/login`, {
+          email: this.email,
+          senha: this.senha,
+        }),
+      );
+
+      if (res.access_token) {
+        localStorage.setItem('access_token', res.access_token);
+        localStorage.setItem('refresh_token', res.refresh_token);
+        this.router.navigate(['/']);
+      }
+    } catch (err: any) {
+      this.error = err?.error?.message || 'Erro ao autenticar';
     }
   }
 }

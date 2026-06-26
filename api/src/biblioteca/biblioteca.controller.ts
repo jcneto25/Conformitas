@@ -6,5 +6,7 @@ import { BibliotecaService } from './biblioteca.service';
 @Controller('biblioteca')
 export class BibliotecaController {
   constructor(private readonly service: BibliotecaService) {}
-  @Get() @ApiOperation({ summary: 'Listar documentos metodológicos' }) findAll() { return this.service.findAll(); }
+  @Get() @ApiOperation({ summary: 'Listar documentos metodológicos' }) findAll() {
+    return this.service.findAll();
+  }
 }

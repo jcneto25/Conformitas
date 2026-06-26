@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { KeycloakStrategy } from './strategies/keycloak.strategy';
+import { PrismaModule } from '../prisma/prisma.module';
 import appConfig from '../config/app.config';
 
 @Module({
@@ -14,6 +15,7 @@ import appConfig from '../config/app.config';
       secret: appConfig.jwt.secret,
       signOptions: { expiresIn: appConfig.jwt.expiresIn },
     }),
+    PrismaModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, KeycloakStrategy],

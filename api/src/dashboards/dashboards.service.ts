@@ -1,3 +1,7 @@
 import { Injectable } from '@nestjs/common';
 @Injectable()
-export class DashboardsService { findAll() { return []; } }
+export class DashboardsService {
+  findAll() {
+    return [];
+  }
+}
