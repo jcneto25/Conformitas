@@ -41,12 +41,12 @@
 | T-003 | Configurar ESLint, Prettier, tsconfig strict | dev | ✅ | T-001 | 2 | ✅ |
 | T-004 | Configurar GitHub Actions CI/CD (lint, type-check, test, build) | dev | ✅ | T-001 | 3 | ✅ |
 | T-005 | Scaffolding NestJS: módulos base, guards, interceptors, pipes | dev | ⚠️ | T-002 | 4 | ✅ |
-| T-006 | Scaffolding Angular: app module, routing, layout, auth interceptor | dev | ⚠️ | T-002 | 4 | 🔄 |
+| T-006 | Scaffolding Angular: app module, routing, layout, auth interceptor | dev | ⚠️ | T-002 | 4 | ✅ |
 | T-007 | Configurar Prisma: schema base, datasource, migration inicial | dev | ⚠️ | T-002 | 2 | ✅ |
 | T-008 | Configurar Swagger/OpenAPI no NestJS | dev | ⚠️ | T-005 | 2 | ✅ |
-| T-009 | Configurar Keycloak Docker (opcional) + strategy OIDC NestJS | dev | ✅ | T-002 | 4 | 🔄 |
+| T-009 | Configurar Keycloak Docker (opcional) + strategy OIDC NestJS | dev | ✅ | T-002 | 4 | ✅ |
 
-**Onda 0 total: 25h** | **Executado:** ~19h (7 concluídas ✅, 2 parciais 🔄)
+**Onda 0 total: 25h** | **Executado:** ~25h (9 concluídas ✅)
 
 ---
 
@@ -66,9 +66,9 @@
 | T-017 | Criar AuthGuard + RolesGuard base (NestJS) | dev | ⚠️ | T-012 | 3 | ⏳ |
 | T-018 | Testes unitários: AuthService, UsuariosService | qa | ❌ | T-011,T-014 | 4 | ⏳ |
 | T-019 | Testes integração: login, refresh, MFA, CRUD usuários | qa | ❌ | T-013,T-015 | 5 | ⏳ |
-| T-020 | Tela Login com formulário + validação | dev | ❌ | T-006,T-013 | 4 | ⏳ |
+| T-020 | Tela Login com formulário + validação | dev | ❌ | T-006,T-013 | 4 | ✅ |
 | T-021 | Tela MFA (TOTP verification) | dev | ❌ | T-020,T-013 | 2 | ⏳ |
-| T-022 | Tela UsuariosList (P10): tabela com busca, filtros | dev | ❌ | T-006,T-015 | 4 | ⏳ |
+| T-022 | Tela UsuariosList (P10): tabela com busca, filtros | dev | ❌ | T-006,T-015 | 4 | ✅ |
 | T-023 | Tela UsuarioForm (P10): cadastro/edição com dados funcionais | dev | ❌ | T-022 | 3 | ⏳ |
 
 **PRP-001 total: 47h**
@@ -102,7 +102,7 @@
 | T-039 | Implementar cálculo do índice de priorização | dev | ❌ | T-037 | 3 | ⏳ |
 | T-040 | Implementar MatrizService: ordenação, destaque por horas | dev | ❌ | T-039 | 4 | ⏳ |
 | T-041 | Testes: CRUD universo, fórmula do índice, matriz | qa | ❌ | T-039,T-040 | 4 | ⏳ |
-| T-042 | Tela UniversoAuditavelList + Form | dev | ❌ | T-006,T-038 | 5 | ⏳ |
+| T-042 | Tela UniversoAuditavelList + Form | dev | ❌ | T-006,T-038 | 5 | ✅ |
 | T-043 | Tela MatrizPriorizacao (tabela ordenada) | dev | ❌ | T-040,T-042 | 4 | ⏳ |
 
 **PRP-003 total: 27h**
@@ -118,7 +118,7 @@
 | T-048 | Implementar PapelTrabalhoService + controller | dev | ✅ | T-044 | 4 | ⏳ |
 | T-049 | Implementar RequisicaoService: prazo, notificação P05 | dev | ✅ | T-044 | 4 | ⏳ |
 | T-050 | Implementar ComunicadoService: geração automática | dev | ⚠️ | T-045 | 3 | ⏳ |
-| T-051 | Tela AuditoriaList + Detail (dashboard com abas) | dev | ❌ | T-006,T-046 | 6 | ⏳ |
+| T-051 | Tela AuditoriaList + Detail (dashboard com abas) | dev | ❌ | T-006,T-046 | 6 | ✅ |
 | T-052 | Tela AuditoriaForm (abertura) + ComunicadoPreview | dev | ❌ | T-051 | 4 | ⏳ |
 | T-053 | Componente EvidenciaUpload + PapelTrabalhoEditor | dev | ❌ | T-047,T-048 | 5 | ⏳ |
 | T-054 | Testes: abertura, upload, workflow status, multi-tenant P05 | qa | ❌ | T-045,T-047,T-049 | 6 | ⏳ |
@@ -134,7 +134,7 @@
 | T-057 | Implementar ImpedimentoService + verificação automática de conflitos | dev | ❌ | T-055 | 4 | ⏳ |
 | T-058 | Implementar ClassificacaoService: níveis, controle de acesso por sigilo | dev | ❌ | T-055 | 4 | ⏳ |
 | T-059 | Implementar middleware ClassificacaoGuard (bloqueia acesso não autorizado) | dev | ❌ | T-058 | 3 | ⏳ |
-| T-060 | Tela DeclaracaoIndependencia (P01/P02) | dev | ❌ | T-006 | 2 | ⏳ |
+| T-060 | Tela DeclaracaoIndependencia (P01/P02) | dev | ❌ | T-006 | 2 | ✅ |
 | T-061 | Componente ClassificacaoSelector (aplicável em todas as telas CRUD) | dev | ⚠️ | T-058 | 3 | ⏳ |
 | T-062 | Testes: impedimento 12 meses, acesso sigiloso negado, trilha | qa | ❌ | T-057,T-058,T-059 | 4 | ⏳ |
 
@@ -151,7 +151,7 @@
 | T-067 | Implementar ItemPlanoService: planejamento individual | dev | ⚠️ | T-064 | 4 | ⏳ |
 | T-068 | Implementar ForcaTrabalhoService: horas disponíveis × alocadas | dev | ❌ | T-063 | 3 | ⏳ |
 | T-069 | Implementar alerta de prazo PAA (01/novembro) + PALP (último ano) | dev | ✅ | T-064 | 2 | ⏳ |
-| T-070 | Tela PlanoList + PlanoForm (abas: dados, itens, força trabalho) | dev | ❌ | T-006,T-064 | 6 | ⏳ |
+| T-070 | Tela PlanoList + PlanoForm (abas: dados, itens, força trabalho) | dev | ❌ | T-006,T-064 | 6 | ✅ |
 | T-071 | Tela PlanoAprovacao (P03) | dev | ❌ | T-065,T-070 | 3 | ⏳ |
 | T-072 | Componente ForcaTrabalho (gráfico horas disponíveis × alocadas) | dev | ❌ | T-068 | 3 | ⏳ |
 | T-073 | Testes: workflow aprovação, bloqueio horas, versionamento, alertas | qa | ❌ | T-065,T-066,T-069 | 5 | ⏳ |
@@ -201,7 +201,7 @@
 | T-092 | Implementar RecomendacaoService: CRUD + workflow Pendente→Cumprida/Vencida | dev | ❌ | T-091 | 5 | ⏳ |
 | T-093 | Implementar ProvidenciaService (P05) | dev | ⚠️ | T-091 | 3 | ⏳ |
 | T-094 | Implementar alertas vencimento + escalonamento 30 dias (cron job) | dev | ❌ | T-092 | 4 | ⏳ |
-| T-095 | Tela PainelMonitoramento (P01, P06): cards status, vencidas | dev | ❌ | T-006,T-092 | 5 | ⏳ |
+| T-095 | Tela PainelMonitoramento (P01, P06): cards status, vencidas | dev | ❌ | T-006,T-092 | 5 | ✅ |
 | T-096 | Tela RecomendacaoList + ProvidenciaForm (P05) | dev | ❌ | T-093,T-095 | 4 | ⏳ |
 | T-097 | Testes: workflow, vencimento, escalonamento, multi-tenant P05/P06 | qa | ❌ | T-092,T-093,T-094 | 5 | ⏳ |
 
@@ -214,7 +214,7 @@
 | T-098 | Criar migrations: `solicitacoes_consultoria`, `consultorias` | dev | ❌ | T-063 | 1 | ⏳ |
 | T-099 | Implementar SolicitacaoService + controller (P05) | dev | ❌ | T-098 | 3 | ⏳ |
 | T-100 | Implementar ConsultoriaService: aceitação, registro, termo cogestão | dev | ❌ | T-098 | 4 | ⏳ |
-| T-101 | Tela SolicitacaoForm (P05) + ConsultoriaList (P01) | dev | ❌ | T-006,T-099 | 4 | ⏳ |
+| T-101 | Tela SolicitacaoForm (P05) + ConsultoriaList (P01) | dev | ❌ | T-006,T-099 | 4 | ✅ |
 | T-102 | Testes: workflow, verificação horas PAA, termo cogestão | qa | ❌ | T-099,T-100 | 3 | ⏳ |
 
 **PRP-010 total: 15h**
@@ -231,7 +231,7 @@
 | T-104 | Implementar AvaliacaoService: monitoramento, autoavaliação, externa | dev | ❌ | T-103 | 4 | ⏳ |
 | T-105 | Implementar acesso temporário P07 (Avaliador Externo) | dev | ❌ | T-104 | 2 | ⏳ |
 | T-106 | Implementar NaoConformidadeService: workflow ABERTA→CORRIGIDA | dev | ⚠️ | T-103 | 3 | ⏳ |
-| T-107 | Tela AvaliacaoList + Form (P01, P07) | dev | ❌ | T-006,T-104 | 4 | ⏳ |
+| T-107 | Tela AvaliacaoList + Form (P01, P07) | dev | ❌ | T-006,T-104 | 4 | ✅ |
 | T-108 | Tela NaoConformidadeList + PlanoAcao | dev | ❌ | T-106 | 3 | ⏳ |
 | T-109 | Testes: autoavaliação, externa, acesso temporário, workflow NC | qa | ❌ | T-104,T-105,T-106 | 4 | ⏳ |
 
@@ -279,7 +279,7 @@
 | T-127 | Implementar IntegracaoService: catálogo, health check, teste conectividade | dev | ✅ | T-124 | 4 | ⏳ |
 | T-128 | Implementar webhook Ações Coordenadas SIAUD-Jud | dev | ✅ | T-124 | 4 | ⏳ |
 | T-129 | Implementar conector Ouvidoria TJCE (stub/mock inicial) | dev | ✅ | T-124 | 3 | ⏳ |
-| T-130 | Tela DashboardPAA, DashboardExecucao, DashboardRecomendacoes | dev | ❌ | T-006,T-125 | 6 | ⏳ |
+| T-130 | Tela DashboardPAA, DashboardExecucao, DashboardRecomendacoes | dev | ❌ | T-006,T-125 | 6 | ✅ |
 | T-131 | Tela DashboardQualidade, DashboardForcaTrabalho | dev | ✅ | T-125 | 3 | ⏳ |
 | T-132 | Tela IntegracaoList + IntegracaoForm (P10) + health dashboard | dev | ❌ | T-127 | 4 | ⏳ |
 | T-133 | Tela AcaoCoordenadaList + Detail + Reporte CPA | dev | ❌ | T-128 | 3 | ⏳ |
@@ -304,7 +304,7 @@
 
 | Onda | PRPs | Tarefas | Horas | Dias (~8h/dia, 3 devs) | Status |
 |------|------|---------|-------|------------------------|--------|
-| 0 — Setup | Transversal | 9 | 25 | ~3 | ✅ 7/9 concluídas |
+| 0 — Setup | Transversal | 9 | 25 | ~3 | ✅ 8/9 concluídas |
 | 1 — Fundação e Core | 001,002,003,004,005,006,009 | 83 | 255 | ~11 | ⏳ |
 | 2 — Relatórios e Monitoramento | 007,008,010 | 20 | 72 | ~3 | ⏳ |
 | 3 — Qualidade e Governança | 011,012,013 | 21 | 66 | ~3 | ⏳ |

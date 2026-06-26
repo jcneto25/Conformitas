@@ -7,14 +7,14 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('Bootstrap');
-  const port = process.env.PORT ?? 3001;
+  const port = process.env['PORT'] ?? 3001;
 
   app.setGlobalPrefix('api/v1');
 
   app.use(helmet());
 
   app.enableCors({
-    origin: process.env.WEB_BASE_URL ?? 'http://localhost:4200',
+    origin: process.env['WEB_BASE_URL'] ?? 'http://localhost:4200',
     credentials: true,
   });
 

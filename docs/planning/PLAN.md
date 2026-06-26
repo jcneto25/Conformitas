@@ -29,7 +29,7 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 5 ondas de exe
 
 **PRPs:** Transversal (nenhum PRP de negócio)
 
-**Status:** ✅ Concluída — 7/9 tarefas executadas, 2 parciais
+**Status:** ✅ Concluída — 9/9 tarefas executadas
 
 | # | Deliverable | Status | Critério de aceitação |
 |---|-------------|--------|----------------------|
@@ -38,10 +38,10 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 5 ondas de exe
 | 0.3 | ESLint + TypeScript strict | ✅ | ESLint configurado, tsconfig strict em api e web |
 | 0.4 | CI/CD GitHub Actions | ✅ | Pipeline lint, type-check, test, build configurado |
 | 0.5 | Scaffolding NestJS (20 módulos, guards, interceptors, pipes) | ✅ | Módulos criados com controllers/services stubs, guards RBAC, Swagger |
-| 0.6 | Scaffolding Angular (app module, routing, login) | 🔄 | App bootstrap, rotas, login component — falta layout shell e auth interceptor |
+| 0.6 | Scaffolding Angular (app module, routing, login) | ✅ | App bootstrap, rotas, login component, layout shell, auth interceptor |
 | 0.7 | Schema Prisma (~30 entidades) | ✅ | 645 linhas, migrations prontas |
 | 0.8 | Mock data (8 arquivos JSON, 16 usuários) | ✅ | Dados mockados para todos os perfis P01-P10 |
-| 0.9 | Keycloak (opcional) | 🔄 | Docker configurado, strategy OIDC stub — não funcional |
+| 0.9 | Keycloak (opcional) | ✅ | Docker configurado, strategy OIDC com JWKS validation — funcional |
 
 ### Onda 1: Fundação e Core (Must) — 22 dias com 3 devs
 

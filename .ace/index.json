@@ -8,17 +8,29 @@
       "file": "2026-06-18-001.md",
       "status": "completed",
       "llc_step": 11,
-      "tags": ["reconstructed", "git-backfill", "wave-0", "scaffolding"],
+      "tags": [
+        "reconstructed",
+        "git-backfill",
+        "wave-0",
+        "scaffolding"
+      ],
       "timestamp": "2026-06-18T10:21:52-03:00",
       "source": "git-backfill",
-      "source_commits": ["1665b97123f1484b7a2af9c8248ee871014bc942"]
+      "source_commits": [
+        "1665b97123f1484b7a2af9c8248ee871014bc942"
+      ]
     },
     {
       "session_id": "2026-06-18-002",
       "file": "2026-06-18-002.md",
       "status": "completed",
       "llc_step": 11,
-      "tags": ["reconstructed", "git-backfill", "wave-0", "housekeeping"],
+      "tags": [
+        "reconstructed",
+        "git-backfill",
+        "wave-0",
+        "housekeeping"
+      ],
       "timestamp": "2026-06-18T12:43:37-03:00",
       "source": "git-backfill",
       "source_commits": [
@@ -33,10 +45,35 @@
       "file": "2026-06-25-001.md",
       "status": "completed",
       "llc_step": 11,
-      "tags": ["reconstructed", "git-backfill", "wave-0", "planning-sync"],
+      "tags": [
+        "reconstructed",
+        "git-backfill",
+        "wave-0",
+        "planning-sync"
+      ],
       "timestamp": "2026-06-25T15:44:35-03:00",
       "source": "git-backfill",
-      "source_commits": ["6c5b53cb8d0c5fc7edda91b39ec97914d3193877"]
+      "source_commits": [
+        "6c5b53cb8d0c5fc7edda91b39ec97914d3193877"
+      ]
+    },
+    {
+      "session_id": "2026-06-26-001",
+      "file": "2026-06-26-001.md",
+      "status": "completed",
+      "llc_step": 11.0,
+      "tags": [],
+      "timestamp": "2026-06-26T01:17:39.946784",
+      "completed_at": "2026-06-26T01:20:56.697724"
+    },
+    {
+      "session_id": "2026-06-26-002",
+      "file": "2026-06-26-002.md",
+      "status": "completed",
+      "llc_step": 11.0,
+      "tags": [],
+      "timestamp": "2026-06-26T01:32:34.106932",
+      "completed_at": "2026-06-26T01:39:04.649661"
     }
   ]
 }

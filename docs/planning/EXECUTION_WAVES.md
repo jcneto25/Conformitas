@@ -38,7 +38,7 @@ Este documento define o plano tático de execução em 5 ondas (Onda 0 concluíd
 | **Pré-condição** | — |
 | **Paralelo** | Até 3 tarefas simultâneas (dev, dev, dev) |
 | **Duração real** | ~3 dias |
-| **Status** | ✅ Concluída (7/9 tarefas executadas, 2 parciais) |
+| **Status** | ✅ Concluída (8/9 tarefas executadas, 1 parcial) |
 
 #### 2.0 Resultados Entregues
 
@@ -49,10 +49,10 @@ Este documento define o plano tático de execução em 5 ondas (Onda 0 concluíd
 | ESLint + TypeScript | ✅ | ESLint configurado com prettier plugin, tsconfig strict |
 | CI/CD GitHub Actions | ✅ | Pipeline lint, type-check, test, build |
 | Scaffolding NestJS | ✅ | 20 módulos, guards (auth, roles), interceptors, decorators, pipes, Swagger |
-| Scaffolding Angular | 🔄 | App bootstrap, rotas, login component — pendente layout shell, auth interceptor |
+| Scaffolding Angular | ✅ | App bootstrap, rotas, login component, layout shell, auth interceptor |
 | Schema Prisma | ✅ | 645 linhas, ~30 entidades, datasource PostgreSQL |
 | Mock data | ✅ | 8 arquivos JSON, 16 usuários (P01-P10) |
-| Keycloak | 🔄 | Docker configurado, strategy OIDC stub — não funcional |
+| Keycloak | ✅ | Docker configurado, strategy OIDC com JWKS validation |
 
 ---
 

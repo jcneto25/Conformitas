@@ -88,6 +88,8 @@ def get_next_session_id() -> str:
     return f"{today}-{len(todays_sessions) + 1:03d}"
 
 
+SESSION_FIELDS = {"session_id", "file", "status", "llc_step", "tags", "timestamp"}
+
 def get_previous_session() -> Optional[SessionInfo]:
     if not INDEX_FILE.exists():
         return None
@@ -99,7 +101,8 @@ def get_previous_session() -> Optional[SessionInfo]:
     sessions = index.get("sessions", [])
     for session_data in reversed(sessions):
         if session_data.get("status") in ("completed", "in_progress"):
-            return SessionInfo(**session_data)
+            filtered = {k: v for k, v in session_data.items() if k in SESSION_FIELDS}
+            return SessionInfo(**filtered)
     return None
 
 
