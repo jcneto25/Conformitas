@@ -12,6 +12,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
       },
+      {
+        path: 'achados',
+        loadComponent: () =>
+          import('./features/achados/quadro-achados.component').then((m) => m.QuadroAchadosComponent),
+      },
+      {
+        path: 'achados/novo',
+        loadComponent: () =>
+          import('./features/achados/achado-form.component').then((m) => m.AchadoFormComponent),
+      },
+      {
+        path: 'achados/:id',
+        loadComponent: () =>
+          import('./features/achados/achado-form.component').then((m) => m.AchadoFormComponent),
+      },
     ],
   },
   { path: 'login', loadComponent: () => import('./features/auth/login/login.component').then((m) => m.LoginComponent) },
