@@ -162,14 +162,14 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-074 | Criar migrations: `achados_auditoria`, `manifestacoes` | dev | ❌ | T-044 | 2 | ⏳ |
-| T-075 | Implementar AchadoService: CRUD + validação 4 atributos | dev | ❌ | T-074 | 4 | ⏳ |
-| T-076 | Implementar workflow: PRELIMINAR→EM_MANIFESTACAO (envio)→CONSOLIDADO | dev | ❌ | T-075 | 4 | ⏳ |
-| T-077 | Implementar ManifestacaoService (P05 escopo unidade) | dev | ❌ | T-074 | 3 | ⏳ |
-| T-078 | Implementar consolidação automática por expiração de prazo (cron job) | dev | ❌ | T-076 | 2 | ⏳ |
-| T-079 | Tela QuadroAchados (tabela com filtros status/tipo) | dev | ❌ | T-051,T-075 | 4 | ⏳ |
-| T-080 | Tela AchadoForm (4 campos + vínculo evidências) | dev | ❌ | T-079 | 4 | ⏳ |
-| T-081 | Tela ManifestacaoForm (P05) | dev | ❌ | T-077,T-079 | 3 | ⏳ |
+| T-074 | Criar migrations: `achados_auditoria`, `manifestacoes` | dev | ❌ | T-044 | 2 | ✅ |
+| T-075 | Implementar AchadoService: CRUD + validação 4 atributos | dev | ❌ | T-074 | 4 | ✅ |
+| T-076 | Implementar workflow: PRELIMINAR→EM_MANIFESTACAO (envio)→CONSOLIDADO | dev | ❌ | T-075 | 4 | ✅ |
+| T-077 | Implementar ManifestacaoService (P05 escopo unidade) | dev | ❌ | T-074 | 3 | ✅ |
+| T-078 | Implementar consolidação automática por expiração de prazo (cron job) | dev | ❌ | T-076 | 2 | ✅ |
+| T-079 | Tela QuadroAchados (tabela com filtros status/tipo) | dev | ❌ | T-051,T-075 | 4 | ✅ |
+| T-080 | Tela AchadoForm (4 campos + vínculo evidências) | dev | ❌ | T-079 | 4 | ✅ |
+| T-081 | Tela ManifestacaoForm (P05) | dev | ❌ | T-077,T-079 | 3 | ✅ |
 | T-082 | Testes: 4 atributos obrigatórios, workflow, expiração, multi-tenant | qa | ❌ | T-075,T-076,T-078 | 5 | ⏳ |
 
 **PRP-006 total: 31h**

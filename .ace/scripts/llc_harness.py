@@ -169,7 +169,7 @@ except ImportError:
 
 # ── Agent CLI detection ──
 
-AGENT_CLIENTS = ["claude", "opencode", "codex", "cursor"]
+AGENT_CLIENTS = ["claude", "opencode", "codex", "cursor", "trae"]
 
 def detect_agent_client():
     """Detecta o primeiro cliente de IA CLI disponivel no PATH."""
@@ -378,63 +378,17 @@ def agent_invoke(prompt, task_description=None, client=None):
 
 
 def _llm_invoke(prompt, client=None):
-    """Execucao LLM com streaming real e extracao de context_seed (G2, R3)."""
+    """Execucao LLM via stdin — 100% agnostico a CLI.
+
+    Envia o prompt via stdin do subprocesso. Funciona com QUALQUER CLI agentica
+    que aceite input via pipe (claude, opencode, codex, cursor, trae, etc.).
+
+    Nao depende de flags como --prompt, -p, --print, etc.
+    """
     if client is None:
         client = detect_agent_client()
 
-    if client:
-        print(f"🤖 Invocando {client}...")
-        import re
-        import time
-
-        process = subprocess.Popen(
-            [client, "--prompt", prompt],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            bufsize=1,
-            cwd=Path.cwd()
-        )
-
-        output_lines = []
-        start_time = time.time()
-        timeout = 600  # 10 min
-
-        try:
-            for line in process.stdout:
-                print(line, end="")  # Streaming em tempo real
-                output_lines.append(line)
-
-                if time.time() - start_time > timeout:
-                    process.kill()
-                    print(f"\n⏰ Timeout ({timeout}s).")
-                    return "\n".join(output_lines), 124, None
-
-            process.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            process.kill()
-            print(f"\n⏰ Timeout.")
-            return "\n".join(output_lines), 124, None
-
-        output = "\n".join(output_lines)
-
-        # Extrai context_seed do output do agente (G2)
-        seed_match = re.search(
-            r'state:\s*(.*?)\n\s*pending:\s*(.*?)\n\s*blockers:\s*(.*?)\n\s*next_action:\s*(.*?)(?:\n|$)',
-            output, re.DOTALL | re.IGNORECASE
-        )
-        if seed_match:
-            context_seed = (
-                f"state: {seed_match.group(1).strip()}\n"
-                f"pending: {seed_match.group(2).strip()}\n"
-                f"blockers: {seed_match.group(3).strip()}\n"
-                f"next_action: {seed_match.group(4).strip()}"
-            )
-            print(f"✅ Context seed extraido ({len(context_seed)} chars)")
-            return output, process.returncode, context_seed
-
-        return output, process.returncode, None
-    else:
+    if not client:
         print("📋 Nenhum cliente CLI detectado. Modo manual:")
         print("=" * 60)
         print(prompt[:2000])
@@ -443,6 +397,67 @@ def _llm_invoke(prompt, client=None):
         print("=" * 60)
         print("\nCole o prompt acima no seu cliente de IA.")
         return "", 0, None
+
+    print(f"🤖 Invocando {client} via stdin...")
+    import re
+    import time
+
+    process = subprocess.Popen(
+        [client],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        bufsize=1,
+        cwd=Path.cwd(),
+    )
+
+    # Envia o prompt via stdin e fecha para sinalizar EOF
+    try:
+        process.stdin.write(prompt)
+        process.stdin.close()
+    except BrokenPipeError:
+        print("⚠️  Cliente fechou stdin antes de receber o prompt completo.")
+        return "", 1, None
+
+    output_lines: list[str] = []
+    start_time = time.time()
+    timeout = 600  # 10 min
+
+    try:
+        for line in process.stdout:
+            print(line, end="")  # Streaming em tempo real
+            output_lines.append(line)
+
+            if time.time() - start_time > timeout:
+                process.kill()
+                print(f"\n⏰ Timeout ({timeout}s).")
+                return "\n".join(output_lines), 124, None
+
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        print(f"\n⏰ Timeout.")
+        return "\n".join(output_lines), 124, None
+
+    output = "\n".join(output_lines)
+
+    # Extrai context_seed do output do agente (G2)
+    seed_match = re.search(
+        r'state:\s*(.*?)\n\s*pending:\s*(.*?)\n\s*blockers:\s*(.*?)\n\s*next_action:\s*(.*?)(?:\n|$)',
+        output, re.DOTALL | re.IGNORECASE,
+    )
+    if seed_match:
+        context_seed = (
+            f"state: {seed_match.group(1).strip()}\n"
+            f"pending: {seed_match.group(2).strip()}\n"
+            f"blockers: {seed_match.group(3).strip()}\n"
+            f"next_action: {seed_match.group(4).strip()}"
+        )
+        print(f"✅ Context seed extraido ({len(context_seed)} chars)")
+        return output, process.returncode, context_seed
+
+    return output, process.returncode, None
 
 # ── Pipeline orchestration ──
 
