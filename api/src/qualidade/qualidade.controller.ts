@@ -6,5 +6,7 @@ import { QualidadeService } from './qualidade.service';
 @Controller('qualidade')
 export class QualidadeController {
   constructor(private readonly service: QualidadeService) {}
-  @Get() @ApiOperation({ summary: 'Listar avaliações de qualidade' }) findAll() { return this.service.findAll(); }
+  @Get() @ApiOperation({ summary: 'Listar avaliações de qualidade' }) findAll() {
+    return this.service.findAll();
+  }
 }

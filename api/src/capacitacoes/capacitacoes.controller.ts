@@ -6,5 +6,7 @@ import { CapacitacoesService } from './capacitacoes.service';
 @Controller('capacitacoes')
 export class CapacitacoesController {
   constructor(private readonly service: CapacitacoesService) {}
-  @Get() @ApiOperation({ summary: 'Listar capacitações' }) findAll() { return this.service.findAll(); }
+  @Get() @ApiOperation({ summary: 'Listar capacitações' }) findAll() {
+    return this.service.findAll();
+  }
 }

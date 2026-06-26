@@ -1,4 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class RecomendacoesService { findAll() { return []; } }
+export class RecomendacoesService {
+  findAll() {
+    return [];
+  }
+}

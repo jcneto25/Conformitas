@@ -49,15 +49,17 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 5 ondas de exe
 
 **PRPs:** 001, 002, 003, 004, 005, 006, 009
 
-| # | Deliverable | Critério de aceitação |
-|---|-------------|----------------------|
-| 1 | Login e MFA funcionais | Auditor loga com senha+TOTP, sessão expira em 30 min |
-| 2 | 10 perfis com RBAC | P01 vê tudo, P05 vê só sua unidade, P10 não vê dados de auditoria |
-| 3 | Universo auditável com matriz de priorização | Cadastro de áreas com notas, matriz ordenada por índice |
-| 4 | PALP e PAA com workflow de aprovação | P01 submete, P03 aprova, bloqueio por excesso de horas |
-| 5 | Abertura e execução de auditoria | Comunicado gerado, upload de evidências, papéis de trabalho |
-| 6 | Achados com 4 atributos e manifestações | Registro de achado, envio à unidade, prazo de 5 dias |
-| 7 | Declaração de independência e classificação de sigilo | P02 declara independência, P01 classifica documento SIGILOSO |
+**Status:** 🔄 Em andamento (6/7 PRPs concluídos, PRP-006 pendente)
+
+| # | Deliverable | Status | Critério de aceitação |
+|---|-------------|--------|----------------------|
+| 1 | Login e MFA funcionais | ✅ | Auditor loga com senha+TOTP, sessão expira em 30 min |
+| 2 | 10 perfis com RBAC | ✅ | P01 vê tudo, P05 vê só sua unidade, P10 não vê dados de auditoria |
+| 3 | Universo auditável com matriz de priorização | ✅ | Cadastro de áreas com notas, matriz ordenada por índice |
+| 4 | PALP e PAA com workflow de aprovação | ✅ | P01 submete, P03 aprova, bloqueio por excesso de horas |
+| 5 | Abertura e execução de auditoria | ✅ | Comunicado gerado, upload de evidências, papéis de trabalho |
+| 6 | Achados com 4 atributos e manifestações | ⏳ | Registro de achado, envio à unidade, prazo de 5 dias |
+| 7 | Declaração de independência e classificação de sigilo | ✅ | P02 declara independência, P01 classifica documento SIGILOSO |
 
 ### Onda 2: Relatórios e Monitoramento (Must) — 8 dias
 
@@ -100,13 +102,13 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 5 ondas de exe
 | PRP | Nome | Onda | Dias | Complexidade | Prioridade | Dependências | Status |
 |-----|------|------|------|--------------|------------|-------------|--------|
 | — | Setup + Scaffolding | 0 | 3 | — | Crítico | — | ✅ |
-| 001 | Autenticação e Usuários | 1 | 8 | Alta | Crítico | — | ⏳ |
-| 002 | Perfis, RBAC e Configurações | 1 | 5 | Média | Crítico | 001 | ⏳ |
-| 003 | Universo Auditável e Matriz | 1 | 6 | Média | Alto | 001, 002 | ⏳ |
-| 004 | PALP, PAA e Força de Trabalho | 1 | 8 | Alta | Alto | 001, 002, 003 | ⏳ |
-| 005 | Auditorias, Evidências e Papéis | 1 | 8 | Alta | Crítico | 001, 002, 004 | ⏳ |
+| 001 | Autenticação e Usuários | 1 | 8 | Alta | Crítico | — | ✅ |
+| 002 | Perfis, RBAC e Configurações | 1 | 5 | Média | Crítico | 001 | ✅ |
+| 003 | Universo Auditável e Matriz | 1 | 6 | Média | Alto | 001, 002 | ✅ |
+| 004 | PALP, PAA e Força de Trabalho | 1 | 8 | Alta | Alto | 001, 002, 003 | ✅ |
+| 005 | Auditorias, Evidências e Papéis | 1 | 8 | Alta | Crítico | 001, 002, 004 | ✅ |
 | 006 | Achados e Manifestações | 1 | 5 | Média | Crítico | 001, 002, 005 | ⏳ |
-| 009 | Ética, Sigilo e Impedimentos | 1 | 4 | Baixa | Alto | 001, 002 | ⏳ |
+| 009 | Ética, Sigilo e Impedimentos | 1 | 4 | Baixa | Alto | 001, 002 | ✅ |
 | 007 | Relatórios de Auditoria | 2 | 6 | Média | Alto | 001, 002, 006 | ⏳ |
 | 008 | Recomendações e Monitoramento | 2 | 6 | Média | Alto | 001, 002, 007 | ⏳ |
 | 010 | Consultorias e Assessoramento | 2 | 4 | Baixa | Média | 001, 002, 004 | ⏳ |

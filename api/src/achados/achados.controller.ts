@@ -9,5 +9,7 @@ export class AchadosController {
 
   @Get()
   @ApiOperation({ summary: 'Listar achados' })
-  findAll() { return this.service.findAll(); }
+  findAll() {
+    return this.service.findAll();
+  }
 }

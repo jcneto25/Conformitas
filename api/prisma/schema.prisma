@@ -29,6 +29,10 @@ model Usuario {
   refreshTokens       RefreshToken[]
   usuariosPerfis      UsuarioPerfil[]
   mandatos            MandatoAuditorChefe[]
+  logs                LogSistema[]
+  declaracoes         DeclaracaoIndependencia[]
+  logsSigilosos       LogAcessoSigiloso[]
+  forcaTrabalhos      ForcaTrabalho[]
 
   @@map("usuarios")
 }
@@ -107,6 +111,8 @@ model LogSistema {
   ip           String?
   userAgent    String?  @map("user_agent")
   createdAt    DateTime @default(now()) @map("created_at")
+
+  usuario Usuario? @relation(fields: [usuarioId], references: [id])
 
   @@index([usuarioId])
   @@index([acao])
@@ -207,7 +213,8 @@ model ForcaTrabalho {
   ano                     Int
   createdAt               DateTime @default(now()) @map("created_at")
 
-  plano PlanoAuditoria @relation(fields: [planoId], references: [id])
+  plano   PlanoAuditoria @relation(fields: [planoId], references: [id])
+  usuario Usuario        @relation(fields: [usuarioId], references: [id])
 
   @@map("forca_trabalho")
 }
@@ -399,6 +406,8 @@ model DeclaracaoIndependencia {
   dataAssinatura DateTime @default(now()) @map("data_assinatura")
   createdAt     DateTime @default(now()) @map("created_at")
 
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
   @@map("declaracoes_independencia")
 }
 
@@ -432,6 +441,8 @@ model LogAcessoSigiloso {
   entidadeId   String   @map("entidade_id") @db.Uuid
   acao         String
   dataAcesso   DateTime @default(now()) @map("data_acesso")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
 
   @@map("log_acesso_sigiloso")
 }

@@ -6,5 +6,7 @@ import { ConsultoriasService } from './consultorias.service';
 @Controller('consultorias')
 export class ConsultoriasController {
   constructor(private readonly service: ConsultoriasService) {}
-  @Get() @ApiOperation({ summary: 'Listar consultorias' }) findAll() { return this.service.findAll(); }
+  @Get() @ApiOperation({ summary: 'Listar consultorias' }) findAll() {
+    return this.service.findAll();
+  }
 }

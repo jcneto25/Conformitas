@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ApiService } from '../../core/services/api.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [MatCardModule],
+  imports: [MatCardModule, MatProgressSpinnerModule],
   template: `
     <h1>Dashboard</h1>
     <div class="dashboard-grid">
@@ -13,8 +15,12 @@ import { MatCardModule } from '@angular/material/card';
           <mat-card-title>Auditorias em Andamento</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <p class="metric">—</p>
-          <p class="hint">Dados disponíveis após PRP-005</p>
+          @if (loadingAuditorias) {
+            <mat-spinner diameter="24" />
+          } @else {
+            <p class="metric">{{ auditoriasEmExecucao }}</p>
+            <p class="hint">de {{ totalAuditorias }} auditorias</p>
+          }
         </mat-card-content>
       </mat-card>
 
@@ -24,7 +30,7 @@ import { MatCardModule } from '@angular/material/card';
         </mat-card-header>
         <mat-card-content>
           <p class="metric">—</p>
-          <p class="hint">Dados disponíveis após PRP-006</p>
+          <p class="hint stub">Stub — PRP-006 pendente</p>
         </mat-card-content>
       </mat-card>
 
@@ -34,7 +40,7 @@ import { MatCardModule } from '@angular/material/card';
         </mat-card-header>
         <mat-card-content>
           <p class="metric">—</p>
-          <p class="hint">Dados disponíveis após PRP-008</p>
+          <p class="hint stub">Stub — PRP-008 pendente</p>
         </mat-card-content>
       </mat-card>
 
@@ -43,8 +49,12 @@ import { MatCardModule } from '@angular/material/card';
           <mat-card-title>PAA Vigente</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <p class="metric">—</p>
-          <p class="hint">Dados disponíveis após PRP-004</p>
+          @if (loadingPlanos) {
+            <mat-spinner diameter="24" />
+          } @else {
+            <p class="metric">{{ planosPublicados }}</p>
+            <p class="hint">de {{ totalPlanos }} planos</p>
+          }
         </mat-card-content>
       </mat-card>
     </div>
@@ -70,7 +80,46 @@ import { MatCardModule } from '@angular/material/card';
         color: #888;
         margin: 0;
       }
+
+      .hint.stub {
+        color: #c62828;
+        font-style: italic;
+      }
     `,
   ],
 })
-export class DashboardComponent {}
+export class DashboardComponent implements OnInit {
+  loadingAuditorias = true;
+  loadingPlanos = true;
+  auditoriasEmExecucao = 0;
+  totalAuditorias = 0;
+  planosPublicados = 0;
+  totalPlanos = 0;
+
+  constructor(private readonly api: ApiService) {}
+
+  async ngOnInit() {
+    try {
+      const auditorias = await this.api.getAuditorias();
+      this.totalAuditorias = auditorias.length;
+      this.auditoriasEmExecucao = auditorias.filter(
+        (a) => a.status === 'EM_EXECUCAO',
+      ).length;
+    } catch {
+      this.totalAuditorias = 0;
+    } finally {
+      this.loadingAuditorias = false;
+    }
+
+    try {
+      const planos = await this.api.getPlanos({ status: 'PUBLICADO' });
+      const todos = await this.api.getPlanos();
+      this.totalPlanos = todos.length;
+      this.planosPublicados = planos.length;
+    } catch {
+      this.totalPlanos = 0;
+    } finally {
+      this.loadingPlanos = false;
+    }
+  }
+}
