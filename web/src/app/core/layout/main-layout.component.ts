@@ -117,7 +117,19 @@ interface NavItem {
   ],
 })
 export class MainLayoutComponent {
-  navItems: NavItem[] = [];
+  navItems: NavItem[] = [
+    { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
+    { label: 'Planos / Aprovação', icon: 'check_circle', route: '/planos-aprovacao' },
+    { label: 'Auditorias', icon: 'search', route: '/auditorias' },
+    { label: 'Matriz Priorização', icon: 'priority_high', route: '/matriz-priorizacao' },
+    { label: 'Perfis', icon: 'admin_panel_settings', route: '/perfis' },
+    { label: 'Mandatos', icon: 'gavel', route: '/mandatos' },
+    { label: 'Configurações', icon: 'settings', route: '/configuracoes' },
+    { label: 'Achados', icon: 'warning', route: '/achados' },
+    { label: 'Relatórios', icon: 'picture_as_pdf', route: '/relatorios' },
+    { label: 'Relatório Anual', icon: 'insights', route: '/relatorios-anuais' },
+    { label: 'Usuários', icon: 'people', route: '/usuarios' },
+  ];
 
   logout() {
     // Placeholder — será implementado no PRP-001
