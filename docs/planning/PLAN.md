@@ -58,7 +58,7 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 5 ondas de exe
 | 3 | Universo auditável com matriz de priorização | ✅ | Cadastro de áreas com notas, matriz ordenada por índice |
 | 4 | PALP e PAA com workflow de aprovação | ✅ | P01 submete, P03 aprova, bloqueio por excesso de horas |
 | 5 | Abertura e execução de auditoria | ✅ | Comunicado gerado, upload de evidências, papéis de trabalho |
-| 6 | Achados com 4 atributos e manifestações | ⏳ | Registro de achado, envio à unidade, prazo de 5 dias |
+| 6 | Achados com 4 atributos e manifestações | ✅ | Registro de achado, envio à unidade, prazo de 5 dias |
 | 7 | Declaração de independência e classificação de sigilo | ✅ | P02 declara independência, P01 classifica documento SIGILOSO |
 
 ### Onda 2: Relatórios e Monitoramento (Must) — 8 dias
@@ -107,7 +107,7 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 5 ondas de exe
 | 003 | Universo Auditável e Matriz | 1 | 6 | Média | Alto | 001, 002 | ✅ |
 | 004 | PALP, PAA e Força de Trabalho | 1 | 8 | Alta | Alto | 001, 002, 003 | ✅ |
 | 005 | Auditorias, Evidências e Papéis | 1 | 8 | Alta | Crítico | 001, 002, 004 | ✅ |
-| 006 | Achados e Manifestações | 1 | 5 | Média | Crítico | 001, 002, 005 | ⏳ |
+| 006 | Achados e Manifestações | 1 | 5 | Média | Crítico | 001, 002, 005 | ✅ |
 | 009 | Ética, Sigilo e Impedimentos | 1 | 4 | Baixa | Alto | 001, 002 | ✅ |
 | 007 | Relatórios de Auditoria | 2 | 6 | Média | Alto | 001, 002, 006 | ⏳ |
 | 008 | Recomendações e Monitoramento | 2 | 6 | Média | Alto | 001, 002, 007 | ⏳ |

@@ -1,0 +1,42 @@
+{
+  "scan_id": "sec-2026-06-27-prp007",
+  "generated_at": "2026-06-27",
+  "last_updated": "2026-06-27 (pos-remediacao overrides)",
+  "filename_note": "Nome conforme comando solicitado pelo usuario. Data real: 2026-06-27.",
+  "tool": "LLC Security Gate (composicao manual): /security-review (codigo) + npm audit (deps)",
+  "scope": "Mudancas do PRP-007 + arvore de dependencias",
+  "policy": { "audit": "all", "fail_on": "high", "tolerate": ["low", "moderate"] },
+  "gate_decision": "PASS",
+  "gate_reason": "Apos remediacao via npm overrides, ZERO vulnerabilidades HIGH/CRITICAL restantes. Politica --fail-on high atendida.",
+  "code_review": {
+    "verdict": "PASS",
+    "findings_high": 0,
+    "findings_medium": 0,
+    "findings_low": 0,
+    "rationale": [
+      "Autenticacao/Autorizacao: app.module registra AuthGuard + RolesGuard como APP_GUARD globais — endpoints autenticados (sem bypass).",
+      "Sem injecao: Prisma parametrizado; findAll constroi where de chaves explicitas (sem spread de input cru).",
+      "Sem RCE/path-traversal: nenhum $queryRaw/eval/exec/fs/path no codigo novo.",
+      "PDF seguro: pdfkit inteiramente em memoria (Buffer), sem I/O de arquivo.",
+      "Frontend Angular com auto-escaping do framework (sem bypassSecurityTrust/dangerouslySetInnerHTML)."
+    ]
+  },
+  "dependency_audit": {
+    "source": "npm audit --json",
+    "totals": { "critical": 0, "high": 0, "moderate": 20, "low": 3, "info": 0, "total": 23 },
+    "previous_totals_before_remediation": { "critical": 0, "high": 8, "moderate": 19, "low": 3, "total": 30 },
+    "remediation": {
+      "method": "npm overrides em api/package.json (npm audit fix era insuficiente — plain nao mudava nada; --force propunha downgrade catastrofico NestJS 11->7)",
+      "overrides": {
+        "multer": "^2.2.0 (instalado 2.1.1 -> 2.2.0; resolveu multer + 5 HIGH encadeados do NestJS)",
+        "tar": "^7.5.16 (instalado 6.2.1 -> 7.5.17; build-time via node-pre-gyp do bcrypt)"
+      },
+      "validation": "tsc limpo; 149/149 testes unitarios; multer 2.2.0 e bump minor dentro da major usada pelo NestJS. Sem e2e no projeto para validar multipart em runtime (lacuna pre-existente)."
+    }
+  },
+  "residual": "23 vulnerabilidades (20 moderate, 3 low) permanecem — todas abaixo do limiar --fail-on high. Nenhuma high/critical.",
+  "recommendations": [
+    "PRP-007: APPROVADO. Gate de seguranca PASS (0 HIGH/CRITICAL).",
+    "Os 20 moderate/3 low restantes sao divida de dependencias de baixo risco; monitorar via CI (npm audit) e atualizar incrementalmente."
+  ]
+}

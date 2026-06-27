@@ -67,9 +67,9 @@
 | T-018 | Testes unitários: AuthService, UsuariosService | qa | ❌ | T-011,T-014 | 4 | ✅ |
 | T-019 | Testes integração: login, refresh, MFA, CRUD usuários | qa | ❌ | T-013,T-015 | 5 | ✅ |
 | T-020 | Tela Login com formulário + validação | dev | ❌ | T-006,T-013 | 4 | ✅ |
-| T-021 | Tela MFA (TOTP verification) | dev | ❌ | T-020,T-013 | 2 | ⏳ |
+| T-021 | Tela MFA (TOTP verification) | dev | ❌ | T-020,T-013 | 2 | ✅ |
 | T-022 | Tela UsuariosList (P10): tabela com busca, filtros | dev | ❌ | T-006,T-015 | 4 | ✅ |
-| T-023 | Tela UsuarioForm (P10): cadastro/edição com dados funcionais | dev | ❌ | T-022 | 3 | ⏳ |
+| T-023 | Tela UsuarioForm (P10): cadastro/edição com dados funcionais | dev | ❌ | T-022 | 3 | ✅ |
 
 **PRP-001 total: 47h**
 
@@ -85,10 +85,10 @@
 | T-029 | Implementar MandatoService: regras 2 anos, máx 6, interstício 1 ano | dev | ✅ | T-024 | 4 | ✅ |
 | T-030 | Implementar ConfiguracoesService + controller | dev | ✅ | T-024 | 2 | ✅ |
 | T-031 | Implementar LogSistemaService: registro e consulta | dev | ✅ | T-024 | 3 | ✅ |
-| T-032 | Tela PerfilList + UsuarioPerfilForm (P10) | dev | ⚠️ | T-026 | 4 | ⏳ |
-| T-033 | Tela MandatoList (P01, P03, P04) | dev | ✅ | T-029 | 2 | ⏳ |
-| T-034 | Tela ConfiguracaoList (P10) | dev | ✅ | T-030 | 2 | ⏳ |
-| T-035 | Testes: segregação de funções, RBAC por endpoint, mandatos | qa | ❌ | T-027,T-028,T-029 | 5 | ⏳ |
+| T-032 | Tela PerfilList + UsuarioPerfilForm (P10) | dev | ⚠️ | T-026 | 4 | ✅ |
+| T-033 | Tela MandatoList (P01, P03, P04) | dev | ✅ | T-029 | 2 | ✅ |
+| T-034 | Tela ConfiguracaoList (P10) | dev | ✅ | T-030 | 2 | ✅ |
+| T-035 | Testes: segregação de funções, RBAC por endpoint, mandatos | qa | ❌ | T-027,T-028,T-029 | 5 | ✅ |
 
 **PRP-002 total: 38h**
 
@@ -103,7 +103,7 @@
 | T-040 | Implementar MatrizService: ordenação, destaque por horas | dev | ❌ | T-039 | 4 | ✅ |
 | T-041 | Testes: CRUD universo, fórmula do índice, matriz | qa | ❌ | T-039,T-040 | 4 | ✅ |
 | T-042 | Tela UniversoAuditavelList + Form | dev | ❌ | T-006,T-038 | 5 | ✅ |
-| T-043 | Tela MatrizPriorizacao (tabela ordenada) | dev | ❌ | T-040,T-042 | 4 | ⏳ |
+| T-043 | Tela MatrizPriorizacao (tabela ordenada) | dev | ❌ | T-040,T-042 | 4 | ✅ |
 
 **PRP-003 total: 27h**
 
@@ -119,9 +119,9 @@
 | T-049 | Implementar RequisicaoService: prazo, notificação P05 | dev | ✅ | T-044 | 4 | ✅ |
 | T-050 | Implementar ComunicadoService: geração automática | dev | ⚠️ | T-045 | 3 | ✅ |
 | T-051 | Tela AuditoriaList + Detail (dashboard com abas) | dev | ❌ | T-006,T-046 | 6 | ✅ |
-| T-052 | Tela AuditoriaForm (abertura) + ComunicadoPreview | dev | ❌ | T-051 | 4 | ⏳ |
-| T-053 | Componente EvidenciaUpload + PapelTrabalhoEditor | dev | ❌ | T-047,T-048 | 5 | ⏳ |
-| T-054 | Testes: abertura, upload, workflow status, multi-tenant P05 | qa | ❌ | T-045,T-047,T-049 | 6 | ⏳ |
+| T-052 | Tela AuditoriaForm (abertura) + ComunicadoPreview | dev | ❌ | T-051 | 4 | ✅ |
+| T-053 | Componente EvidenciaUpload + PapelTrabalhoEditor | dev | ❌ | T-047,T-048 | 5 | ✅ |
+| T-054 | Testes: abertura, upload, workflow status, multi-tenant P05 | qa | ❌ | T-045,T-047,T-049 | 6 | ✅ |
 
 **PRP-005 total: 49h**
 
@@ -135,8 +135,8 @@
 | T-058 | Implementar ClassificacaoService: níveis, controle de acesso por sigilo | dev | ❌ | T-055 | 4 | ✅ |
 | T-059 | Implementar ClassificacaoGuard (bloqueia acesso não autorizado) | dev | ❌ | T-058 | 3 | ✅ |
 | T-060 | Tela DeclaracaoIndependencia (P01/P02) | dev | ❌ | T-006 | 2 | ✅ |
-| T-061 | Componente ClassificacaoSelector (aplicável em todas as telas CRUD) | dev | ⚠️ | T-058 | 3 | ⏳ |
-| T-062 | Testes: impedimento 12 meses, acesso sigiloso negado, trilha | qa | ❌ | T-057,T-058,T-059 | 4 | ⏳ |
+| T-061 | Componente ClassificacaoSelector (aplicável em todas as telas CRUD) | dev | ⚠️ | T-058 | 3 | ✅ |
+| T-062 | Testes: impedimento 12 meses, acesso sigiloso negado, trilha | qa | ❌ | T-057,T-058,T-059 | 4 | ✅ |
 
 **PRP-009 total: 24h**
 
@@ -152,9 +152,9 @@
 | T-068 | Implementar ForcaTrabalhoService: horas disponíveis × alocadas | dev | ❌ | T-063 | 3 | ✅ |
 | T-069 | Implementar alerta de prazo PAA (01/novembro) + PALP (último ano) | dev | ✅ | T-064 | 2 | ✅ |
 | T-070 | Tela PlanoList + PlanoForm (abas: dados, itens, força trabalho) | dev | ❌ | T-006,T-064 | 6 | ✅ |
-| T-071 | Tela PlanoAprovacao (P03) | dev | ❌ | T-065,T-070 | 3 | ⏳ |
-| T-072 | Componente ForcaTrabalho (gráfico horas disponíveis × alocadas) | dev | ❌ | T-068 | 3 | ⏳ |
-| T-073 | Testes: workflow aprovação, bloqueio horas, versionamento, alertas | qa | ❌ | T-065,T-066,T-069 | 5 | ⏳ |
+| T-071 | Tela PlanoAprovacao (P03) | dev | ❌ | T-065,T-070 | 3 | ✅ |
+| T-072 | Componente ForcaTrabalho (gráfico horas disponíveis × alocadas) | dev | ❌ | T-068 | 3 | ✅ |
+| T-073 | Testes: workflow aprovação, bloqueio horas, versionamento, alertas | qa | ❌ | T-065,T-066,T-069 | 5 | ✅ |
 
 **PRP-004 total: 39h**
 
@@ -170,7 +170,7 @@
 | T-079 | Tela QuadroAchados (tabela com filtros status/tipo) | dev | ❌ | T-051,T-075 | 4 | ✅ |
 | T-080 | Tela AchadoForm (4 campos + vínculo evidências) | dev | ❌ | T-079 | 4 | ✅ |
 | T-081 | Tela ManifestacaoForm (P05) | dev | ❌ | T-077,T-079 | 3 | ✅ |
-| T-082 | Testes: 4 atributos obrigatórios, workflow, expiração, multi-tenant | qa | ❌ | T-075,T-076,T-078 | 5 | ⏳ |
+| T-082 | Testes: 4 atributos obrigatórios, workflow, expiração, multi-tenant | qa | ❌ | T-075,T-076,T-078 | 5 | ✅ |
 
 **PRP-006 total: 31h**
 
@@ -182,14 +182,14 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-083 | Criar migrations: `relatorios_auditoria`, `relatorios_anuais` | dev | ❌ | T-074 | 2 | ⏳ |
-| T-084 | Implementar RelatorioService: compilar achados, gerar documento | dev | ❌ | T-083 | 5 | ⏳ |
-| T-085 | Implementar geração de PDF (pdfkit/puppeteer) | dev | ❌ | T-084 | 4 | ⏳ |
-| T-086 | Implementar RelatorioAnualService: consolidação exercício | dev | ✅ | T-083 | 4 | ⏳ |
-| T-087 | Implementar assinatura eletrônica (P01) | dev | ❌ | T-084 | 3 | ⏳ |
-| T-088 | Tela RelatorioPreview + assinatura | dev | ❌ | T-084,T-085 | 4 | ⏳ |
-| T-089 | Tela RelatorioAnualForm | dev | ❌ | T-086 | 3 | ⏳ |
-| T-090 | Testes: geração, compilação, sem manifestação, multi-tenant | qa | ❌ | T-084,T-086,T-087 | 4 | ⏳ |
+| T-083 | Criar migrations: `relatorios_auditoria`, `relatorios_anuais` | dev | ❌ | T-074 | 2 | ✅ |
+| T-084 | Implementar RelatorioService: compilar achados, gerar documento | dev | ❌ | T-083 | 5 | ✅ |
+| T-085 | Implementar geração de PDF (pdfkit/puppeteer) | dev | ❌ | T-084 | 4 | ✅ |
+| T-086 | Implementar RelatorioAnualService: consolidação exercício | dev | ✅ | T-083 | 4 | ✅ |
+| T-087 | Implementar assinatura eletrônica (P01) | dev | ❌ | T-084 | 3 | ✅ |
+| T-088 | Tela RelatorioPreview + assinatura | dev | ❌ | T-084,T-085 | 4 | ✅ |
+| T-089 | Tela RelatorioAnualForm | dev | ❌ | T-086 | 3 | ✅ |
+| T-090 | Testes: geração, compilação, sem manifestação, multi-tenant | qa | ❌ | T-084,T-086,T-087 | 4 | ✅ |
 
 **PRP-007 total: 29h**
 
@@ -197,7 +197,7 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-091 | Criar migrations: `recomendacoes`, `providencias` | dev | ❌ | T-083 | 2 | ⏳ |
+| T-091 | Criar migrations: `recomendacoes`, `providencias` | dev | ❌ | T-083 | 2 | ✅ |
 | T-092 | Implementar RecomendacaoService: CRUD + workflow Pendente→Cumprida/Vencida | dev | ❌ | T-091 | 5 | ⏳ |
 | T-093 | Implementar ProvidenciaService (P05) | dev | ⚠️ | T-091 | 3 | ⏳ |
 | T-094 | Implementar alertas vencimento + escalonamento 30 dias (cron job) | dev | ❌ | T-092 | 4 | ⏳ |
@@ -305,12 +305,12 @@
 | Onda | PRPs | Tarefas | Horas | Dias (~8h/dia, 3 devs) | Status |
 |------|------|---------|-------|------------------------|--------|
 | 0 — Setup | Transversal | 9 | 25 | ~3 | ✅ 8/9 concluídas |
-| 1 — Fundação e Core | 001,002,003,004,005,006,009 | 83 | 255 | ~11 | ⏳ |
+| 1 — Fundação e Core | 001,002,003,004,005,006,009 | 83 | 255 | ~11 | ✅ 85% |
 | 2 — Relatórios e Monitoramento | 007,008,010 | 20 | 72 | ~3 | ⏳ |
 | 3 — Qualidade e Governança | 011,012,013 | 21 | 66 | ~3 | ⏳ |
 | 4 — Dashboards e Integrações | 014 | 11 | 42 | ~2 | ⏳ |
 | Finalização | Transversal | 4 | 20 | ~1 | ⏳ |
-| **TOTAL** | **14 PRPs** | **148 tarefas** | **~480h** | **~23 dias (3 devs)** | **7% concluído** |
+| **TOTAL** | **14 PRPs** | **148 tarefas** | **~480h** | **~23 dias (3 devs)** | **~43% concluído** |
 
 ---
 
