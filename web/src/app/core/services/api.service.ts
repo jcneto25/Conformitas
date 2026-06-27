@@ -19,4 +19,10 @@ export class ApiService {
       this.http.get<any[]>(`${API}/planos`, { params }),
     );
   }
+
+  getAchados(params?: { status?: string }) {
+    return firstValueFrom(
+      this.http.get<any[]>(`${API}/achados`, { params }),
+    );
+  }
 }

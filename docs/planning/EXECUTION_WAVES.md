@@ -89,7 +89,7 @@ Este documento define o plano tático de execução em 5 ondas (Onda 0 concluíd
 - [x] RBAC com 10 perfis aplicado em todos os endpoints
 - [x] PAA pode ser criado, submetido por P01 e aprovado por P03
 - [x] Auditoria pode ser aberta, evidências uploaded, papéis de trabalho criados
-- [ ] Achados registrados com 4 atributos e enviados para manifestação
+- [x] Achados registrados com 4 atributos e enviados para manifestação
 - [x] Documentos classificáveis por sigilo
 
 ---

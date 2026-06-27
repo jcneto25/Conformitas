@@ -29,8 +29,12 @@ import { ApiService } from '../../core/services/api.service';
           <mat-card-title>Achados Pendentes</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <p class="metric">—</p>
-          <p class="hint stub">Stub — PRP-006 pendente</p>
+          @if (loadingAchados) {
+            <mat-spinner diameter="24" />
+          } @else {
+            <p class="metric">{{ achadosPendentes }}</p>
+            <p class="hint">de {{ totalAchados }} achados</p>
+          }
         </mat-card-content>
       </mat-card>
 
@@ -90,9 +94,12 @@ import { ApiService } from '../../core/services/api.service';
 })
 export class DashboardComponent implements OnInit {
   loadingAuditorias = true;
+  loadingAchados = true;
   loadingPlanos = true;
   auditoriasEmExecucao = 0;
   totalAuditorias = 0;
+  achadosPendentes = 0;
+  totalAchados = 0;
   planosPublicados = 0;
   totalPlanos = 0;
 
@@ -109,6 +116,18 @@ export class DashboardComponent implements OnInit {
       this.totalAuditorias = 0;
     } finally {
       this.loadingAuditorias = false;
+    }
+
+    try {
+      const achados = await this.api.getAchados();
+      this.totalAchados = achados.length;
+      this.achadosPendentes = achados.filter(
+        (a) => a.status === 'PRELIMINAR' || a.status === 'EM_MANIFESTACAO',
+      ).length;
+    } catch {
+      this.totalAchados = 0;
+    } finally {
+      this.loadingAchados = false;
     }
 
     try {

@@ -76,7 +76,10 @@ export class LoginComponent {
         }),
       );
 
-      if (res.access_token) {
+      if (res.mfa_required) {
+        localStorage.setItem('session_token', res.session_token!);
+        this.router.navigate(['/mfa']);
+      } else if (res.access_token) {
         localStorage.setItem('access_token', res.access_token);
         localStorage.setItem('refresh_token', res.refresh_token);
         this.router.navigate(['/']);

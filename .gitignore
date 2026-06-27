@@ -52,4 +52,10 @@ keycloak/data/
 .omc/
 .opencode/
 .ace/.venv/
+.ace/logs/
+.ace/worktrees/
 .vscode/
+
+# Python artifacts
+__pycache__/
+*.pyc

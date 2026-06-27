@@ -76,8 +76,10 @@ def extract_context_seed(session_file: Path) -> Optional[str]:
     if not session_file.exists():
         return None
     content = session_file.read_text(encoding='utf-8')
-    match = re.search(r'<context_seed>(.*?)</context_seed>', content, re.DOTALL)
-    return match.group(1).strip() if match else None
+    # findall + último: corrige bug onde finalize_session appendava context_seed ao final
+    # e re.search pegava o primeiro (seção Contexto), ignorando o do Encerramento.
+    matches = re.findall(r'<context_seed>(.*?)</context_seed>', content, re.DOTALL)
+    return matches[-1].strip() if matches else None
 
 
 def get_next_session_id() -> str:
