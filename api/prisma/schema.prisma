@@ -9,30 +9,30 @@ datasource db {
 
 // ── Autenticação ──────────────────────────────────
 model Usuario {
-  id               String   @id @default(uuid()) @db.Uuid
-  nome             String
-  email            String   @unique
-  matricula        String   @unique
-  cargo            String
-  unidade          String
-  senhaHash        String
-  mfaEnabled       Boolean  @default(false)
-  mfaSecret        String?
-  ativo            Boolean  @default(true)
-  dataDesativacao  DateTime?
-  tentativasLogin  Int      @default(0)
-  bloqueadoAte     DateTime?
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
-  deletedAt        DateTime? @map("deleted_at")
+  id              String    @id @default(uuid()) @db.Uuid
+  nome            String
+  email           String    @unique
+  matricula       String    @unique
+  cargo           String
+  unidade         String
+  senhaHash       String
+  mfaEnabled      Boolean   @default(false)
+  mfaSecret       String?
+  ativo           Boolean   @default(true)
+  dataDesativacao DateTime?
+  tentativasLogin Int       @default(0)
+  bloqueadoAte    DateTime?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
 
-  refreshTokens       RefreshToken[]
-  usuariosPerfis      UsuarioPerfil[]
-  mandatos            MandatoAuditorChefe[]
-  logs                LogSistema[]
-  declaracoes         DeclaracaoIndependencia[]
-  logsSigilosos       LogAcessoSigiloso[]
-  forcaTrabalhos      ForcaTrabalho[]
+  refreshTokens  RefreshToken[]
+  usuariosPerfis UsuarioPerfil[]
+  mandatos       MandatoAuditorChefe[]
+  logs           LogSistema[]
+  declaracoes    DeclaracaoIndependencia[]
+  logsSigilosos  LogAcessoSigiloso[]
+  forcaTrabalhos ForcaTrabalho[]
 
   @@map("usuarios")
 }
@@ -68,14 +68,14 @@ model Perfil {
 }
 
 model UsuarioPerfil {
-  id             String    @id @default(uuid()) @db.Uuid
-  usuarioId      String    @map("usuario_id") @db.Uuid
-  perfilId       String    @map("perfil_id") @db.Uuid
-  unidadeEscopo  String?   @map("unidade_escopo")
-  dataInicio     DateTime  @default(now()) @map("data_inicio")
-  dataFim        DateTime? @map("data_fim")
-  ativo          Boolean   @default(true)
-  createdAt      DateTime  @default(now()) @map("created_at")
+  id            String    @id @default(uuid()) @db.Uuid
+  usuarioId     String    @map("usuario_id") @db.Uuid
+  perfilId      String    @map("perfil_id") @db.Uuid
+  unidadeEscopo String?   @map("unidade_escopo")
+  dataInicio    DateTime  @default(now()) @map("data_inicio")
+  dataFim       DateTime? @map("data_fim")
+  ativo         Boolean   @default(true)
+  createdAt     DateTime  @default(now()) @map("created_at")
 
   usuario Usuario @relation(fields: [usuarioId], references: [id])
   perfil  Perfil  @relation(fields: [perfilId], references: [id])
@@ -121,31 +121,31 @@ model LogSistema {
 }
 
 model ConfiguracaoSistema {
-  chave      String   @id
-  valor      String
-  descricao  String
-  editavel   Boolean  @default(true)
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  chave     String   @id
+  valor     String
+  descricao String
+  editavel  Boolean  @default(true)
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("configuracoes_sistema")
 }
 
 // ── Planejamento ────────────────────────────────
 model UniversoAuditavel {
-  id                  String   @id @default(uuid()) @db.Uuid
-  nome                String
-  descricao           String?
-  tipo                String
-  unidadeResponsavel  String   @map("unidade_responsavel")
-  materialidade       Int
-  relevancia          Int
-  criticidade         Int
-  risco               Int
-  indicePriorizacao   Float?   @map("indice_priorizacao")
-  ativo               Boolean  @default(true)
-  createdAt           DateTime @default(now()) @map("created_at")
-  updatedAt           DateTime @updatedAt @map("updated_at")
-  deletedAt           DateTime? @map("deleted_at")
+  id                 String    @id @default(uuid()) @db.Uuid
+  nome               String
+  descricao          String?
+  tipo               String
+  unidadeResponsavel String    @map("unidade_responsavel")
+  materialidade      Int
+  relevancia         Int
+  criticidade        Int
+  risco              Int
+  indicePriorizacao  Float?    @map("indice_priorizacao")
+  ativo              Boolean   @default(true)
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  deletedAt          DateTime? @map("deleted_at")
 
   itensPlano ItemPlano[]
 
@@ -155,45 +155,45 @@ model UniversoAuditavel {
 }
 
 model PlanoAuditoria {
-  id              String    @id @default(uuid()) @db.Uuid
-  tipo            String
-  anoInicio       Int       @map("ano_inicio")
-  anoFim          Int       @map("ano_fim")
-  status          String
-  versao          Int       @default(1)
-  dataSubmissao   DateTime? @map("data_submissao")
-  dataAprovacao   DateTime? @map("data_aprovacao")
-  dataPublicacao  DateTime? @map("data_publicacao")
-  criadoPorId     String    @map("criado_por_id") @db.Uuid
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
-  deletedAt       DateTime? @map("deleted_at")
+  id             String    @id @default(uuid()) @db.Uuid
+  tipo           String
+  anoInicio      Int       @map("ano_inicio")
+  anoFim         Int       @map("ano_fim")
+  status         String
+  versao         Int       @default(1)
+  dataSubmissao  DateTime? @map("data_submissao")
+  dataAprovacao  DateTime? @map("data_aprovacao")
+  dataPublicacao DateTime? @map("data_publicacao")
+  criadoPorId    String    @map("criado_por_id") @db.Uuid
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
 
-  itensPlano     ItemPlano[]
-  forcTrabalho   ForcaTrabalho[]
-  consultorias   Consultoria[]
+  itensPlano   ItemPlano[]
+  forcTrabalho ForcaTrabalho[]
+  consultorias Consultoria[]
 
   @@map("planos_auditoria")
 }
 
 model ItemPlano {
-  id                   String    @id @default(uuid()) @db.Uuid
-  planoId              String    @map("plano_id") @db.Uuid
-  universoAuditavelId  String    @map("universo_auditavel_id") @db.Uuid
-  tipoAuditoria        String?   @map("tipo_auditoria")
-  formaExecucao        String?   @map("forma_execucao")
-  horasEstimadas       Int?      @map("horas_estimadas")
-  equipeIds            Json?     @map("equipe_ids")
-  escopo               String?
-  objetivo             String?
-  resultadosEsperados  String?   @map("resultados_esperados")
-  questoesAuditoria    Json?     @map("questoes_auditoria")
-  testesPrevistos      Json?     @map("testes_previstos")
-  cronogramaInicio     DateTime? @map("cronograma_inicio")
-  cronogramaFim        DateTime? @map("cronograma_fim")
-  prioridade           String?
-  createdAt            DateTime  @default(now()) @map("created_at")
-  updatedAt            DateTime  @updatedAt @map("updated_at")
+  id                  String    @id @default(uuid()) @db.Uuid
+  planoId             String    @map("plano_id") @db.Uuid
+  universoAuditavelId String    @map("universo_auditavel_id") @db.Uuid
+  tipoAuditoria       String?   @map("tipo_auditoria")
+  formaExecucao       String?   @map("forma_execucao")
+  horasEstimadas      Int?      @map("horas_estimadas")
+  equipeIds           Json?     @map("equipe_ids")
+  escopo              String?
+  objetivo            String?
+  resultadosEsperados String?   @map("resultados_esperados")
+  questoesAuditoria   Json?     @map("questoes_auditoria")
+  testesPrevistos     Json?     @map("testes_previstos")
+  cronogramaInicio    DateTime? @map("cronograma_inicio")
+  cronogramaFim       DateTime? @map("cronograma_fim")
+  prioridade          String?
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
 
   plano      PlanoAuditoria    @relation(fields: [planoId], references: [id])
   universo   UniversoAuditavel @relation(fields: [universoAuditavelId], references: [id])
@@ -203,15 +203,15 @@ model ItemPlano {
 }
 
 model ForcaTrabalho {
-  id                      String   @id @default(uuid()) @db.Uuid
-  planoId                 String   @map("plano_id") @db.Uuid
-  usuarioId               String   @map("usuario_id") @db.Uuid
-  horasDisponiveisAno     Int      @map("horas_disponiveis_ano")
-  horasAlocadasAuditoria  Int      @default(0) @map("horas_alocadas_auditoria")
-  horasAlocadasConsultoria Int     @default(0) @map("horas_alocadas_consultoria")
-  horasAlocadasCapacitacao Int     @default(0) @map("horas_alocadas_capacitacao")
-  ano                     Int
-  createdAt               DateTime @default(now()) @map("created_at")
+  id                       String   @id @default(uuid()) @db.Uuid
+  planoId                  String   @map("plano_id") @db.Uuid
+  usuarioId                String   @map("usuario_id") @db.Uuid
+  horasDisponiveisAno      Int      @map("horas_disponiveis_ano")
+  horasAlocadasAuditoria   Int      @default(0) @map("horas_alocadas_auditoria")
+  horasAlocadasConsultoria Int      @default(0) @map("horas_alocadas_consultoria")
+  horasAlocadasCapacitacao Int      @default(0) @map("horas_alocadas_capacitacao")
+  ano                      Int
+  createdAt                DateTime @default(now()) @map("created_at")
 
   plano   PlanoAuditoria @relation(fields: [planoId], references: [id])
   usuario Usuario        @relation(fields: [usuarioId], references: [id])
@@ -238,13 +238,13 @@ model Auditoria {
   updatedAt       DateTime  @updatedAt @map("updated_at")
   deletedAt       DateTime? @map("deleted_at")
 
-  itemPlano     ItemPlano        @relation(fields: [itemPlanoId], references: [id])
-  comunicados   ComunicadoAuditoria[]
-  evidencias    Evidencia[]
+  itemPlano      ItemPlano             @relation(fields: [itemPlanoId], references: [id])
+  comunicados    ComunicadoAuditoria[]
+  evidencias     Evidencia[]
   papeisTrabalho PapelTrabalho[]
-  requisicoes   Requisicao[]
-  achados       AchadoAuditoria[]
-  relatorios    RelatorioAuditoria[]
+  requisicoes    Requisicao[]
+  achados        AchadoAuditoria[]
+  relatorios     RelatorioAuditoria[]
 
   @@map("auditorias")
 }
@@ -326,9 +326,9 @@ model AchadoAuditoria {
   createdAt          DateTime  @default(now()) @map("created_at")
   updatedAt          DateTime  @updatedAt @map("updated_at")
 
-  auditoria      Auditoria       @relation(fields: [auditoriaId], references: [id])
-  manifestacoes  Manifestacao[]
-  recomendacoes  Recomendacao[]
+  auditoria     Auditoria      @relation(fields: [auditoriaId], references: [id])
+  manifestacoes Manifestacao[]
+  recomendacoes Recomendacao[]
 
   @@map("achados_auditoria")
 }
@@ -348,33 +348,47 @@ model Manifestacao {
 }
 
 model RelatorioAuditoria {
-  id           String    @id @default(uuid()) @db.Uuid
-  auditoriaId  String    @map("auditoria_id") @db.Uuid
-  tipo         String
-  conteudo     String?
-  dataEmissao  DateTime? @map("data_emissao")
-  assinadoPor  String?   @map("assinado_por") @db.Uuid
-  status       String
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
+  id          String    @id @default(uuid()) @db.Uuid
+  auditoriaId String    @map("auditoria_id") @db.Uuid
+  tipo        String
+  conteudo    String?
+  dataEmissao DateTime? @map("data_emissao")
+  assinadoPor String?   @map("assinado_por") @db.Uuid
+  status      String
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
-  auditoria      Auditoria       @relation(fields: [auditoriaId], references: [id])
-  recomendacoes  Recomendacao[]
+  auditoria     Auditoria      @relation(fields: [auditoriaId], references: [id])
+  recomendacoes Recomendacao[]
 
   @@map("relatorios_auditoria")
 }
 
+model RelatorioAnual {
+  id             String    @id @default(uuid()) @db.Uuid
+  ano            Int       @unique
+  conteudo       String?
+  status         String    @default("RASCUNHO")
+  dataEnvio      DateTime? @map("data_envio")
+  dataPublicacao DateTime? @map("data_publicacao")
+  geradoPor      String?   @map("gerado_por") @db.Uuid
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@map("relatorios_anuais")
+}
+
 model Recomendacao {
-  id              String    @id @default(uuid()) @db.Uuid
-  relatorioId     String    @map("relatorio_id") @db.Uuid
-  achadoId        String?   @map("achado_id") @db.Uuid
-  descricao       String
-  criticidade     String
-  prazo           DateTime
-  responsavelId   String    @map("responsavel_id") @db.Uuid
-  status          String
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
+  id            String   @id @default(uuid()) @db.Uuid
+  relatorioId   String   @map("relatorio_id") @db.Uuid
+  achadoId      String?  @map("achado_id") @db.Uuid
+  descricao     String
+  criticidade   String
+  prazo         DateTime
+  responsavelId String   @map("responsavel_id") @db.Uuid
+  status        String
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   relatorio    RelatorioAuditoria @relation(fields: [relatorioId], references: [id])
   achado       AchadoAuditoria?   @relation(fields: [achadoId], references: [id])
@@ -384,13 +398,13 @@ model Recomendacao {
 }
 
 model Providencia {
-  id              String   @id @default(uuid()) @db.Uuid
-  recomendacaoId  String   @map("recomendacao_id") @db.Uuid
-  descricao       String
-  data            DateTime @default(now())
-  autorId         String   @map("autor_id") @db.Uuid
-  evidenciaPath   String?  @map("evidencia_path")
-  createdAt       DateTime @default(now()) @map("created_at")
+  id             String   @id @default(uuid()) @db.Uuid
+  recomendacaoId String   @map("recomendacao_id") @db.Uuid
+  descricao      String
+  data           DateTime @default(now())
+  autorId        String   @map("autor_id") @db.Uuid
+  evidenciaPath  String?  @map("evidencia_path")
+  createdAt      DateTime @default(now()) @map("created_at")
 
   recomendacao Recomendacao @relation(fields: [recomendacaoId], references: [id])
 
@@ -399,12 +413,12 @@ model Providencia {
 
 // ── Ética e Sigilo ─────────────────────────────
 model DeclaracaoIndependencia {
-  id            String   @id @default(uuid()) @db.Uuid
-  usuarioId     String   @map("usuario_id") @db.Uuid
-  ano           Int
-  declaracao    String?
+  id             String   @id @default(uuid()) @db.Uuid
+  usuarioId      String   @map("usuario_id") @db.Uuid
+  ano            Int
+  declaracao     String?
   dataAssinatura DateTime @default(now()) @map("data_assinatura")
-  createdAt     DateTime @default(now()) @map("created_at")
+  createdAt      DateTime @default(now()) @map("created_at")
 
   usuario Usuario @relation(fields: [usuarioId], references: [id])
 
@@ -449,28 +463,28 @@ model LogAcessoSigiloso {
 
 // ── Consultorias ───────────────────────────────
 model SolicitacaoConsultoria {
-  id                  String   @id @default(uuid()) @db.Uuid
-  unidadeSolicitante  String   @map("unidade_solicitante")
-  tema                String
-  duvida              String
-  fundamentacao       String?
-  status              String
-  solicitanteId       String   @map("solicitante_id") @db.Uuid
-  createdAt           DateTime @default(now()) @map("created_at")
+  id                 String   @id @default(uuid()) @db.Uuid
+  unidadeSolicitante String   @map("unidade_solicitante")
+  tema               String
+  duvida             String
+  fundamentacao      String?
+  status             String
+  solicitanteId      String   @map("solicitante_id") @db.Uuid
+  createdAt          DateTime @default(now()) @map("created_at")
 
   @@map("solicitacoes_consultoria")
 }
 
 model Consultoria {
-  id              String    @id @default(uuid()) @db.Uuid
-  solicitacaoId   String?   @map("solicitacao_id") @db.Uuid
+  id              String   @id @default(uuid()) @db.Uuid
+  solicitacaoId   String?  @map("solicitacao_id") @db.Uuid
   tipo            String
   escopo          String?
-  horasUtilizadas Int?      @map("horas_utilizadas")
+  horasUtilizadas Int?     @map("horas_utilizadas")
   resultado       String?
-  equipeIds       Json?     @map("equipe_ids")
-  planoId         String?   @map("plano_id") @db.Uuid
-  createdAt       DateTime  @default(now()) @map("created_at")
+  equipeIds       Json?    @map("equipe_ids")
+  planoId         String?  @map("plano_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at")
 
   plano PlanoAuditoria? @relation(fields: [planoId], references: [id])
 
@@ -479,15 +493,15 @@ model Consultoria {
 
 // ── Qualidade ──────────────────────────────────
 model AvaliacaoQualidade {
-  id            String    @id @default(uuid()) @db.Uuid
+  id            String   @id @default(uuid()) @db.Uuid
   tipo          String
-  periodoInicio DateTime  @map("periodo_inicio")
-  periodoFim    DateTime  @map("periodo_fim")
+  periodoInicio DateTime @map("periodo_inicio")
+  periodoFim    DateTime @map("periodo_fim")
   resultado     String?
   nota          Float?
   status        String
-  homologadaPor String?   @map("homologada_por") @db.Uuid
-  createdAt     DateTime  @default(now()) @map("created_at")
+  homologadaPor String?  @map("homologada_por") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
 
   naoConformidades NaoConformidade[]
 
@@ -495,15 +509,15 @@ model AvaliacaoQualidade {
 }
 
 model NaoConformidade {
-  id               String   @id @default(uuid()) @db.Uuid
-  avaliacaoId      String   @map("avaliacao_id") @db.Uuid
-  descricao        String
-  normaReferencia  String?  @map("norma_referencia")
-  severidade       String
-  acaoCorretiva    String?  @map("acao_corretiva")
-  prazo            DateTime?
-  status           String
-  createdAt        DateTime @default(now()) @map("created_at")
+  id              String    @id @default(uuid()) @db.Uuid
+  avaliacaoId     String    @map("avaliacao_id") @db.Uuid
+  descricao       String
+  normaReferencia String?   @map("norma_referencia")
+  severidade      String
+  acaoCorretiva   String?   @map("acao_corretiva")
+  prazo           DateTime?
+  status          String
+  createdAt       DateTime  @default(now()) @map("created_at")
 
   avaliacao AvaliacaoQualidade @relation(fields: [avaliacaoId], references: [id])
 
@@ -524,21 +538,21 @@ model IndicadorQualidade {
 
 // ── Riscos e Competências ─────────────────────
 model Risco {
-  id           String   @id @default(uuid()) @db.Uuid
-  codigo       String
-  descricao    String
-  categoria    String?
-  causa        String?
-  evento       String?
-  consequencia String?
+  id            String   @id @default(uuid()) @db.Uuid
+  codigo        String
+  descricao     String
+  categoria     String?
+  causa         String?
+  evento        String?
+  consequencia  String?
   probabilidade Int
-  impacto      Int
-  nivel        String
-  estrategia   String?
-  planoAcao    String?  @map("plano_acao")
-  status       String
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  impacto       Int
+  nivel         String
+  estrategia    String?
+  planoAcao     String?  @map("plano_acao")
+  status        String
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   @@map("riscos")
 }
@@ -585,72 +599,72 @@ model DocumentoMetodologico {
 
 // ── Governança ────────────────────────────────
 model DeterminacaoExterna {
-  id               String    @id @default(uuid()) @db.Uuid
-  orgao            String
-  numero           String
-  descricao        String
-  dataRecebimento  DateTime  @default(now()) @map("data_recebimento")
-  prazoResposta    DateTime? @map("prazo_resposta")
-  status           String
-  createdAt        DateTime  @default(now()) @map("created_at")
+  id              String    @id @default(uuid()) @db.Uuid
+  orgao           String
+  numero          String
+  descricao       String
+  dataRecebimento DateTime  @default(now()) @map("data_recebimento")
+  prazoResposta   DateTime? @map("prazo_resposta")
+  status          String
+  createdAt       DateTime  @default(now()) @map("created_at")
 
   @@map("determinacoes_externas")
 }
 
 model RegistroFraude {
-  id                       String    @id @default(uuid()) @db.Uuid
-  auditoriaId              String?   @map("auditoria_id") @db.Uuid
-  descricao                String
-  classificacao            String
-  dataComunicacaoSuperior  DateTime? @map("data_comunicacao_superior")
-  dataComunicacaoTce       DateTime? @map("data_comunicacao_tce")
-  createdAt                DateTime  @default(now()) @map("created_at")
+  id                      String    @id @default(uuid()) @db.Uuid
+  auditoriaId             String?   @map("auditoria_id") @db.Uuid
+  descricao               String
+  classificacao           String
+  dataComunicacaoSuperior DateTime? @map("data_comunicacao_superior")
+  dataComunicacaoTce      DateTime? @map("data_comunicacao_tce")
+  createdAt               DateTime  @default(now()) @map("created_at")
 
   @@map("registros_fraude")
 }
 
 // ── Integrações ───────────────────────────────
 model Integracao {
-  id                String   @id @default(uuid()) @db.Uuid
-  nome              String
-  sistemaExterno    String   @map("sistema_externo")
-  tipo              String
-  protocolo         String
-  endpoint          String?
-  metodoAutenticacao String? @map("metodo_autenticacao")
-  frequencia        String?
-  status            String
-  healthStatus      String?  @map("health_status")
-  createdAt         DateTime @default(now()) @map("created_at")
+  id                 String   @id @default(uuid()) @db.Uuid
+  nome               String
+  sistemaExterno     String   @map("sistema_externo")
+  tipo               String
+  protocolo          String
+  endpoint           String?
+  metodoAutenticacao String?  @map("metodo_autenticacao")
+  frequencia         String?
+  status             String
+  healthStatus       String?  @map("health_status")
+  createdAt          DateTime @default(now()) @map("created_at")
 
   @@map("integracoes")
 }
 
 model AcaoCoordenada {
-  id               String    @id @default(uuid()) @db.Uuid
-  codigoSiaud      String    @map("codigo_siaud")
-  titulo           String
-  descricao        String?
-  metodologia      String?
-  dataAprovacaoCpa DateTime? @map("data_aprovacao_cpa")
-  prazoExecucao    DateTime? @map("prazo_execucao")
-  status           String
-  auditoriaId      String?   @map("auditoria_id") @db.Uuid
-  resultadoReportado Boolean  @default(false) @map("resultado_reportado")
-  createdAt        DateTime  @default(now()) @map("created_at")
+  id                 String    @id @default(uuid()) @db.Uuid
+  codigoSiaud        String    @map("codigo_siaud")
+  titulo             String
+  descricao          String?
+  metodologia        String?
+  dataAprovacaoCpa   DateTime? @map("data_aprovacao_cpa")
+  prazoExecucao      DateTime? @map("prazo_execucao")
+  status             String
+  auditoriaId        String?   @map("auditoria_id") @db.Uuid
+  resultadoReportado Boolean   @default(false) @map("resultado_reportado")
+  createdAt          DateTime  @default(now()) @map("created_at")
 
   @@map("acoes_coordenadas")
 }
 
 model LogIntegracao {
-  id            String   @id @default(uuid()) @db.Uuid
-  integracaoId  String   @map("integracao_id") @db.Uuid
-  status        String
-  requisicao    Json?
-  resposta      Json?
-  erro          String?
-  duracaoMs     Int?     @map("duracao_ms")
-  createdAt     DateTime @default(now()) @map("created_at")
+  id           String   @id @default(uuid()) @db.Uuid
+  integracaoId String   @map("integracao_id") @db.Uuid
+  status       String
+  requisicao   Json?
+  resposta     Json?
+  erro         String?
+  duracaoMs    Int?     @map("duracao_ms")
+  createdAt    DateTime @default(now()) @map("created_at")
 
   @@map("logs_integracao")
 }
