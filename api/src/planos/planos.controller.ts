@@ -27,7 +27,7 @@ export class PlanosController {
   }
 
   @Get('planos')
-  @Roles('P01', 'P02', 'P03')
+  @Roles('P01', 'P02', 'P03', 'P10')
   @ApiOperation({ summary: 'Listar planos' })
   findAll(@Query('tipo') tipo?: string, @Query('ano') ano?: string, @Query('status') status?: string) {
     return this.service.findAll({
@@ -38,7 +38,7 @@ export class PlanosController {
   }
 
   @Get('planos/:id')
-  @Roles('P01', 'P02', 'P03')
+  @Roles('P01', 'P02', 'P03', 'P10')
   @ApiOperation({ summary: 'Obter plano por ID' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.service.findOne(id);
@@ -106,7 +106,7 @@ export class PlanosController {
   }
 
   @Get('forca-trabalho')
-  @Roles('P01', 'P02')
+  @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Listar força de trabalho' })
   listarForcaTrabalho(@Query('plano_id') planoId?: string, @Query('ano') ano?: string) {
     return this.service.listarForcaTrabalho(planoId, ano ? parseInt(ano, 10) : undefined);

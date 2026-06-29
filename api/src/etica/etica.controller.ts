@@ -37,7 +37,7 @@ export class EticaController {
   // ── Impedimentos ──────────────────────────────
 
   @Post('impedimentos')
-  @Roles('P01', 'P02')
+  @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Registrar impedimento (P01, P02)' })
   criarImpedimento(@Req() req: RequestWithUser, @Body() dto: CreateImpedimentoDto) {
     return this.service.criarImpedimento(req.user.sub, dto);

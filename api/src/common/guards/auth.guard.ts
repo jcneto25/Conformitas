@@ -7,6 +7,7 @@ import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 interface JwtPayload {
   sub: string;
   email: string;
+  roles: string[];
   iat?: number;
   exp?: number;
 }
@@ -26,6 +27,12 @@ export class AuthGuard implements CanActivate {
     if (isPublic) return true;
 
     const request = context.switchToHttp().getRequest<Request>();
+
+    // Ignorar preflight CORS (OPTIONS) — o middleware CORS já trata antes do guard
+    if (request.method === 'OPTIONS') {
+      return true;
+    }
+
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
@@ -34,7 +41,15 @@ export class AuthGuard implements CanActivate {
 
     try {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(token);
-      request['user'] = payload;
+
+      // Garantir que roles seja sempre um array
+      const userPayload = {
+        sub: payload.sub,
+        email: payload.email,
+        roles: Array.isArray(payload.roles) ? payload.roles : [],
+      };
+
+      request['user'] = userPayload;
       return true;
     } catch {
       throw new UnauthorizedException('Token inválido ou expirado');
