@@ -198,12 +198,12 @@
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
 | T-091 | Criar migrations: `recomendacoes`, `providencias` | dev | ❌ | T-083 | 2 | ✅ |
-| T-092 | Implementar RecomendacaoService: CRUD + workflow Pendente→Cumprida/Vencida | dev | ❌ | T-091 | 5 | ⏳ |
-| T-093 | Implementar ProvidenciaService (P05) | dev | ⚠️ | T-091 | 3 | ⏳ |
-| T-094 | Implementar alertas vencimento + escalonamento 30 dias (cron job) | dev | ❌ | T-092 | 4 | ⏳ |
+| T-092 | Implementar RecomendacaoService: CRUD + workflow Pendente→Cumprida/Vencida | dev | ❌ | T-091 | 5 | ✅ |
+| T-093 | Implementar ProvidenciaService (P05) | dev | ⚠️ | T-091 | 3 | ✅ |
+| T-094 | Implementar alertas vencimento + escalonamento 30 dias (cron job) | dev | ❌ | T-092 | 4 | ✅ |
 | T-095 | Tela PainelMonitoramento (P01, P06): cards status, vencidas | dev | ❌ | T-006,T-092 | 5 | ✅ |
-| T-096 | Tela RecomendacaoList + ProvidenciaForm (P05) | dev | ❌ | T-093,T-095 | 4 | ⏳ |
-| T-097 | Testes: workflow, vencimento, escalonamento, multi-tenant P05/P06 | qa | ❌ | T-092,T-093,T-094 | 5 | ⏳ |
+| T-096 | Tela RecomendacaoList + ProvidenciaForm (P05) | dev | ❌ | T-093,T-095 | 4 | ✅ |
+| T-097 | Testes: workflow, vencimento, escalonamento, multi-tenant P05/P06 | qa | ❌ | T-092,T-093,T-094 | 5 | ✅ |
 
 **PRP-008 total: 28h**
 
@@ -211,11 +211,11 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-098 | Criar migrations: `solicitacoes_consultoria`, `consultorias` | dev | ❌ | T-063 | 1 | ⏳ |
-| T-099 | Implementar SolicitacaoService + controller (P05) | dev | ❌ | T-098 | 3 | ⏳ |
-| T-100 | Implementar ConsultoriaService: aceitação, registro, termo cogestão | dev | ❌ | T-098 | 4 | ⏳ |
+| T-098 | Criar migrations: `solicitacoes_consultoria`, `consultorias` | dev | ❌ | T-063 | 1 | ✅ |
+| T-099 | Implementar SolicitacaoService + controller (P05) | dev | ❌ | T-098 | 3 | ✅ |
+| T-100 | Implementar ConsultoriaService: aceitação, registro, termo cogestão | dev | ❌ | T-098 | 4 | ✅ |
 | T-101 | Tela SolicitacaoForm (P05) + ConsultoriaList (P01) | dev | ❌ | T-006,T-099 | 4 | ✅ |
-| T-102 | Testes: workflow, verificação horas PAA, termo cogestão | qa | ❌ | T-099,T-100 | 3 | ⏳ |
+| T-102 | Testes: workflow, verificação horas PAA, termo cogestão | qa | ❌ | T-099,T-100 | 3 | ✅ |
 
 **PRP-010 total: 15h**
 
@@ -274,7 +274,7 @@
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
 | T-124 | Criar migrations: `integracoes`, `acoes_coordenadas`, `logs_integracao` | dev | ❌ | T-007 | 2 | ⏳ |
-| T-125 | Implementar DashboardService: queries agregadas PAA, execução, recomendações | dev | ❌ | T-064,T-045,T-092 | 5 | ⏳ |
+| T-125 | Implementar DashboardService: queries agregadas PAA, execução, recomendações | dev | ❌ | T-064,T-045,T-092 | 5 | ✅ |
 | T-126 | Implementar export PDF/XLSX para dashboards | dev | ❌ | T-125 | 3 | ⏳ |
 | T-127 | Implementar IntegracaoService: catálogo, health check, teste conectividade | dev | ✅ | T-124 | 4 | ⏳ |
 | T-128 | Implementar webhook Ações Coordenadas SIAUD-Jud | dev | ✅ | T-124 | 4 | ⏳ |

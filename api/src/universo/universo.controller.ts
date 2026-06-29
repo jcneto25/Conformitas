@@ -12,14 +12,14 @@ export class UniversoController {
   constructor(private readonly service: UniversoService) {}
 
   @Post()
-  @Roles('P01', 'P02')
+  @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Criar item no universo auditável (P01, P02)' })
   create(@Body() dto: CreateUniversoDto) {
     return this.service.create(dto);
   }
 
   @Get()
-  @Roles('P01', 'P02')
+  @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Listar universo auditável (P01, P02)' })
   @ApiQuery({ name: 'tipo', required: false })
   @ApiQuery({ name: 'ativo', required: false })
@@ -33,7 +33,7 @@ export class UniversoController {
   }
 
   @Get('matriz-priorizacao')
-  @Roles('P01', 'P02')
+  @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Gerar matriz de priorização (P01, P02)' })
   @ApiQuery({ name: 'horas_disponiveis', required: false })
   matrizPriorizacao(@Query('horas_disponiveis') horas?: string) {
@@ -41,14 +41,14 @@ export class UniversoController {
   }
 
   @Get(':id')
-  @Roles('P01', 'P02')
+  @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Obter item do universo por ID (P01, P02)' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.service.findOne(id);
   }
 
   @Patch(':id')
-  @Roles('P01', 'P02')
+  @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Atualizar item do universo (P01, P02)' })
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateUniversoDto) {
     return this.service.update(id, dto);

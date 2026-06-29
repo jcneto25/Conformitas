@@ -8,16 +8,16 @@ async function main() {
 
   // ── Perfis (P01-P10) ──────────────────────────
   const perfis = [
-    { codigo: 'P01', nome: 'Auditor-Chefe', descricao: 'Chefe da AUDIN', nivelAcesso: 'AUDITORIA' },
-    { codigo: 'P02', nome: 'Auditor', descricao: 'Auditor interno', nivelAcesso: 'AUDITORIA' },
-    { codigo: 'P03', nome: 'Presidente', descricao: 'Presidente do TJCE', nivelAcesso: 'INSTITUCIONAL' },
-    { codigo: 'P04', nome: 'Órgão Colegiado', descricao: 'Membros do colegiado', nivelAcesso: 'INSTITUCIONAL' },
-    { codigo: 'P05', nome: 'Gestor Unidade Auditada', descricao: 'Gestor da unidade sob auditoria', nivelAcesso: 'UNIDADE' },
-    { codigo: 'P06', nome: 'Gestor 2ª Linha', descricao: 'Gestor de controles internos', nivelAcesso: 'UNIDADE' },
-    { codigo: 'P07', nome: 'Avaliador Externo', descricao: 'Avaliador externo do PQAUD', nivelAcesso: 'AVALIACAO' },
-    { codigo: 'P08', nome: 'Comitê SIAUD-Jud', descricao: 'Comitê de coordenação', nivelAcesso: 'INSTITUCIONAL' },
-    { codigo: 'P09', nome: 'CPA', descricao: 'Comissão de Auditoria', nivelAcesso: 'AUDITORIA' },
-    { codigo: 'P10', nome: 'Administrador', descricao: 'Administrador do sistema', nivelAcesso: 'SISTEMA' },
+    { codigo: 'P01', nome: 'Auditor-Chefe', descricao: 'Chefe da AUDIN', nivelAcesso: 'AUDITORIA', permissoes: ['AUDITORIA_READ', 'AUDITORIA_WRITE', 'PLANO_READ', 'PLANO_WRITE', 'RELATORIO_READ', 'RELATORIO_WRITE', 'USUARIO_READ', 'PERFIL_READ', 'ETICA_READ', 'ETICA_WRITE'] },
+    { codigo: 'P02', nome: 'Auditor', descricao: 'Auditor interno', nivelAcesso: 'AUDITORIA', permissoes: ['AUDITORIA_READ', 'EVIDENCIA_READ', 'EVIDENCIA_WRITE', 'PAPEL_TRABALHO_READ', 'PAPEL_TRABALHO_WRITE'] },
+    { codigo: 'P03', nome: 'Presidente', descricao: 'Presidente do TJCE', nivelAcesso: 'INSTITUCIONAL', permissoes: ['PLANO_READ', 'PLANO_APROVAR', 'PLANO_PUBLICAR', 'RELATORIO_READ'] },
+    { codigo: 'P04', nome: 'Órgão Colegiado', descricao: 'Membros do colegiado', nivelAcesso: 'INSTITUCIONAL', permissoes: ['PLANO_READ', 'PLANO_APROVAR', 'RELATORIO_READ'] },
+    { codigo: 'P05', nome: 'Gestor Unidade Auditada', descricao: 'Gestor da unidade sob auditoria', nivelAcesso: 'UNIDADE', permissoes: ['AUDITORIA_READ', 'MANIFESTACAO_WRITE', 'RECOMENDACAO_READ', 'REQUISICAO_READ'] },
+    { codigo: 'P06', nome: 'Gestor 2ª Linha', descricao: 'Gestor de controles internos', nivelAcesso: 'UNIDADE', permissoes: ['AUDITORIA_READ', 'RECOMENDACAO_READ', 'RISCO_READ'] },
+    { codigo: 'P07', nome: 'Avaliador Externo', descricao: 'Avaliador externo do PQAUD', nivelAcesso: 'AVALIACAO', permissoes: ['AVALIACAO_READ', 'AVALIACAO_WRITE', 'NC_READ', 'NC_WRITE'] },
+    { codigo: 'P08', nome: 'Comitê SIAUD-Jud', descricao: 'Comitê de coordenação', nivelAcesso: 'INSTITUCIONAL', permissoes: ['INTEGRACAO_READ', 'PLANO_READ', 'RELATORIO_READ'] },
+    { codigo: 'P09', nome: 'CPA', descricao: 'Comissão de Auditoria', nivelAcesso: 'AUDITORIA', permissoes: ['AUDITORIA_READ', 'RELATORIO_READ', 'RECOMENDACAO_READ'] },
+    { codigo: 'P10', nome: 'Administrador', descricao: 'Administrador do sistema', nivelAcesso: 'SISTEMA', permissoes: ['SISTEMA_ADMIN', 'USUARIO_READ', 'USUARIO_WRITE', 'PERFIL_READ', 'PERFIL_WRITE', 'CONFIG_READ', 'CONFIG_WRITE'] },
   ];
 
   for (const perfil of perfis) {

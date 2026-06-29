@@ -1,16 +1,19 @@
 import { Component } from '@angular/core';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatMenuModule } from '@angular/material/menu';
+import { AuthService } from '../services/auth.service';
 
 interface NavItem {
   label: string;
   icon: string;
   route: string;
+  roles?: string[];
 }
 
 @Component({
@@ -18,17 +21,16 @@ interface NavItem {
   standalone: true,
   imports: [
     RouterModule,
-    RouterOutlet,
     MatToolbarModule,
     MatSidenavModule,
     MatListModule,
     MatIconModule,
     MatButtonModule,
     MatDividerModule,
+    MatMenuModule,
   ],
   template: `
     <mat-sidenav-container class="layout-container">
-      <!-- Sidebar -->
       <mat-sidenav mode="side" opened class="sidebar">
         <div class="sidebar-header">
           <h2>CONFORMITAS</h2>
@@ -36,7 +38,7 @@ interface NavItem {
         </div>
         <mat-divider />
         <mat-nav-list>
-          @for (item of navItems; track item.route) {
+          @for (item of visibleNavItems(); track item.route) {
             <a mat-list-item [routerLink]="item.route" routerLinkActive="active-link">
               <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
               <span matListItemTitle>{{ item.label }}</span>
@@ -45,17 +47,29 @@ interface NavItem {
         </mat-nav-list>
       </mat-sidenav>
 
-      <!-- Content -->
       <mat-sidenav-content>
         <mat-toolbar class="topbar">
           <span>CONFORMITAS 3.0 — AUDIN/TJCE</span>
           <span class="toolbar-spacer"></span>
-          <button mat-icon-button>
+          <span class="user-name">{{ auth.user()?.nome }}</span>
+          <button mat-icon-button [matMenuTriggerFor]="menu">
             <mat-icon>account_circle</mat-icon>
           </button>
-          <button mat-icon-button (click)="logout()">
-            <mat-icon>logout</mat-icon>
-          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item disabled>
+              <mat-icon>badge</mat-icon>
+              {{ auth.user()?.cargo }}
+            </button>
+            <button mat-menu-item disabled>
+              <mat-icon>group</mat-icon>
+              {{ auth.userRoles() }}
+            </button>
+            <mat-divider />
+            <button mat-menu-item (click)="auth.logout()">
+              <mat-icon>logout</mat-icon>
+              Sair
+            </button>
+          </mat-menu>
         </mat-toolbar>
         <main class="main-content">
           <router-outlet />
@@ -108,6 +122,12 @@ interface NavItem {
         flex: 1 1 auto;
       }
 
+      .user-name {
+        font-size: 0.85rem;
+        margin-right: 0.5rem;
+        opacity: 0.85;
+      }
+
       .main-content {
         padding: 2rem;
         background: #f5f5f5;
@@ -117,22 +137,31 @@ interface NavItem {
   ],
 })
 export class MainLayoutComponent {
-  navItems: NavItem[] = [
+  protected readonly auth: AuthService;
+
+  readonly allNavItems: NavItem[] = [
     { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
-    { label: 'Planos / Aprovação', icon: 'check_circle', route: '/planos-aprovacao' },
+    { label: 'Planos / Aprovação', icon: 'check_circle', route: '/planos-aprovacao', roles: ['P01', 'P03'] },
+    { label: 'Monitoramento', icon: 'monitor_heart', route: '/painel-monitoramento', roles: ['P01', 'P06'] },
+    { label: 'Recomendações', icon: 'recommend', route: '/recomendacoes' },
     { label: 'Auditorias', icon: 'search', route: '/auditorias' },
     { label: 'Matriz Priorização', icon: 'priority_high', route: '/matriz-priorizacao' },
-    { label: 'Perfis', icon: 'admin_panel_settings', route: '/perfis' },
-    { label: 'Mandatos', icon: 'gavel', route: '/mandatos' },
-    { label: 'Configurações', icon: 'settings', route: '/configuracoes' },
+    { label: 'Perfis', icon: 'admin_panel_settings', route: '/perfis', roles: ['P10'] },
+    { label: 'Mandatos', icon: 'gavel', route: '/mandatos', roles: ['P01', 'P03', 'P04'] },
+    { label: 'Configurações', icon: 'settings', route: '/configuracoes', roles: ['P10'] },
     { label: 'Achados', icon: 'warning', route: '/achados' },
     { label: 'Relatórios', icon: 'picture_as_pdf', route: '/relatorios' },
     { label: 'Relatório Anual', icon: 'insights', route: '/relatorios-anuais' },
-    { label: 'Usuários', icon: 'people', route: '/usuarios' },
+    { label: 'Usuários', icon: 'people', route: '/usuarios', roles: ['P10'] },
   ];
 
-  logout() {
-    // Placeholder — será implementado no PRP-001
-    console.log('Logout pendente — PRP-001');
+  constructor(auth: AuthService) {
+    this.auth = auth;
+  }
+
+  visibleNavItems() {
+    return this.allNavItems.filter(
+      (item) => !item.roles || this.auth.hasAnyRole(item.roles),
+    );
   }
 }

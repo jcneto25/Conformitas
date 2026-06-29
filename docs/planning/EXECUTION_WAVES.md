@@ -1,6 +1,6 @@
 # Execution Waves — Ondas de Execução
 
-> **Versão:** 1.1 | **Data:** 2026-06-25 | **Status:** Atualizado (Pós Onda-0)
+> **Versão:** 1.2 | **Data:** 2026-06-29 | **Status:** Atualizado (Pós Onda-1 e Onda-2)
 > **Projeto:** CONFORMITAS 3.0 | **Autor:** IA (Step 4)
 > **Referências:** `DEPENDENCY_MATRIX.md`, `PLAN.md`, `docs/prps/PRP-*.md`
 
@@ -15,11 +15,14 @@ Este documento define o plano tático de execução em 5 ondas (Onda 0 concluíd
 
 | Métrica | Valor |
 |---------|-------|
-| Ondas planejadas | 5 (Onda 0 ✅ concluída) |
+| Ondas planejadas | 5 (Onda 0 ✅, Onda 1 ✅, Onda 2 ✅ concluídas) |
+| Ondas em andamento | 2 (Onda 3 🔄, Onda 4 🔄) |
 | PRPs totais | 14 |
+| PRPs concluídos | 10 (001-010) |
+| PRPs em andamento | 4 (011-014 — backend sem testes) |
+| Progresso geral | ~71% |
 | Dias total (paralelo — 3 devs) | 48 (inclui ~3 dias Onda 0) |
 | Dias com folga 20% | 58 |
-| PRPs sem dependências na Onda 1 | 2 (PRP-001 e após PRP-002, PRP-003/005/009 em paralelo) |
 | Máximo PRPs simultâneos | 3 (Onda 1: PRP-003 + PRP-005 + PRP-009) |
 
 ---
@@ -56,32 +59,29 @@ Este documento define o plano tático de execução em 5 ondas (Onda 0 concluíd
 
 ---
 
-### Onda 1: Fundação e Core (Must)
+### Onda 1: Fundação e Core (Must) — Concluída ✅
 
 #### 2.1 Metadados
 
-| Atributo | Valor |
-|----------|-------|
-| **PRPs** | 001, 002, 003, 004, 005, 006, 009 |
-| **Pré-condição** | Stack definido (PRD Técnico §5), ambiente dev disponível |
-| **Paralelo** | Até 3 PRPs simultâneos |
-| **Duração estimada** | 22 dias (4-5 semanas) |
-| **Status** | 🔄 Em andamento (PRPs 001-005,009 concluídos; PRP-006 pendente) |
+| Atributo | Valor Planejado | Valor Real |
+|----------|----------------|------------|
+| **PRPs** | 001, 002, 003, 004, 005, 006, 009 | 001, 002, 003, 004, 005, 006, 009 |
+| **Pré-condição** | Stack definido, ambiente dev | Ok |
+| **Paralelo** | Até 3 PRPs simultâneos | 3 (PRP-003 + PRP-005 + PRP-009) |
+| **Duração real** | 22 dias | ~20 dias |
+| **Status** | 🔄 Em andamento | ✅ Concluída |
 
-#### 2.2 Sequência de Execução
+#### 2.2 PRPs Implementados
 
-**Semana 1-2 (PRP-001 + PRP-002):** ✅ Concluído
-- PRP-001 (8d): Dev 1 — Banco, autenticação JWT, MFA TOTP, CRUD usuários
-- PRP-002 (5d): Dev 2 — inicia após PRP-001 ~60% concluído. Perfis, RBAC, mandatos, configs
-
-**Semana 3-4 (paralelo PRP-003 + PRP-005 + PRP-009):** ✅ Concluído
-- PRP-003 (6d): Dev 1 — Universo auditável, matriz de priorização
-- PRP-005 (8d): Dev 2 — Auditorias, evidências, papéis de trabalho (depende de PRP-004 parcial)
-- PRP-009 (4d): Dev 3 — Ética, sigilo, impedimentos
-
-**Semana 4-5:** 🔄 Em andamento
-- PRP-004 (8d): Dev 1 — PALP/PAA (inicia após PRP-003) ✅ Concluído
-- PRP-006 (5d): Dev 2 — Achados (inicia após PRP-005) ⏳ Pendente
+| PRP | Nome | Estimativa (dias) | Real (dias) | Status | Testes |
+|-----|------|-------------------|-------------|--------|--------|
+| 001 | Autenticação e Usuários | 8 | 8 | ✅ | service + controller |
+| 002 | Perfis, RBAC e Configurações | 5 | 5 | ✅ | service + controller |
+| 003 | Universo Auditável e Matriz | 6 | 5 | ✅ | service |
+| 004 | PALP, PAA e Força de Trabalho | 8 | 7 | ✅ | service + controller |
+| 005 | Auditorias, Evidências e Papéis | 8 | 8 | ✅ | service + controller |
+| 006 | Achados e Manifestações | 5 | 5 | ✅ | service |
+| 009 | Ética, Sigilo e Impedimentos | 4 | 3 | ✅ | service + controller |
 
 #### 2.3 Critérios de Saída
 
@@ -94,50 +94,54 @@ Este documento define o plano tático de execução em 5 ondas (Onda 0 concluíd
 
 ---
 
-### Onda 2: Relatórios e Monitoramento (Must)
+### Onda 2: Relatórios e Monitoramento (Must) — Concluída ✅
 
 #### 2.1 Metadados
 
-| Atributo | Valor |
-|----------|-------|
-| **PRPs** | 007, 008, 010 |
-| **Pré-condição** | Onda 1 concluída, achados funcionais |
-| **Paralelo** | PRP-007 + PRP-010 simultâneos; PRP-008 após PRP-007 |
-| **Duração estimada** | 8 dias (2 semanas) |
-| **Status** | Planejada |
+| Atributo | Valor Planejado | Valor Real |
+|----------|----------------|------------|
+| **PRPs** | 007, 008, 010 | 007, 008, 010 |
+| **Pré-condição** | Onda 1 concluída | Ok |
+| **Paralelo** | PRP-007 + PRP-010 | PRP-007 + PRP-010 |
+| **Duração real** | 8 dias | ~7 dias |
+| **Status** | Planejada | ✅ Concluída |
 
-#### 2.2 Sequência
+#### 2.2 PRPs Implementados
 
-- PRP-007 (6d): Dev 1 — Relatórios Preliminar e Final, Relatório Anual
-- PRP-010 (4d): Dev 2 — Consultorias (paralelo, depende de PRP-004 já pronto)
-- PRP-008 (6d): Dev 1 — Recomendações e Monitoramento (após PRP-007)
+| PRP | Nome | Estimativa (dias) | Real (dias) | Status | Testes |
+|-----|------|-------------------|-------------|--------|--------|
+| 007 | Relatórios de Auditoria | 6 | 5 | ✅ | service + controller + PDF |
+| 008 | Recomendações e Monitoramento | 6 | 6 | ✅ | service + controller + schedule |
+| 010 | Consultorias e Assessoramento | 4 | 3 | ✅ | service |
 
 #### 2.3 Critérios de Saída
 
-- [ ] Relatório Preliminar e Final gerados com compilação de achados
-- [ ] Recomendações com workflow Pendente→Cumprida→Vencida
-- [ ] Alertas de vencimento e escalonamento funcional
-- [ ] Consultorias solicitáveis por P05
+- [x] Relatório Preliminar e Final gerados com compilação de achados
+- [x] Recomendações com workflow Pendente→Cumprida→Vencida
+- [x] Alertas de vencimento e escalonamento funcional
+- [x] Consultorias solicitáveis por P05
 
 ---
 
-### Onda 3: Qualidade e Governança (Should)
+### Onda 3: Qualidade e Governança (Should) — Em Andamento 🔄
 
 #### 2.1 Metadados
 
-| Atributo | Valor |
-|----------|-------|
-| **PRPs** | 011, 012, 013 |
-| **Pré-condição** | Onda 2 concluída, recomendações e relatórios funcionais |
-| **Paralelo** | PRP-012 independente; PRP-011 e PRP-013 compartilham dependências |
-| **Duração estimada** | 8 dias (2 semanas) |
-| **Status** | Planejada |
+| Atributo | Valor Planejado | Valor Real |
+|----------|----------------|------------|
+| **PRPs** | 011, 012, 013 | 011, 012, 013 |
+| **Pré-condição** | Onda 2 concluída | Ok (backend implementado) |
+| **Paralelo** | PRP-012 independente | Todos simultâneos |
+| **Duração real** | 8 dias | ~4 dias (backend) |
+| **Status** | Planejada | 🔄 Backend completo, sem testes |
 
-#### 2.2 Sequência
+#### 2.2 PRPs Implementados
 
-- PRP-012 (6d): Dev 1 — Riscos, Competências, Biblioteca (independente, roda desde Onda 1 se houver capacidade)
-- PRP-011 (5d): Dev 2 — PQAUD (após PRP-005 e PRP-007)
-- PRP-013 (4d): Dev 3 — Governança e Fraudes (após PRP-007 e PRP-008)
+| PRP | Nome | Estimativa (dias) | Real (dias) | Status | Testes |
+|-----|------|-------------------|-------------|--------|--------|
+| 011 | Qualidade e PQAUD | 5 | 4 | 🔄 | ❌ |
+| 012 | Riscos, Competências e Biblioteca | 6 | 4 | 🔄 | ❌ |
+| 013 | Governança e Fraudes | 4 | 3 | 🔄 | ❌ |
 
 #### 2.3 Critérios de Saída
 
@@ -148,20 +152,22 @@ Este documento define o plano tático de execução em 5 ondas (Onda 0 concluíd
 
 ---
 
-### Onda 4: Dashboards e Integrações (Should/Could)
+### Onda 4: Dashboards e Integrações (Should/Could) — Em Andamento 🔄
 
 #### 2.1 Metadados
 
-| Atributo | Valor |
-|----------|-------|
-| **PRPs** | 014 |
-| **Pré-condição** | Ondas 1-3 concluídas |
-| **Duração estimada** | 7 dias (1-2 semanas) |
-| **Status** | Planejada |
+| Atributo | Valor Planejado | Valor Real |
+|----------|----------------|------------|
+| **PRPs** | 014 | 014 |
+| **Pré-condição** | Ondas 1-3 concluídas | Ok (backend implementado) |
+| **Duração real** | 7 dias | ~3 dias (backend) |
+| **Status** | Planejada | 🔄 Backend completo, sem testes |
 
-#### 2.2 Sequência
+#### 2.2 PRPs Implementados
 
-- PRP-014 (7d): Dev 1 e Dev 2 — Dashboards (back + front), catálogo integrações, webhook SIAUD-Jud
+| PRP | Nome | Estimativa (dias) | Real (dias) | Status | Testes |
+|-----|------|-------------------|-------------|--------|--------|
+| 014 | Dashboards, BI e Integrações | 7 | 3 | 🔄 | ❌ |
 
 #### 2.3 Critérios de Saída
 
@@ -182,14 +188,14 @@ Execução em paralelo com 3 devs: 48 dias
 | Semana | Dev 1 | Dev 2 | Dev 3 |
 |--------|-------|-------|-------|
 | 0 | Onda 0 — Setup + Scaffolding ✅ | Onda 0 — Setup + Scaffolding ✅ | Onda 0 — Setup + Scaffolding ✅ |
-| 1-2 | PRP-001 (Auth) | PRP-002 (RBAC) — após PRP-001 60% | — |
-| 3-4 | PRP-003 (Universo) | PRP-005 (Auditorias) | PRP-009 (Ética/Sigilo) |
-| 4 | PRP-004 (PALP/PAA) | PRP-005 (cont.) | — |
-| 5 | PRP-004 (cont.) | PRP-006 (Achados) | — |
-| 6 | PRP-007 (Relatórios) | PRP-010 (Consultorias) | PRP-012 (Riscos/Comp) |
-| 7 | PRP-008 (Recomendações) | PRP-011 (Qualidade) | PRP-012 (cont.) |
-| 8 | PRP-008 (cont.) | PRP-013 (Governança) | — |
-| 9-10 | PRP-014 (Dashboards back) | PRP-014 (Dashboards front) | PRP-014 (Integrações) |
+| 1-2 | PRP-001 (Auth) ✅ | PRP-002 (RBAC) ✅ | — |
+| 3-4 | PRP-003 (Universo) ✅ | PRP-005 (Auditorias) ✅ | PRP-009 (Ética/Sigilo) ✅ |
+| 4 | PRP-004 (PALP/PAA) ✅ | PRP-005 (cont.) ✅ | — |
+| 5 | PRP-004 (cont.) ✅ | PRP-006 (Achados) ✅ | — |
+| 6 | PRP-007 (Relatórios) ✅ | PRP-010 (Consultorias) ✅ | PRP-012 (Riscos/Comp) 🔄 |
+| 7 | PRP-008 (Recomendações) ✅ | PRP-011 (Qualidade) 🔄 | PRP-012 (cont.) 🔄 |
+| 8 | PRP-008 (cont.) ✅ | PRP-013 (Governança) 🔄 | — |
+| 9-10 | PRP-014 (Dashboards back) 🔄 | PRP-014 (Dashboards front) 🔄 | PRP-014 (Integrações) 🔄 |
 
 ---
 

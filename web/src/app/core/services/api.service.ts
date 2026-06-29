@@ -25,4 +25,10 @@ export class ApiService {
       this.http.get<any[]>(`${API}/achados`, { params }),
     );
   }
+
+  getRecomendacoes(params?: { status?: string }) {
+    return firstValueFrom(
+      this.http.get<any[]>(`${API}/recomendacoes`, { params }),
+    );
+  }
 }

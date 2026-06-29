@@ -2,17 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
-
-interface LoginResponse {
-  access_token: string;
-  refresh_token: string;
-  mfa_required?: boolean;
-  session_token?: string;
-}
-
-const API = 'http://localhost:3001/api/v1';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -61,7 +51,7 @@ export class LoginComponent {
 
   constructor(
     private readonly router: Router,
-    private readonly http: HttpClient,
+    private readonly auth: AuthService,
   ) {}
 
   async onSubmit() {
@@ -69,19 +59,12 @@ export class LoginComponent {
     this.error = '';
 
     try {
-      const res = await firstValueFrom(
-        this.http.post<LoginResponse>(`${API}/auth/login`, {
-          email: this.email,
-          senha: this.senha,
-        }),
-      );
+      const res = await this.auth.login(this.email, this.senha);
 
       if (res.mfa_required) {
         localStorage.setItem('session_token', res.session_token!);
         this.router.navigate(['/mfa']);
-      } else if (res.access_token) {
-        localStorage.setItem('access_token', res.access_token);
-        localStorage.setItem('refresh_token', res.refresh_token);
+      } else {
         this.router.navigate(['/']);
       }
     } catch (err: any) {

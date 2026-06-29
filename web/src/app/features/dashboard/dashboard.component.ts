@@ -43,8 +43,12 @@ import { ApiService } from '../../core/services/api.service';
           <mat-card-title>Recomendações em Monitoramento</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <p class="metric">—</p>
-          <p class="hint stub">Stub — PRP-008 pendente</p>
+          @if (loadingRecomendacoes) {
+            <mat-spinner diameter="24" />
+          } @else {
+            <p class="metric">{{ recomendacoesMonitoradas }}</p>
+            <p class="hint">de {{ totalRecomendacoes }} recomendações</p>
+          }
         </mat-card-content>
       </mat-card>
 
@@ -95,11 +99,14 @@ import { ApiService } from '../../core/services/api.service';
 export class DashboardComponent implements OnInit {
   loadingAuditorias = true;
   loadingAchados = true;
+  loadingRecomendacoes = true;
   loadingPlanos = true;
   auditoriasEmExecucao = 0;
   totalAuditorias = 0;
   achadosPendentes = 0;
   totalAchados = 0;
+  recomendacoesMonitoradas = 0;
+  totalRecomendacoes = 0;
   planosPublicados = 0;
   totalPlanos = 0;
 
@@ -128,6 +135,18 @@ export class DashboardComponent implements OnInit {
       this.totalAchados = 0;
     } finally {
       this.loadingAchados = false;
+    }
+
+    try {
+      const recomendacoes = await this.api.getRecomendacoes();
+      this.totalRecomendacoes = recomendacoes.length;
+      this.recomendacoesMonitoradas = recomendacoes.filter(
+        (r) => r.status === 'PENDENTE' || r.status === 'EM_ANDAMENTO',
+      ).length;
+    } catch {
+      this.totalRecomendacoes = 0;
+    } finally {
+      this.loadingRecomendacoes = false;
     }
 
     try {

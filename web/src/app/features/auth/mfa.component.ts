@@ -2,16 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
-
-interface MfaResponse {
-  access_token: string;
-  refresh_token: string;
-  expires_in: number;
-}
-
-const API = 'http://localhost:3001/api/v1';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-mfa',
@@ -61,7 +52,7 @@ export class MfaComponent {
 
   constructor(
     private readonly router: Router,
-    private readonly http: HttpClient,
+    private readonly auth: AuthService,
   ) {}
 
   async onSubmit() {
@@ -71,16 +62,7 @@ export class MfaComponent {
     const sessionToken = localStorage.getItem('session_token');
 
     try {
-      const res = await firstValueFrom(
-        this.http.post<MfaResponse>(`${API}/auth/mfa/verify`, {
-          session_token: sessionToken,
-          totp_code: this.totp,
-        }),
-      );
-
-      localStorage.removeItem('session_token');
-      localStorage.setItem('access_token', res.access_token);
-      localStorage.setItem('refresh_token', res.refresh_token);
+      await this.auth.verifyMfa(sessionToken!, this.totp);
       this.router.navigate(['/']);
     } catch (err: any) {
       this.error = err?.error?.message || 'Código TOTP inválido';

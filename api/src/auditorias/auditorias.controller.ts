@@ -26,14 +26,14 @@ export class AuditoriasController {
   }
 
   @Get('auditorias')
-  @Roles('P01', 'P02')
+  @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Listar auditorias' })
   findAll(@Query('status') status?: string, @Query('unidade') unidade?: string, @Query('search') search?: string) {
     return this.service.findAll({ status, unidade, search });
   }
 
   @Get('auditorias/:id')
-  @Roles('P01', 'P02')
+  @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Obter auditoria por ID' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.service.findOne(id);
@@ -77,7 +77,7 @@ export class AuditoriasController {
   }
 
   @Get('auditorias/:id/evidencias')
-  @Roles('P01', 'P02')
+  @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Listar evidências da auditoria' })
   listarEvidencias(@Param('id', ParseUUIDPipe) id: string) {
     return this.service.listarEvidencias(id);
@@ -97,7 +97,7 @@ export class AuditoriasController {
   }
 
   @Get('auditorias/:id/papeis-trabalho')
-  @Roles('P01', 'P02')
+  @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Listar papéis de trabalho da auditoria' })
   listarPapeisTrabalho(@Param('id', ParseUUIDPipe) id: string) {
     return this.service.listarPapeisTrabalho(id);
@@ -113,7 +113,7 @@ export class AuditoriasController {
   }
 
   @Get('auditorias/:id/requisicoes')
-  @Roles('P01', 'P02')
+  @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Listar requisições da auditoria' })
   listarRequisicoes(@Param('id', ParseUUIDPipe) id: string) {
     return this.service.listarRequisicoes(id);

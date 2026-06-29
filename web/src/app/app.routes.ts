@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
+import { authGuard, rolesGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
       import('./core/layout/main-layout.component').then((m) => m.MainLayoutComponent),
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
@@ -31,36 +33,43 @@ export const routes: Routes = [
         path: 'usuarios',
         loadComponent: () =>
           import('./features/usuarios/usuario-form.component').then((m) => m.UsuarioFormComponent),
+        canActivate: [rolesGuard(['P10'])],
       },
       {
         path: 'usuarios/novo',
         loadComponent: () =>
           import('./features/usuarios/usuario-form.component').then((m) => m.UsuarioFormComponent),
+        canActivate: [rolesGuard(['P10'])],
       },
       {
         path: 'usuarios/:id',
         loadComponent: () =>
           import('./features/usuarios/usuario-form.component').then((m) => m.UsuarioFormComponent),
+        canActivate: [rolesGuard(['P10'])],
       },
       {
         path: 'perfis',
         loadComponent: () =>
           import('./features/perfis/perfil-list.component').then((m) => m.PerfilListComponent),
+        canActivate: [rolesGuard(['P10'])],
       },
       {
         path: 'usuarios/:id/perfis',
         loadComponent: () =>
           import('./features/perfis/usuario-perfil-form.component').then((m) => m.UsuarioPerfilFormComponent),
+        canActivate: [rolesGuard(['P10'])],
       },
       {
         path: 'mandatos',
         loadComponent: () =>
           import('./features/mandatos/mandato-list.component').then((m) => m.MandatoListComponent),
+        canActivate: [rolesGuard(['P01', 'P03', 'P04'])],
       },
       {
         path: 'configuracoes',
         loadComponent: () =>
           import('./features/config/configuracao-list.component').then((m) => m.ConfiguracaoListComponent),
+        canActivate: [rolesGuard(['P10'])],
       },
       {
         path: 'matriz-priorizacao',
@@ -86,6 +95,7 @@ export const routes: Routes = [
         path: 'planos-aprovacao',
         loadComponent: () =>
           import('./features/planos/plano-aprovacao.component').then((m) => m.PlanoAprovacaoComponent),
+        canActivate: [rolesGuard(['P01', 'P03'])],
       },
       {
         path: 'relatorios',
@@ -96,6 +106,22 @@ export const routes: Routes = [
         path: 'relatorios-anuais',
         loadComponent: () =>
           import('./features/relatorios/relatorio-anual-form.component').then((m) => m.RelatorioAnualFormComponent),
+      },
+      {
+        path: 'painel-monitoramento',
+        loadComponent: () =>
+          import('./features/recomendacoes/painel-monitoramento.component').then((m) => m.PainelMonitoramentoComponent),
+        canActivate: [rolesGuard(['P01', 'P06'])],
+      },
+      {
+        path: 'recomendacoes',
+        loadComponent: () =>
+          import('./features/recomendacoes/recomendacao-list.component').then((m) => m.RecomendacaoListComponent),
+      },
+      {
+        path: 'recomendacoes/:id',
+        loadComponent: () =>
+          import('./features/recomendacoes/recomendacao-detail.component').then((m) => m.RecomendacaoDetailComponent),
       },
     ],
   },

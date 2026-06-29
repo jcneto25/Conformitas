@@ -1,6 +1,6 @@
 # Plano de Entregas — CONFORMITAS 3.0
 
-> **Versão:** 1.1 | **Data:** 2026-06-25 | **Status:** Atualizado (Pós Onda-0)
+> **Versão:** 1.2 | **Data:** 2026-06-29 | **Status:** Atualizado (Pós Onda-1 e Onda-2)
 > **Projeto:** CONFORMITAS 3.0 | **Codename:** SGI
 > **Autor:** IA (Step 4) | **Referências:** PRD, SPEC, 14 PRPs, DEPENDENCY_MATRIX
 
@@ -43,13 +43,13 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 5 ondas de exe
 | 0.8 | Mock data (8 arquivos JSON, 16 usuários) | ✅ | Dados mockados para todos os perfis P01-P10 |
 | 0.9 | Keycloak (opcional) | ✅ | Docker configurado, strategy OIDC com JWKS validation — funcional |
 
-### Onda 1: Fundação e Core (Must) — 22 dias com 3 devs
+### Onda 1: Fundação e Core (Must) — 22 dias com 3 devs (Concluída)
 
 **Objetivo:** Plataforma funcional com autenticação, RBAC, planejamento, execução de auditorias e achados. Usuário pode logar, criar PAA, abrir auditoria, registrar evidências e achados.
 
 **PRPs:** 001, 002, 003, 004, 005, 006, 009
 
-**Status:** 🔄 Em andamento (6/7 PRPs concluídos, PRP-006 pendente)
+**Status:** ✅ Concluída — 7/7 PRPs implementados (backend + frontend + testes unitários)
 
 | # | Deliverable | Status | Critério de aceitação |
 |---|-------------|--------|----------------------|
@@ -61,17 +61,19 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 5 ondas de exe
 | 6 | Achados com 4 atributos e manifestações | ✅ | Registro de achado, envio à unidade, prazo de 5 dias |
 | 7 | Declaração de independência e classificação de sigilo | ✅ | P02 declara independência, P01 classifica documento SIGILOSO |
 
-### Onda 2: Relatórios e Monitoramento (Must) — 8 dias
+### Onda 2: Relatórios e Monitoramento (Must) — 8 dias (Concluída)
 
 **Objetivo:** Emissão de relatórios de auditoria, recomendações e monitoramento de implementação.
 
 **PRPs:** 007, 008, 010
 
-| # | Deliverable | Critério de aceitação |
-|---|-------------|----------------------|
-| 8 | Relatório Preliminar e Final | Compilação de achados, geração de relatório, assinatura P01 |
-| 9 | Recomendações com monitoramento | Emissão, workflow Pendente→Cumprida, alertas de vencimento |
-| 10 | Consultorias | Solicitação por P05, aceitação por P01, termo anticogestão |
+**Status:** ✅ Concluída — 3/3 PRPs implementados (backend + frontend + alguns testes)
+
+| # | Deliverable | Status | Critério de aceitação |
+|---|-------------|--------|----------------------|
+| 8 | Relatório Preliminar e Final | ✅ | Compilação de achados, geração de relatório, assinatura P01 |
+| 9 | Recomendações com monitoramento | ✅ | Emissão, workflow Pendente→Cumprida, alertas de vencimento |
+| 10 | Consultorias | ✅ | Solicitação por P05, aceitação por P01, termo anticogestão |
 
 ### Onda 3: Qualidade e Governança (Should) — 8 dias
 
@@ -79,11 +81,13 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 5 ondas de exe
 
 **PRPs:** 011, 012, 013
 
-| # | Deliverable | Critério de aceitação |
-|---|-------------|----------------------|
-| 11 | PQAUD funcional | Autoavaliações, não conformidades, acesso P07 temporário |
-| 12 | Gestão de riscos, PAC-Aud e biblioteca | Matriz de riscos, meta 40h, catálogo de normas |
-| 13 | Governança e fraudes | Registro de determinações TCE/CNJ, workflow de fraude |
+**Status:** 🔄 Em andamento (backend implementado, sem testes)
+
+| # | Deliverable | Status | Critério de aceitação |
+|---|-------------|--------|----------------------|
+| 11 | PQAUD funcional | 🔄 | Autoavaliações, não conformidades, acesso P07 temporário |
+| 12 | Gestão de riscos, PAC-Aud e biblioteca | 🔄 | Matriz de riscos, meta 40h, catálogo de normas |
+| 13 | Governança e fraudes | 🔄 | Registro de determinações TCE/CNJ, workflow de fraude |
 
 ### Onda 4: Dashboards e Integrações (Should/Could) — 7 dias
 
@@ -91,9 +95,11 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 5 ondas de exe
 
 **PRPs:** 014
 
-| # | Deliverable | Critério de aceitação |
-|---|-------------|----------------------|
-| 14 | Dashboards e integrações | 5 dashboards, export PDF/XLSX, catálogo de integrações, Ações Coordenadas SIAUD-Jud |
+**Status:** 🔄 Em andamento (backend implementado, sem testes)
+
+| # | Deliverable | Status | Critério de aceitação |
+|---|-------------|--------|----------------------|
+| 14 | Dashboards e integrações | 🔄 | 5 dashboards, export PDF/XLSX, catálogo de integrações, Ações Coordenadas SIAUD-Jud |
 
 ---
 
@@ -109,13 +115,13 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 5 ondas de exe
 | 005 | Auditorias, Evidências e Papéis | 1 | 8 | Alta | Crítico | 001, 002, 004 | ✅ |
 | 006 | Achados e Manifestações | 1 | 5 | Média | Crítico | 001, 002, 005 | ✅ |
 | 009 | Ética, Sigilo e Impedimentos | 1 | 4 | Baixa | Alto | 001, 002 | ✅ |
-| 007 | Relatórios de Auditoria | 2 | 6 | Média | Alto | 001, 002, 006 | ⏳ |
-| 008 | Recomendações e Monitoramento | 2 | 6 | Média | Alto | 001, 002, 007 | ⏳ |
-| 010 | Consultorias e Assessoramento | 2 | 4 | Baixa | Média | 001, 002, 004 | ⏳ |
-| 011 | Qualidade e PQAUD | 3 | 5 | Média | Média | 001, 002, 005, 007 | ⏳ |
-| 012 | Riscos, Competências e Biblioteca | 3 | 6 | Média | Média | 001, 002 | ⏳ |
-| 013 | Governança e Fraudes | 3 | 4 | Baixa | Média | 001, 002, 007, 008 | ⏳ |
-| 014 | Dashboards, BI e Integrações | 4 | 7 | Média | Média | 001, 002, 004, 005, 008 | ⏳ |
+| 007 | Relatórios de Auditoria | 2 | 6 | Média | Alto | 001, 002, 006 | ✅ |
+| 008 | Recomendações e Monitoramento | 2 | 6 | Média | Alto | 001, 002, 007 | ✅ |
+| 010 | Consultorias e Assessoramento | 2 | 4 | Baixa | Média | 001, 002, 004 | ✅ |
+| 011 | Qualidade e PQAUD | 3 | 5 | Média | Média | 001, 002, 005, 007 | 🔄 |
+| 012 | Riscos, Competências e Biblioteca | 3 | 6 | Média | Média | 001, 002 | 🔄 |
+| 013 | Governança e Fraudes | 3 | 4 | Baixa | Média | 001, 002, 007, 008 | 🔄 |
+| 014 | Dashboards, BI e Integrações | 4 | 7 | Média | Média | 001, 002, 004, 005, 008 | 🔄 |
 
 ---
 
@@ -123,13 +129,15 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 5 ondas de exe
 
 | Métrica | Valor |
 |---------|-------|
-| Ondas totais | 5 (Onda 0 concluída ✅) |
+| Ondas totais | 5 (Onda 0 ✅, Onda 1 ✅, Onda 2 ✅ concluídas) |
 | PRPs totais | 14 |
+| PRPs concluídos | 10 (001-010) |
+| PRPs em andamento | 4 (011-014 — backend implementado, sem testes) |
 | Dias total (sequencial) | 74 |
 | Dias total (paralelo — 3 devs) | ~48 (inclui ~3 dias Onda 0) |
 | Dias com folga 20% | ~58 |
 | Semanas (~5 dias/semana) | ~12 semanas |
-| **Previsão de conclusão (MVP)** | ~3 meses com 3 devs |
+| **Progresso geral** | **~71% dos PRPs concluídos (10/14)** |
 
 ---
 
@@ -145,7 +153,7 @@ Este plano cobre o desenvolvimento completo do CONFORMITAS 3.0 em 5 ondas de exe
 
 ## 6. Definição de Pronto do Projeto (DoD Global)
 
-Onda 0 concluída. Pendente para as Ondas 1-4:
+Ondas 0-2 concluídas. Pendente para as Ondas 3-4:
 - [ ] Todos os 14 PRPs com DoD individual aprovado
 - [ ] Cobertura de testes ≥ 80% unitários, ≥ 70% integração
 - [ ] Testes E2E para fluxos críticos passando
