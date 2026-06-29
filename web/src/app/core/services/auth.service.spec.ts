@@ -41,8 +41,6 @@ describe('AuthService', () => {
 
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
-
-    httpMock.expectOne(`${API}/auth/profile`).flush(null, { status: 401, statusText: 'Unauthorized' });
   });
 
   afterEach(() => {
@@ -61,19 +59,21 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('should set session on login without MFA', async () => {
-      const loginPromise = service.login('test@test.com', 'password');
+      service.login('test@test.com', 'password');
 
       const req = httpMock.expectOne(`${API}/auth/login`);
       expect(req.request.method).toBe('POST');
       req.flush({ access_token: 'at1', refresh_token: 'rt1', expires_in: 1800 });
 
-      const profileReq = httpMock.expectOne(`${API}/auth/profile`);
-      profileReq.flush(makeFakeProfile({ mfaEnabled: false }));
-
-      await loginPromise;
+      await new Promise(r => setTimeout(r));
 
       expect(localStorage.getItem('access_token')).toBe('at1');
       expect(localStorage.getItem('refresh_token')).toBe('rt1');
+
+      const profileReq = httpMock.expectOne(`${API}/auth/profile`);
+      profileReq.flush(makeFakeProfile({ mfaEnabled: false }));
+
+      await new Promise(r => setTimeout(r));
       expect(service.isAuthenticated()).toBeTrue();
       expect(service.user()?.nome).toBe('Rômulo Pinheiro Ribeiro');
       expect(service.userRoles()).toEqual(['P01']);
@@ -95,19 +95,22 @@ describe('AuthService', () => {
 
   describe('verifyMfa', () => {
     it('should set session after MFA verification', async () => {
-      const mfaPromise = service.verifyMfa('st1', '123456');
+      service.verifyMfa('st1', '123456');
 
       const req = httpMock.expectOne(`${API}/auth/mfa/verify`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({ session_token: 'st1', totp_code: '123456' });
       req.flush({ access_token: 'at2', refresh_token: 'rt2', expires_in: 1800 });
 
+      await new Promise(r => setTimeout(r));
+
+      expect(localStorage.getItem('access_token')).toBe('at2');
+      expect(localStorage.getItem('refresh_token')).toBe('rt2');
+
       const profileReq = httpMock.expectOne(`${API}/auth/profile`);
       profileReq.flush(makeFakeProfile());
 
-      await mfaPromise;
-
-      expect(localStorage.getItem('access_token')).toBe('at2');
+      await new Promise(r => setTimeout(r));
       expect(service.isAuthenticated()).toBeTrue();
     });
   });

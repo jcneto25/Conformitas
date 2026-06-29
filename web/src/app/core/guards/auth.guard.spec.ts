@@ -27,19 +27,25 @@ describe('authGuard', () => {
 
   it('should allow when authenticated', () => {
     (authSpy.isAuthenticated as jasmine.Spy).and.returnValue(true);
-    expect(authGuard(mockRoute, mockState)).toBeTrue();
+    TestBed.runInInjectionContext(() => {
+      expect(authGuard(mockRoute, mockState)).toBeTrue();
+    });
   });
 
   it('should allow when token exists but not yet loaded', () => {
     (authSpy.isAuthenticated as jasmine.Spy).and.returnValue(false);
     localStorage.setItem('access_token', 'some-token');
-    expect(authGuard(mockRoute, mockState)).toBeTrue();
+    TestBed.runInInjectionContext(() => {
+      expect(authGuard(mockRoute, mockState)).toBeTrue();
+    });
     expect(authSpy.loadProfile).toHaveBeenCalled();
   });
 
   it('should redirect to login when not authenticated and no token', () => {
     (authSpy.isAuthenticated as jasmine.Spy).and.returnValue(false);
-    expect(authGuard(mockRoute, mockState)).toBeFalse();
+    TestBed.runInInjectionContext(() => {
+      expect(authGuard(mockRoute, mockState)).toBeFalse();
+    });
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
   });
 });
@@ -67,7 +73,9 @@ describe('rolesGuard', () => {
     (authSpy.hasAnyRole as jasmine.Spy).and.returnValue(true);
 
     const guard = rolesGuard(['P10']);
-    expect(guard(mockRoute, mockState)).toBeTrue();
+    TestBed.runInInjectionContext(() => {
+      expect(guard(mockRoute, mockState)).toBeTrue();
+    });
     expect(authSpy.hasAnyRole).toHaveBeenCalledWith(['P10']);
   });
 
@@ -76,7 +84,9 @@ describe('rolesGuard', () => {
     (authSpy.hasAnyRole as jasmine.Spy).and.returnValue(false);
 
     const guard = rolesGuard(['P10']);
-    expect(guard(mockRoute, mockState)).toBeFalse();
+    TestBed.runInInjectionContext(() => {
+      expect(guard(mockRoute, mockState)).toBeFalse();
+    });
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/']);
   });
 
@@ -84,7 +94,9 @@ describe('rolesGuard', () => {
     (authSpy.isAuthenticated as jasmine.Spy).and.returnValue(false);
 
     const guard = rolesGuard(['P10']);
-    expect(guard(mockRoute, mockState)).toBeFalse();
+    TestBed.runInInjectionContext(() => {
+      expect(guard(mockRoute, mockState)).toBeFalse();
+    });
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
   });
 });
