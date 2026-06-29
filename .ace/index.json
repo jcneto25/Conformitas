@@ -202,10 +202,11 @@
     {
       "session_id": "2026-06-27-001",
       "file": "2026-06-27-001.md",
-      "status": "in_progress",
+      "status": "completed",
       "llc_step": 11.0,
       "tags": [],
-      "timestamp": "2026-06-27T11:25:42.837088"
+      "timestamp": "2026-06-27T11:25:42.837088",
+      "completed_at": "2026-06-29T09:48:40.240778"
     },
     {
       "session_id": "2026-06-27-002",
@@ -235,6 +236,69 @@
       ],
       "timestamp": "2026-06-29T09:02:28.835528",
       "completed_at": "2026-06-29T09:14:09.158556"
+    },
+    {
+      "session_id": "2026-06-29-002",
+      "file": "2026-06-29-002.md",
+      "status": "in_progress",
+      "llc_step": 11.0,
+      "tags": [
+        "wave-3 prp-011 prp-012 prp-013 msw"
+      ],
+      "timestamp": "2026-06-29T13:06:52.817199"
+    },
+    {
+      "session_id": "2026-06-29-003",
+      "file": "2026-06-29-003.md",
+      "status": "in_progress",
+      "llc_step": 3.0,
+      "tags": [
+        "wave-1 fase-3 ui-refactor tailwind"
+      ],
+      "timestamp": "2026-06-29T14:54:40.694129"
+    },
+    {
+      "session_id": "2026-06-29-004",
+      "file": "2026-06-29-004.md",
+      "status": "in_progress",
+      "llc_step": 11.0,
+      "tags": [],
+      "timestamp": "2026-06-29T19:36:15.357191"
+    },
+    {
+      "session_id": "2026-06-29-005",
+      "file": "2026-06-29-005.md",
+      "status": "in_progress",
+      "llc_step": 11.0,
+      "tags": [],
+      "timestamp": "2026-06-29T19:36:56.208921"
+    },
+    {
+      "session_id": "2026-06-29-006",
+      "file": "2026-06-29-006.md",
+      "status": "completed",
+      "llc_step": 11.0,
+      "tags": [],
+      "timestamp": "2026-06-29T19:38:11.913713",
+      "completed_at": "2026-06-29T19:50:22.557734"
+    },
+    {
+      "session_id": "2026-06-29-007",
+      "file": "2026-06-29-007.md",
+      "status": "completed",
+      "llc_step": 11.0,
+      "tags": [],
+      "timestamp": "2026-06-29T19:43:21.908710",
+      "completed_at": "2026-06-29T19:50:30.659527"
+    },
+    {
+      "session_id": "2026-06-29-008",
+      "file": "2026-06-29-008.md",
+      "status": "completed",
+      "llc_step": 11.0,
+      "tags": [],
+      "timestamp": "2026-06-29T19:48:21.933465",
+      "completed_at": "2026-06-29T19:50:44.875253"
     }
   ]
 }
