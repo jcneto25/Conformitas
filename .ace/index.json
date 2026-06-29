@@ -228,12 +228,13 @@
     {
       "session_id": "2026-06-29-001",
       "file": "2026-06-29-001.md",
-      "status": "in_progress",
+      "status": "completed",
       "llc_step": 11.0,
       "tags": [
         "planejamento correcoes"
       ],
-      "timestamp": "2026-06-29T09:02:28.835528"
+      "timestamp": "2026-06-29T09:02:28.835528",
+      "completed_at": "2026-06-29T09:14:09.158556"
     }
   ]
 }
