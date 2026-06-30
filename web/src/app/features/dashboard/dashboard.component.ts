@@ -2,99 +2,73 @@ import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ApiService } from '../../core/services/api.service';
+import { PageHeaderComponent } from '../../shared/components/page-header.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [MatCardModule, MatProgressSpinnerModule],
+  imports: [MatCardModule, MatProgressSpinnerModule, PageHeaderComponent],
   template: `
-    <h1>Dashboard</h1>
-    <div class="dashboard-grid">
+    <app-page-header title="Dashboard" />
+
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
       <mat-card>
         <mat-card-header>
-          <mat-card-title>Auditorias em Andamento</mat-card-title>
+          <mat-card-title class="text-sm font-medium text-text-sec">Auditorias em Andamento</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           @if (loadingAuditorias) {
             <mat-spinner diameter="24" />
           } @else {
-            <p class="metric">{{ auditoriasEmExecucao }}</p>
-            <p class="hint">de {{ totalAuditorias }} auditorias</p>
+            <p class="text-3xl font-bold text-text-main my-2">{{ auditoriasEmExecucao }}</p>
+            <p class="text-xs text-text-sec m-0">de {{ totalAuditorias }} auditorias</p>
           }
         </mat-card-content>
       </mat-card>
 
       <mat-card>
         <mat-card-header>
-          <mat-card-title>Achados Pendentes</mat-card-title>
+          <mat-card-title class="text-sm font-medium text-text-sec">Achados Pendentes</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           @if (loadingAchados) {
             <mat-spinner diameter="24" />
           } @else {
-            <p class="metric">{{ achadosPendentes }}</p>
-            <p class="hint">de {{ totalAchados }} achados</p>
+            <p class="text-3xl font-bold text-text-main my-2">{{ achadosPendentes }}</p>
+            <p class="text-xs text-text-sec m-0">de {{ totalAchados }} achados</p>
           }
         </mat-card-content>
       </mat-card>
 
       <mat-card>
         <mat-card-header>
-          <mat-card-title>Recomendações em Monitoramento</mat-card-title>
+          <mat-card-title class="text-sm font-medium text-text-sec">Recomendações em Monitoramento</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           @if (loadingRecomendacoes) {
             <mat-spinner diameter="24" />
           } @else {
-            <p class="metric">{{ recomendacoesMonitoradas }}</p>
-            <p class="hint">de {{ totalRecomendacoes }} recomendações</p>
+            <p class="text-3xl font-bold text-text-main my-2">{{ recomendacoesMonitoradas }}</p>
+            <p class="text-xs text-text-sec m-0">de {{ totalRecomendacoes }} recomendações</p>
           }
         </mat-card-content>
       </mat-card>
 
       <mat-card>
         <mat-card-header>
-          <mat-card-title>PAA Vigente</mat-card-title>
+          <mat-card-title class="text-sm font-medium text-text-sec">PAA Vigente</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           @if (loadingPlanos) {
             <mat-spinner diameter="24" />
           } @else {
-            <p class="metric">{{ planosPublicados }}</p>
-            <p class="hint">de {{ totalPlanos }} planos</p>
+            <p class="text-3xl font-bold text-text-main my-2">{{ planosPublicados }}</p>
+            <p class="text-xs text-text-sec m-0">de {{ totalPlanos }} planos</p>
           }
         </mat-card-content>
       </mat-card>
     </div>
   `,
-  styles: [
-    `
-      .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 1rem;
-        margin-top: 1rem;
-      }
-
-      .metric {
-        font-size: 2rem;
-        font-weight: 700;
-        margin: 0.5rem 0;
-        color: #1a1a2e;
-      }
-
-      .hint {
-        font-size: 0.8rem;
-        color: #888;
-        margin: 0;
-      }
-
-      .hint.stub {
-        color: #c62828;
-        font-style: italic;
-      }
-    `,
-  ],
 })
 export class DashboardComponent implements OnInit {
   loadingAuditorias = true;

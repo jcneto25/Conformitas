@@ -1,0 +1,44 @@
+{
+  "forca_trabalho": [
+    {
+      "id": "ft-001",
+      "plano_id": "plano-001",
+      "usuario_id": "mock-user-002",
+      "horas_disponiveis_ano": 1600,
+      "horas_alocadas_auditoria": 520,
+      "horas_alocadas_consultoria": 80,
+      "horas_alocadas_capacitacao": 40,
+      "ano": 2026
+    },
+    {
+      "id": "ft-002",
+      "plano_id": "plano-001",
+      "usuario_id": "mock-user-003",
+      "horas_disponiveis_ano": 1600,
+      "horas_alocadas_auditoria": 480,
+      "horas_alocadas_consultoria": 60,
+      "horas_alocadas_capacitacao": 40,
+      "ano": 2026
+    },
+    {
+      "id": "ft-003",
+      "plano_id": "plano-001",
+      "usuario_id": "mock-user-004",
+      "horas_disponiveis_ano": 1600,
+      "horas_alocadas_auditoria": 480,
+      "horas_alocadas_consultoria": 40,
+      "horas_alocadas_capacitacao": 60,
+      "ano": 2026
+    },
+    {
+      "id": "ft-004",
+      "plano_id": "plano-001",
+      "usuario_id": "mock-user-005",
+      "horas_disponiveis_ano": 1600,
+      "horas_alocadas_auditoria": 520,
+      "horas_alocadas_consultoria": 40,
+      "horas_alocadas_capacitacao": 40,
+      "ano": 2026
+    }
+  ]
+}

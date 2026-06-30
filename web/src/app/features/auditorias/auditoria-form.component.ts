@@ -11,9 +11,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatChipsModule } from '@angular/material/chips';
-
-const API = 'http://localhost:3001/api/v1';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { StatusBadgeComponent } from '../../shared/components/status-badge.component';
+import { environment } from '../../../environments/environment';
+import { PageHeaderComponent } from '../../shared/components/page-header.component';
 
 @Component({
   selector: 'app-auditoria-form',
@@ -22,88 +23,118 @@ const API = 'http://localhost:3001/api/v1';
     CommonModule, FormsModule, RouterModule,
     MatCardModule, MatFormFieldModule, MatSelectModule,
     MatInputModule, MatButtonModule, MatSlideToggleModule,
-    MatDividerModule, MatChipsModule,
+    MatDividerModule, MatProgressSpinnerModule, StatusBadgeComponent, PageHeaderComponent,
   ],
   template: `
-    <h1>{{ isNew ? 'Abrir Auditoria' : 'Auditoria ' + auditoria?.codigo }}</h1>
+    <app-page-header [title]="isNew ? 'Abrir Auditoria' : 'Auditoria ' + (auditoria?.codigo ?? '')" />
 
-    <!-- Formulário de abertura -->
-    <mat-card *ngIf="isNew || editing" style="margin-bottom: 1rem;">
-      <mat-card-content>
-        <h3>{{ isNew ? 'Nova Auditoria' : 'Editar' }}</h3>
-        <form (ngSubmit)="salvar()" style="display: flex; flex-direction: column; gap: 1rem;">
-          <mat-form-field appearance="outline">
-            <mat-label>Item do PAA</mat-label>
-            <mat-select [(ngModel)]="form.itemPlanoId" name="itemPlanoId" required>
-              <mat-option *ngFor="let i of itensPlano" [value]="i.id">
-                {{ i.nome || i.id }} — {{ i.plano?.tipo || 'PAA' }}
-              </mat-option>
-            </mat-select>
-            <mat-hint *ngIf="!itensPlano.length">Carregando itens do plano...</mat-hint>
-          </mat-form-field>
+    @if (loading) {
+      <div class="flex justify-center p-8">
+        <mat-spinner diameter="40" />
+      </div>
+    } @else {
+      @if (isNew || editing) {
+        <mat-card class="mb-4">
+          <mat-card-content>
+            <h3>{{ isNew ? 'Nova Auditoria' : 'Editar' }}</h3>
+            <form (ngSubmit)="salvar()" class="flex flex-col gap-4">
+              <mat-form-field appearance="outline">
+                <mat-label>Item do PAA</mat-label>
+                <mat-select #itemPlanoModel="ngModel" [(ngModel)]="form.itemPlanoId" name="itemPlanoId" required>
+                  @for (i of itensPlano; track i.id) {
+                    <mat-option [value]="i.id">
+                      {{ i.nome || i.id }} — {{ i.plano?.tipo || 'PAA' }}
+                    </mat-option>
+                  }
+                </mat-select>
+                @if (itemPlanoModel.invalid && itemPlanoModel.touched) {
+                  <mat-error>Item do PAA obrigatório</mat-error>
+                }
+                @if (itensPlano.length === 0) {
+                  <mat-hint>Carregando itens do plano...</mat-hint>
+                }
+              </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Observações</mat-label>
-            <textarea matInput [(ngModel)]="form.observacoes" name="observacoes" rows="3"></textarea>
-          </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Observações</mat-label>
+                <textarea matInput [(ngModel)]="form.observacoes" name="observacoes" rows="3"></textarea>
+              </mat-form-field>
 
-          <mat-slide-toggle [(ngModel)]="form.sigilosa" name="sigilosa" color="warn">
-            Auditoria Sigilosa
-          </mat-slide-toggle>
+              <mat-slide-toggle [(ngModel)]="form.sigilosa" name="sigilosa" color="warn">
+                Auditoria Sigilosa
+              </mat-slide-toggle>
 
-          <div>
-            <button mat-raised-button color="primary" type="submit"
-                    [disabled]="!form.itemPlanoId">
-              {{ isNew ? 'Abrir Auditoria' : 'Salvar' }}
+              <div>
+                <button mat-raised-button color="primary" type="submit"
+                        [disabled]="!form.itemPlanoId">
+                  {{ isNew ? 'Abrir Auditoria' : 'Salvar' }}
+                </button>
+                <button mat-button type="button" (click)="router.navigate(['/auditorias'])" class="ml-2">
+                  Cancelar
+                </button>
+              </div>
+            </form>
+
+            @if (error) {
+              <p class="text-critical mt-2">{{ error }}</p>
+            }
+            @if (success) {
+              <p class="text-success mt-2">{{ success }}</p>
+            }
+          </mat-card-content>
+        </mat-card>
+      }
+
+      @if (!isNew && auditoria) {
+        <mat-card class="mb-4">
+          <mat-card-content>
+            <h3>Detalhes</h3>
+            <p><strong>Status:</strong>
+              <app-status-badge [status]="auditoria.status" />
+            </p>
+            @if (auditoria.codigo) {
+              <p><strong>Código:</strong> {{ auditoria.codigo }}</p>
+            }
+            @if (auditoria.unidadeAuditada) {
+              <p><strong>Unidade Auditada:</strong> {{ auditoria.unidadeAuditada }}</p>
+            }
+            @if (auditoria.observacoes) {
+              <p><strong>Observações:</strong> {{ auditoria.observacoes }}</p>
+            }
+            @if (auditoria.motivoSuspensao) {
+              <p><strong>Motivo Suspensão:</strong> {{ auditoria.motivoSuspensao }}</p>
+            }
+            @if (auditoria.createdAt) {
+              <p><strong>Criada em:</strong> {{ auditoria.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+            }
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-content>
+            <h3>Comunicado de Auditoria</h3>
+            @if (comunicado) {
+              <div class="bg-surface p-4 rounded mb-4">
+                <p><strong>Número:</strong> {{ comunicado.numero }}</p>
+                <p><strong>Data:</strong> {{ comunicado.dataEmissao | date:'dd/MM/yyyy' }}</p>
+                <p><strong>Destinatário:</strong> {{ comunicado.destinatario }}</p>
+                <p><strong>Conteúdo:</strong></p>
+                <pre class="whitespace-pre-wrap font-sans">{{ comunicado.conteudo }}</pre>
+              </div>
+            } @else {
+              <p class="text-text-sec">Nenhum comunicado gerado ainda.</p>
+            }
+            <button mat-stroked-button color="primary" (click)="gerarComunicado()"
+                    [disabled]="gerando">
+              @if (gerando) {
+                <mat-spinner diameter="16" class="inline-block mr-1" />
+              }
+              {{ gerando ? 'Gerando...' : 'Gerar Comunicado' }}
             </button>
-            <button mat-button type="button" (click)="router.navigate(['/auditorias'])" style="margin-left: 0.5rem;">
-              Cancelar
-            </button>
-          </div>
-        </form>
-
-        <p *ngIf="error" style="color: #c62828; margin-top: 0.5rem;">{{ error }}</p>
-        <p *ngIf="success" style="color: #2e7d32; margin-top: 0.5rem;">{{ success }}</p>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- Detalhes da auditoria -->
-    <mat-card *ngIf="!isNew && auditoria" style="margin-bottom: 1rem;">
-      <mat-card-content>
-        <h3>Detalhes</h3>
-        <p><strong>Status:</strong>
-          <mat-chip [style.background]="statusColor()" style="color: #fff; margin-left: 0.5rem;">
-            {{ auditoria.status }}
-          </mat-chip>
-        </p>
-        <p *ngIf="auditoria.codigo"><strong>Código:</strong> {{ auditoria.codigo }}</p>
-        <p *ngIf="auditoria.unidadeAuditada"><strong>Unidade Auditada:</strong> {{ auditoria.unidadeAuditada }}</p>
-        <p *ngIf="auditoria.observacoes"><strong>Observações:</strong> {{ auditoria.observacoes }}</p>
-        <p *ngIf="auditoria.motivoSuspensao"><strong>Motivo Suspensão:</strong> {{ auditoria.motivoSuspensao }}</p>
-        <p *ngIf="auditoria.createdAt"><strong>Criada em:</strong> {{ auditoria.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- Comunicado Preview -->
-    <mat-card *ngIf="!isNew && auditoria">
-      <mat-card-content>
-        <h3>Comunicado de Auditoria</h3>
-        <div *ngIf="comunicado; else semComunicado" style="background: #f5f5f5; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
-          <p><strong>Número:</strong> {{ comunicado.numero }}</p>
-          <p><strong>Data:</strong> {{ comunicado.dataEmissao | date:'dd/MM/yyyy' }}</p>
-          <p><strong>Destinatário:</strong> {{ comunicado.destinatario }}</p>
-          <p><strong>Conteúdo:</strong></p>
-          <pre style="white-space: pre-wrap; font-family: inherit;">{{ comunicado.conteudo }}</pre>
-        </div>
-        <ng-template #semComunicado>
-          <p style="color: #999;">Nenhum comunicado gerado ainda.</p>
-        </ng-template>
-        <button mat-stroked-button color="primary" (click)="gerarComunicado()"
-                [disabled]="gerando">
-          {{ gerando ? 'Gerando...' : 'Gerar Comunicado' }}
-        </button>
-      </mat-card-content>
-    </mat-card>
+          </mat-card-content>
+        </mat-card>
+      }
+    }
   `,
 })
 export class AuditoriaFormComponent implements OnInit {
@@ -113,6 +144,7 @@ export class AuditoriaFormComponent implements OnInit {
   itensPlano: any[] = [];
   editing = false;
   gerando = false;
+  loading = true;
   error = '';
   success = '';
   form = { itemPlanoId: '', observacoes: '', sigilosa: false };
@@ -129,21 +161,24 @@ export class AuditoriaFormComponent implements OnInit {
     this.isNew = !this.id;
     this.editing = this.isNew;
 
-    await Promise.all([this.loadItensPlano()]);
-
-    if (!this.isNew) {
-      await this.loadAuditoria();
+    try {
+      await Promise.all([this.loadItensPlano()]);
+      if (!this.isNew) {
+        await this.loadAuditoria();
+      }
+    } finally {
+      this.loading = false;
     }
   }
 
   async loadItensPlano() {
     try {
       const planos = await firstValueFrom(
-        this.http.get<any[]>(`${API}/planos`, { params: { status: 'APROVADO' } }),
+        this.http.get<any[]>(`${environment.apiUrl}/planos`, { params: { status: 'APROVADO' } }),
       );
       for (const plano of planos) {
         const itens = await firstValueFrom(
-          this.http.get<any[]>(`${API}/planos/${plano.id}/itens`),
+          this.http.get<any[]>(`${environment.apiUrl}/planos/${plano.id}/itens`),
         );
         this.itensPlano.push(...itens.map((i: any) => ({ ...i, plano })));
       }
@@ -155,7 +190,7 @@ export class AuditoriaFormComponent implements OnInit {
   async loadAuditoria() {
     try {
       this.auditoria = await firstValueFrom(
-        this.http.get<any>(`${API}/auditorias/${this.id}`),
+        this.http.get<any>(`${environment.apiUrl}/auditorias/${this.id}`),
       );
       await this.loadComunicado();
     } catch (err: any) {
@@ -166,7 +201,7 @@ export class AuditoriaFormComponent implements OnInit {
   async loadComunicado() {
     try {
       const comunicados = await firstValueFrom(
-        this.http.get<any[]>(`${API}/auditorias/${this.id}/comunicado`),
+        this.http.get<any[]>(`${environment.apiUrl}/auditorias/${this.id}/comunicado`),
       );
       if (Array.isArray(comunicados) && comunicados.length) {
         this.comunicado = comunicados[comunicados.length - 1];
@@ -181,7 +216,7 @@ export class AuditoriaFormComponent implements OnInit {
     this.success = '';
     try {
       const result = await firstValueFrom(
-        this.http.post(`${API}/auditorias`, {
+        this.http.post(`${environment.apiUrl}/auditorias`, {
           itemPlanoId: this.form.itemPlanoId,
           observacoes: this.form.observacoes || undefined,
           sigilosa: this.form.sigilosa,
@@ -199,7 +234,7 @@ export class AuditoriaFormComponent implements OnInit {
     this.gerando = true;
     try {
       this.comunicado = await firstValueFrom(
-        this.http.post<any>(`${API}/auditorias/${this.id}/comunicado`, {}),
+        this.http.post<any>(`${environment.apiUrl}/auditorias/${this.id}/comunicado`, {}),
       );
     } catch (err: any) {
       this.error = err?.error?.message || 'Erro ao gerar comunicado';
@@ -208,13 +243,5 @@ export class AuditoriaFormComponent implements OnInit {
     }
   }
 
-  statusColor(): string {
-    const colorMap: Record<string, string> = {
-      ABERTA: '#1565c0',
-      EM_EXECUCAO: '#e65100',
-      SUSPENSA: '#c62828',
-      CONCLUIDA: '#2e7d32',
-    };
-    return colorMap[this.auditoria?.status] || '#666';
-  }
+
 }

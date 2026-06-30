@@ -8,8 +8,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-
-const API = 'http://localhost:3001/api/v1';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-evidencia-upload',
@@ -17,34 +17,33 @@ const API = 'http://localhost:3001/api/v1';
   imports: [
     CommonModule, FormsModule,
     MatCardModule, MatFormFieldModule, MatSelectModule,
-    MatInputModule, MatButtonModule,
+    MatInputModule, MatButtonModule, MatProgressSpinnerModule,
   ],
   template: `
     <mat-card>
       <mat-card-content>
         <h3>Evidências</h3>
 
-        <!-- Lista de evidências -->
-        <div *ngIf="evidencias.length; else semEvidencias" style="margin-bottom: 1rem;">
-          <div *ngFor="let e of evidencias"
-               style="display: flex; justify-content: space-between; align-items: center;
-                      padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-            <div>
-              <strong>{{ e.tipo }}</strong> — {{ e.descricao }}
-              <br /><small style="color: #888;">Fonte: {{ e.fonte || 'N/A' }} | Arquivo: {{ e.arquivoPath }}</small>
-            </div>
+        @if (evidencias.length) {
+          <div class="mb-4">
+            @for (e of evidencias; track e.id || $index) {
+              <div class="flex justify-between items-center py-2 border-b border-divider">
+                <div>
+                  <strong>{{ e.tipo }}</strong> — {{ e.descricao }}
+                  <br /><small class="text-text-sec">Fonte: {{ e.fonte || 'N/A' }} | Arquivo: {{ e.arquivoPath }}</small>
+                </div>
+              </div>
+            }
           </div>
-        </div>
-        <ng-template #semEvidencias>
-          <p style="color: #999; padding: 1rem;">Nenhuma evidência registrada.</p>
-        </ng-template>
+        } @else {
+          <p class="text-text-sec p-4">Nenhuma evidência registrada.</p>
+        }
 
-        <!-- Form upload -->
         <h4>Adicionar Evidência</h4>
-        <form (ngSubmit)="adicionar()" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
-          <mat-form-field appearance="outline" style="min-width: 180px;">
+        <form (ngSubmit)="adicionar()" class="flex gap-4 items-end flex-wrap">
+          <mat-form-field appearance="outline" class="min-w-[180px]">
             <mat-label>Tipo</mat-label>
-            <mat-select [(ngModel)]="form.tipo" name="tipo" required>
+            <mat-select #tipoModel="ngModel" [(ngModel)]="form.tipo" name="tipo" required>
               <mat-option value="DOCUMENTO">Documento</mat-option>
               <mat-option value="PLANILHA">Planilha</mat-option>
               <mat-option value="EMAIL">E-mail</mat-option>
@@ -52,19 +51,25 @@ const API = 'http://localhost:3001/api/v1';
               <mat-option value="ENTREVISTA">Entrevista</mat-option>
               <mat-option value="OUTRO">Outro</mat-option>
             </mat-select>
+            @if (tipoModel.invalid && tipoModel.touched) {
+              <mat-error>Tipo obrigatório</mat-error>
+            }
           </mat-form-field>
 
-          <mat-form-field appearance="outline" style="min-width: 250px; flex: 1;">
+          <mat-form-field appearance="outline" class="min-w-[250px] flex-1">
             <mat-label>Descrição</mat-label>
-            <input matInput [(ngModel)]="form.descricao" name="descricao" required />
+            <input matInput #descModel="ngModel" [(ngModel)]="form.descricao" name="descricao" required />
+            @if (descModel.invalid && descModel.touched) {
+              <mat-error>Descrição obrigatória</mat-error>
+            }
           </mat-form-field>
 
-          <mat-form-field appearance="outline" style="min-width: 180px;">
+          <mat-form-field appearance="outline" class="min-w-[180px]">
             <mat-label>Fonte</mat-label>
             <input matInput [(ngModel)]="form.fonte" name="fonte" />
           </mat-form-field>
 
-          <mat-form-field appearance="outline" style="min-width: 200px;">
+          <mat-form-field appearance="outline" class="min-w-[200px]">
             <mat-label>Caminho do Arquivo</mat-label>
             <input matInput [(ngModel)]="form.arquivoPath" name="arquivoPath" required
                    placeholder="/evidencias/doc-001.pdf" />
@@ -72,11 +77,16 @@ const API = 'http://localhost:3001/api/v1';
 
           <button mat-raised-button color="primary" type="submit"
                   [disabled]="!form.tipo || !form.descricao || !form.arquivoPath || uploading">
+            @if (uploading) {
+              <mat-spinner diameter="16" class="inline-block mr-1" />
+            }
             {{ uploading ? 'Enviando...' : 'Adicionar' }}
           </button>
         </form>
 
-        <p *ngIf="error" style="color: #c62828; margin-top: 0.5rem;">{{ error }}</p>
+        @if (error) {
+          <p class="text-critical mt-2">{{ error }}</p>
+        }
       </mat-card-content>
     </mat-card>
   `,
@@ -98,7 +108,7 @@ export class EvidenciaUploadComponent {
     this.uploading = true;
     try {
       const nova = await firstValueFrom(
-        this.http.post(`${API}/auditorias/${this.auditoriaId}/evidencias`, {
+        this.http.post(`${environment.apiUrl}/auditorias/${this.auditoriaId}/evidencias`, {
           tipo: this.form.tipo,
           descricao: this.form.descricao,
           fonte: this.form.fonte || undefined,

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -9,8 +9,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-
-const API = 'http://localhost:3001/api/v1';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-forca-trabalho',
@@ -18,109 +18,119 @@ const API = 'http://localhost:3001/api/v1';
   imports: [
     CommonModule, FormsModule,
     MatCardModule, MatFormFieldModule, MatSelectModule,
-    MatInputModule, MatButtonModule, MatProgressBarModule,
+    MatInputModule, MatButtonModule, MatProgressBarModule, MatProgressSpinnerModule,
   ],
   template: `
     <mat-card>
       <mat-card-content>
         <h3>Força de Trabalho</h3>
 
-        <!-- Indicadores visuais -->
-        <div *ngIf="forcaTrabalho.length" style="margin-bottom: 1.5rem;">
-          <div style="display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 1rem;">
-            <div style="flex: 1; min-width: 150px;">
-              <div style="font-size: 2rem; font-weight: 700; color: #1565c0;">{{ totalDisponivel }}h</div>
-              <div style="color: #666; font-size: 0.85rem;">Horas Disponíveis</div>
-            </div>
-            <div style="flex: 1; min-width: 150px;">
-              <div style="font-size: 2rem; font-weight: 700;"
-                   [style.color]="totalAlocado > totalDisponivel ? '#c62828' : '#2e7d32'">
-                {{ totalAlocado }}h
+        @if (carregando) {
+          <div class="flex justify-center p-8">
+            <mat-spinner diameter="40" />
+          </div>
+        }
+
+        @if (forcaTrabalho.length) {
+          <div class="mb-6">
+            <div class="flex gap-8 flex-wrap mb-4">
+              <div class="flex-1 min-w-[150px]">
+                <div class="text-3xl font-bold text-info">{{ totalDisponivel }}h</div>
+                <div class="text-text-sec text-sm">Horas Disponíveis</div>
               </div>
-              <div style="color: #666; font-size: 0.85rem;">Horas Alocadas</div>
-            </div>
-            <div style="flex: 1; min-width: 150px;">
-              <div style="font-size: 2rem; font-weight: 700;"
-                   [style.color]="saldo < 0 ? '#c62828' : '#2e7d32'">
-                {{ saldo }}h
+              <div class="flex-1 min-w-[150px]">
+                <div class="text-3xl font-bold"
+                     [class.text-critical]="totalAlocado > totalDisponivel"
+                     [class.text-success]="totalAlocado <= totalDisponivel">
+                  {{ totalAlocado }}h
+                </div>
+                <div class="text-text-sec text-sm">Horas Alocadas</div>
               </div>
-              <div style="color: #666; font-size: 0.85rem;">Saldo</div>
+              <div class="flex-1 min-w-[150px]">
+                <div class="text-3xl font-bold"
+                     [class.text-critical]="saldo < 0"
+                     [class.text-success]="saldo >= 0">
+                  {{ saldo }}h
+                </div>
+                <div class="text-text-sec text-sm">Saldo</div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <div class="flex justify-between text-sm text-text-sec mb-1">
+                <span>0h</span>
+                <span>{{ totalDisponivel }}h</span>
+              </div>
+              <mat-progress-bar mode="determinate" [value]="percentualAlocado"
+                                [color]="percentualAlocado > 100 ? 'warn' : 'primary'" />
+              <div class="text-right text-xs mt-1"
+                   [class.text-critical]="percentualAlocado > 100"
+                   [class.text-text-sec]="percentualAlocado <= 100">
+                {{ percentualAlocado | number:'1.0-1' }}% alocado
+              </div>
             </div>
           </div>
 
-          <!-- Barra de progresso -->
-          <div style="margin-bottom: 1rem;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #888; margin-bottom: 0.25rem;">
-              <span>0h</span>
-              <span>{{ totalDisponivel }}h</span>
+          @for (ft of forcaTrabalho; track $index) {
+            <div class="flex justify-between items-center py-2 border-b border-divider">
+              <div>
+                <strong>{{ ft.usuario?.nome || ft.usuarioId }}</strong>
+                <br /><small class="text-text-sec">{{ ft.usuario?.email }}</small>
+              </div>
+              <div class="text-right">
+                <span class="font-semibold text-info">{{ ft.horasDisponiveisAno }}h</span>
+                <br /><small class="text-text-sec">Ano {{ ft.ano }}</small>
+              </div>
             </div>
-            <mat-progress-bar mode="determinate" [value]="percentualAlocado"
-                              [color]="percentualAlocado > 100 ? 'warn' : 'primary'">
-            </mat-progress-bar>
-            <div style="text-align: right; font-size: 0.75rem; margin-top: 0.25rem;"
-                 [style.color]="percentualAlocado > 100 ? '#c62828' : '#666'">
-              {{ percentualAlocado | number:'1.0-1' }}% alocado
-            </div>
-          </div>
-        </div>
+          }
+        } @else if (!carregando) {
+          <p class="text-text-sec py-4">Nenhum registro de força de trabalho.</p>
+        }
 
-        <!-- Lista individual -->
-        <div *ngFor="let ft of forcaTrabalho"
-             style="display: flex; justify-content: space-between; align-items: center;
-                    padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-          <div>
-            <strong>{{ ft.usuario?.nome || ft.usuarioId }}</strong>
-            <br /><small style="color: #888;">{{ ft.usuario?.email }}</small>
-          </div>
-          <div style="text-align: right;">
-            <span style="font-weight: 600; color: #1565c0;">{{ ft.horasDisponiveisAno }}h</span>
-            <br /><small style="color: #888;">Ano {{ ft.ano }}</small>
-          </div>
-        </div>
-
-        <p *ngIf="!forcaTrabalho.length && !carregando" style="color: #999; padding: 1rem 0;">
-          Nenhum registro de força de trabalho.
-        </p>
-        <mat-progress-bar *ngIf="carregando" mode="indeterminate" />
-
-        <!-- Form adicionar -->
-        <div *ngIf="planoId" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
-          <h4>Adicionar Força de Trabalho</h4>
-          <form (ngSubmit)="adicionar()" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
-            <mat-form-field appearance="outline" style="min-width: 250px;">
-              <mat-label>Usuário</mat-label>
-              <mat-select [(ngModel)]="form.usuarioId" name="usuarioId" required>
-                @for (u of usuarios; track u.id) {
-                  <mat-option [value]="u.id">{{ u.nome }} ({{ u.email }})</mat-option>
+        @if (planoId) {
+          <div class="mt-4 pt-4 border-t border-divider">
+            <h4>Adicionar Força de Trabalho</h4>
+            <form (ngSubmit)="adicionar()" class="flex gap-4 items-end flex-wrap">
+              <mat-form-field appearance="outline" class="min-w-[250px]">
+                <mat-label>Usuário</mat-label>
+                <mat-select #usuarioModel="ngModel" [(ngModel)]="form.usuarioId" name="usuarioId" required>
+                  @for (u of usuarios; track u.id) {
+                    <mat-option [value]="u.id">{{ u.nome }} ({{ u.email }})</mat-option>
+                  }
+                </mat-select>
+                @if (usuarioModel.invalid && usuarioModel.touched) {
+                  <mat-error>Selecione um usuário</mat-error>
                 }
-              </mat-select>
-            </mat-form-field>
+              </mat-form-field>
 
-            <mat-form-field appearance="outline" style="min-width: 150px;">
-              <mat-label>Horas/Ano</mat-label>
-              <input matInput type="number" [(ngModel)]="form.horasDisponiveisAno" name="horas"
-                     required min="0" placeholder="2000" />
-            </mat-form-field>
+              <mat-form-field appearance="outline" class="min-w-[150px]">
+                <mat-label>Horas/Ano</mat-label>
+                <input matInput type="number" [(ngModel)]="form.horasDisponiveisAno" name="horas"
+                       required min="0" placeholder="2000" />
+              </mat-form-field>
 
-            <mat-form-field appearance="outline" style="min-width: 120px;">
-              <mat-label>Ano</mat-label>
-              <input matInput type="number" [(ngModel)]="form.ano" name="ano"
-                     required [value]="anoAtual" />
-            </mat-form-field>
+              <mat-form-field appearance="outline" class="min-w-[120px]">
+                <mat-label>Ano</mat-label>
+                <input matInput type="number" [(ngModel)]="form.ano" name="ano"
+                       required [value]="anoAtual" />
+              </mat-form-field>
 
-            <button mat-raised-button color="primary" type="submit"
-                    [disabled]="!form.usuarioId || !form.horasDisponiveisAno">
-              Adicionar
-            </button>
-          </form>
-        </div>
+              <button mat-raised-button color="primary" type="submit"
+                      [disabled]="!form.usuarioId || !form.horasDisponiveisAno">
+                Adicionar
+              </button>
+            </form>
+          </div>
+        }
 
-        <p *ngIf="error" style="color: #c62828; margin-top: 0.5rem;">{{ error }}</p>
+        @if (error) {
+          <p class="text-critical mt-2">{{ error }}</p>
+        }
       </mat-card-content>
     </mat-card>
   `,
 })
-export class ForcaTrabalhoComponent {
+export class ForcaTrabalhoComponent implements OnInit {
   @Input() planoId = '';
   @Input() forcaTrabalho: any[] = [];
 
@@ -137,12 +147,15 @@ export class ForcaTrabalhoComponent {
   }
 
   async carregarUsuarios() {
+    this.carregando = true;
     try {
       this.usuarios = await firstValueFrom(
-        this.http.get<any[]>(`${API}/usuarios`),
+        this.http.get<any[]>(`${environment.apiUrl}/usuarios`),
       );
     } catch {
       // non-blocking
+    } finally {
+      this.carregando = false;
     }
   }
 
@@ -171,7 +184,7 @@ export class ForcaTrabalhoComponent {
     this.error = '';
     try {
       const novo = await firstValueFrom(
-        this.http.post(`${API}/forca-trabalho`, {
+        this.http.post(`${environment.apiUrl}/forca-trabalho`, {
           planoId: this.planoId,
           usuarioId: this.form.usuarioId,
           horasDisponiveisAno: this.form.horasDisponiveisAno,

@@ -12,101 +12,119 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
-
-const API = 'http://localhost:3001/api/v1';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { StatusBadgeComponent } from '../../shared/components/status-badge.component';
+import { environment } from '../../../environments/environment';
+import { PageHeaderComponent } from '../../shared/components/page-header.component';
+import { HasRoleDirective } from '../../core/directives/has-role.directive';
 
 @Component({
   selector: 'app-recomendacao-detail',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, RouterModule,
+    CommonModule, FormsModule, RouterModule, StatusBadgeComponent,
     MatCardModule, MatFormFieldModule, MatInputModule,
     MatButtonModule, MatListModule, MatIconModule,
-    MatDividerModule, MatChipsModule,
+    MatDividerModule, MatProgressSpinnerModule, PageHeaderComponent, HasRoleDirective,
   ],
   template: `
-    <h1>Recomendação</h1>
+    <app-page-header title="Recomendação" />
 
-    <!-- Detalhes -->
-    <mat-card *ngIf="recomendacao" style="margin-bottom: 1rem;">
-      <mat-card-content>
-        <p><strong>Descrição:</strong> {{ recomendacao.descricao }}</p>
-        <p>
-          <strong>Criticidade:</strong>
-          <mat-chip [style.background]="criticidadeColor(recomendacao.criticidade)" style="color: #fff; margin-left: 0.5rem;">
-            {{ recomendacao.criticidade }}
-          </mat-chip>
-        </p>
-        <p>
-          <strong>Status:</strong>
-          <mat-chip [style.background]="statusColor(recomendacao.status)" style="color: #fff; margin-left: 0.5rem;">
-            {{ recomendacao.status }}
-          </mat-chip>
-        </p>
-        <p><strong>Prazo:</strong> {{ recomendacao.prazo | date:'dd/MM/yyyy' }}</p>
-        <p *ngIf="recomendacao.relatorio"><strong>Relatório:</strong> {{ recomendacao.relatorio.tipo || recomendacao.relatorioId }}</p>
-      </mat-card-content>
-    </mat-card>
+    @if (loading) {
+      <div class="flex justify-center p-8"><mat-spinner diameter="40" /></div>
+    } @else {
+      @if (recomendacao) {
+        <mat-card class="mb-4">
+          <mat-card-content>
+            <p><strong>Descrição:</strong> {{ recomendacao.descricao }}</p>
+            <p>
+              <strong>Criticidade:</strong>
+              <app-status-badge [status]="recomendacao.criticidade" />
+            </p>
+            <p>
+              <strong>Status:</strong>
+              <app-status-badge [status]="recomendacao.status" />
+            </p>
+            <p><strong>Prazo:</strong> {{ recomendacao.prazo | date:'dd/MM/yyyy' }}</p>
+            @if (recomendacao.relatorio) {
+              <p><strong>Relatório:</strong> {{ recomendacao.relatorio.tipo || recomendacao.relatorioId }}</p>
+            }
+          </mat-card-content>
+        </mat-card>
+      }
 
-    <!-- Providências -->
-    <mat-card style="margin-bottom: 1rem;">
-      <mat-card-content>
-        <h3>Providências</h3>
-        <mat-list *ngIf="providencias.length; else semProvidencias">
-          @for (p of providencias; track p.id) {
-            <mat-list-item>
-              <mat-icon matListItemIcon>check_circle</mat-icon>
-              <span matListItemTitle>{{ p.descricao }}</span>
-              <span matListItemLine style="color: #888; font-size: 0.8rem;">
-                {{ p.data | date:'dd/MM/yyyy HH:mm' }}
-                <span *ngIf="p.evidenciaPath"> — Evidência: {{ p.evidenciaPath }}</span>
-              </span>
-            </mat-list-item>
-            <mat-divider />
+      <mat-card class="mb-4">
+        <mat-card-content>
+          <h3>Providências</h3>
+          @if (providencias.length) {
+            <mat-list>
+              @for (p of providencias; track p.id) {
+                <mat-list-item>
+                  <mat-icon matListItemIcon>check_circle</mat-icon>
+                  <span matListItemTitle>{{ p.descricao }}</span>
+                  <span matListItemLine class="text-text-sec text-xs">
+                    {{ p.data | date:'dd/MM/yyyy HH:mm' }}
+                    @if (p.evidenciaPath) {
+                      <span> — Evidência: {{ p.evidenciaPath }}</span>
+                    }
+                  </span>
+                </mat-list-item>
+                <mat-divider />
+              }
+            </mat-list>
+          } @else {
+            <p class="text-text-sec">Nenhuma providência registrada.</p>
           }
-        </mat-list>
-        <ng-template #semProvidencias>
-          <p style="color: #999;">Nenhuma providência registrada.</p>
-        </ng-template>
 
-        <!-- Form registrar providência (P05) -->
-        <div *ngIf="recomendacao && recomendacao.status !== 'CUMPRIDA' && recomendacao.status !== 'CANCELADA'"
-             style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
-          <h4>Registrar Providência (P05)</h4>
-          <form (ngSubmit)="registrarProvidencia()" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
-            <mat-form-field appearance="outline" style="min-width: 300px; flex: 1;">
-              <mat-label>Descrição da Providência</mat-label>
-              <textarea matInput [(ngModel)]="form.descricao" name="descricao" required rows="2"></textarea>
-            </mat-form-field>
+          @if (recomendacao && recomendacao.status !== 'CUMPRIDA' && recomendacao.status !== 'CANCELADA') {
+            <div class="mt-4 pt-4 border-t" *appHasRole="'P05'">
+              <h4>Registrar Providência (P05)</h4>
+              <form (ngSubmit)="registrarProvidencia()" class="flex gap-4 items-end flex-wrap">
+                <mat-form-field appearance="outline" class="min-w-[300px] flex-1">
+                  <mat-label>Descrição da Providência</mat-label>
+                  <textarea matInput #descModel="ngModel" [(ngModel)]="form.descricao" name="descricao" required rows="2"></textarea>
+                  @if (descModel.invalid && descModel.touched) {
+                    <mat-error>Descrição obrigatória</mat-error>
+                  }
+                </mat-form-field>
 
-            <mat-form-field appearance="outline" style="min-width: 200px;">
-              <mat-label>Evidência (caminho)</mat-label>
-              <input matInput [(ngModel)]="form.evidenciaPath" name="evidenciaPath" placeholder="/files/evidencia.pdf" />
-            </mat-form-field>
+                <mat-form-field appearance="outline" class="min-w-[200px]">
+                  <mat-label>Evidência (caminho)</mat-label>
+                  <input matInput [(ngModel)]="form.evidenciaPath" name="evidenciaPath" placeholder="/files/evidencia.pdf" />
+                </mat-form-field>
 
-            <button mat-raised-button color="primary" type="submit" [disabled]="!form.descricao">
-              Registrar
+                <button mat-raised-button color="primary" type="submit" [disabled]="!form.descricao">
+                  Registrar
+                </button>
+              </form>
+
+              @if (success) {
+                <p class="text-success mt-2">{{ success }}</p>
+              }
+              @if (error) {
+                <p class="text-critical mt-2">{{ error }}</p>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      @if (recomendacao && recomendacao.status === 'EM_ANDAMENTO') {
+        <mat-card class="mb-4">
+          <mat-card-content>
+            <h3>Validação (P02)</h3>
+            <p class="text-text-sec">Confirmar que a recomendação foi implementada e está CUMPRIDA.</p>
+            <button mat-raised-button color="accent" (click)="validar()" *appHasRole="'P02'">
+              Validar Implementação
             </button>
-          </form>
+          </mat-card-content>
+        </mat-card>
+      }
+    }
 
-          <p *ngIf="success" style="color: #2e7d32; margin-top: 0.5rem;">{{ success }}</p>
-          <p *ngIf="error" style="color: #c62828; margin-top: 0.5rem;">{{ error }}</p>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- Botão validar (P02) -->
-    <mat-card *ngIf="recomendacao && recomendacao.status === 'EM_ANDAMENTO'" style="margin-bottom: 1rem;">
-      <mat-card-content>
-        <h3>Validação (P02)</h3>
-        <p style="color: #666;">Confirmar que a recomendação foi implementada e está CUMPRIDA.</p>
-        <button mat-raised-button color="accent" (click)="validar()">
-          Validar Implementação
-        </button>
-      </mat-card-content>
-    </mat-card>
-
-    <p *ngIf="loadError" style="color: #c62828; text-align: center;">{{ loadError }}</p>
+    @if (loadError) {
+      <p class="text-critical text-center">{{ loadError }}</p>
+    }
   `,
 })
 export class RecomendacaoDetailComponent implements OnInit {
@@ -116,6 +134,7 @@ export class RecomendacaoDetailComponent implements OnInit {
   error = '';
   success = '';
   loadError = '';
+  loading = true;
   private id = '';
 
   constructor(
@@ -130,14 +149,17 @@ export class RecomendacaoDetailComponent implements OnInit {
   }
 
   async carregar() {
+    this.loading = true;
     this.loadError = '';
     try {
       this.recomendacao = await firstValueFrom(
-        this.http.get<any>(`${API}/recomendacoes/${this.id}`),
+        this.http.get<any>(`${environment.apiUrl}/recomendacoes/${this.id}`),
       );
       this.providencias = this.recomendacao.providencias || [];
     } catch (err: any) {
       this.loadError = err?.error?.message || 'Erro ao carregar recomendação';
+    } finally {
+      this.loading = false;
     }
   }
 
@@ -147,7 +169,7 @@ export class RecomendacaoDetailComponent implements OnInit {
     this.success = '';
     try {
       await firstValueFrom(
-        this.http.post(`${API}/recomendacoes/${this.id}/providencias`, {
+        this.http.post(`${environment.apiUrl}/recomendacoes/${this.id}/providencias`, {
           descricao: this.form.descricao,
           autorId: 'current-user',
           evidenciaPath: this.form.evidenciaPath || undefined,
@@ -165,7 +187,7 @@ export class RecomendacaoDetailComponent implements OnInit {
     this.error = '';
     try {
       await firstValueFrom(
-        this.http.post(`${API}/recomendacoes/${this.id}/validar`, {}),
+        this.http.post(`${environment.apiUrl}/recomendacoes/${this.id}/validar`, {}),
       );
       await this.carregar();
     } catch (err: any) {
@@ -173,15 +195,5 @@ export class RecomendacaoDetailComponent implements OnInit {
     }
   }
 
-  criticidadeColor(criticidade: string): string {
-    const m: Record<string, string> = { ALTA: '#c62828', MEDIA: '#e65100', BAIXA: '#2e7d32' };
-    return m[criticidade] || '#888';
-  }
 
-  statusColor(status: string): string {
-    const m: Record<string, string> = {
-      PENDENTE: '#1565c0', EM_ANDAMENTO: '#e65100', CUMPRIDA: '#2e7d32', VENCIDA: '#c62828', CANCELADA: '#888',
-    };
-    return m[status] || '#888';
-  }
 }

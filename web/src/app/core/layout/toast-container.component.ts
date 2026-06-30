@@ -14,7 +14,7 @@ import { ToastService } from '../../core/services/toast.service';
         <div class="toast" [class]="toast.type" role="alert">
           <mat-icon class="toast-icon">{{ iconFor(toast.type) }}</mat-icon>
           <span class="toast-message">{{ toast.message }}</span>
-          <button mat-icon-button class="toast-close" (click)="toastService.dismiss(toast.id)">
+          <button mat-icon-button class="toast-close" (click)="toastService.dismiss(toast.id)" aria-label="Fechar notificação">
             <mat-icon>close</mat-icon>
           </button>
         </div>
