@@ -13,7 +13,7 @@ export const authHandlers = [
       return HttpResponse.json({ message: 'Credenciais inválidas' }, { status: 401 });
     }
     if (user.mfaEnabled) {
-      return HttpResponse.json({ mfa_required: true, session_token: 'mock-session-token' });
+      return HttpResponse.json({ mfa_required: true, session_token: `mock-st-${user.id}` });
     }
     return HttpResponse.json({
       access_token: `mock-at-${user.id}`,
@@ -23,8 +23,9 @@ export const authHandlers = [
   }),
 
   http.post(`${API}/auth/mfa/verify`, async ({ request }) => {
-    const _body = (await request.json()) as any;
-    const user = users[0];
+    const body = (await request.json()) as any;
+    const userId = (body.session_token || '').replace('mock-st-', '');
+    const user = users.find((u) => u.id === userId) || users[0];
     return HttpResponse.json({
       access_token: `mock-at-${user.id}`,
       refresh_token: `mock-rt-${user.id}`,
@@ -33,8 +34,9 @@ export const authHandlers = [
   }),
 
   http.post(`${API}/auth/refresh`, async ({ request }) => {
-    const _body = (await request.json()) as any;
-    const user = users[0];
+    const body = (await request.json()) as any;
+    const userId = (body.refresh_token || '').replace('mock-rt-', '').replace('-refreshed', '');
+    const user = users.find((u) => u.id === userId) || users[0];
     return HttpResponse.json({
       access_token: `mock-at-${user.id}-refreshed`,
       refresh_token: `mock-rt-${user.id}-refreshed`,

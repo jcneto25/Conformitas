@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
@@ -9,71 +8,88 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
-
-const API = 'http://localhost:3001/api/v1';
-// Placeholder até o contexto de auth (PRP-001) estar disponível no frontend.
-const AUTOR_ID = 'p01-auditor-chefe';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { environment } from '../../../environments/environment';
+import { PageHeaderComponent } from '../../shared/components/page-header.component';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-relatorio-anual-form',
   standalone: true,
   imports: [
-    CommonModule, FormsModule,
+    FormsModule,
     MatCardModule, MatFormFieldModule, MatInputModule,
-    MatButtonModule, MatChipsModule, MatIconModule,
+    MatButtonModule, MatChipsModule, MatIconModule, MatProgressSpinnerModule, PageHeaderComponent,
   ],
   template: `
-    <h1>Relatório Anual de Atividades</h1>
+    <app-page-header title="Relatório Anual de Atividades" />
 
-    <mat-card style="margin-bottom: 1rem;">
+    <mat-card class="mb-4">
       <mat-card-content>
-        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-          <mat-form-field appearance="outline" style="width: 160px;">
+        <div class="flex gap-4 items-center flex-wrap">
+          <mat-form-field appearance="outline" class="w-[160px]">
             <mat-label>Ano (exercício)</mat-label>
             <input matInput type="number" [(ngModel)]="ano" name="ano" placeholder="2025" />
           </mat-form-field>
-          <button mat-raised-button color="primary" (click)="gerar()" [disabled]="!ano">
+          <button mat-raised-button color="primary" (click)="gerar()" [disabled]="!ano || carregando">
             <mat-icon>insights</mat-icon> Gerar Relatório Anual
           </button>
-          <span style="color: #888; font-size: 0.85rem;">Consolida indicadores do exercício (P01).</span>
+          <span class="text-text-sec text-sm">Consolida indicadores do exercício (P01).</span>
         </div>
-        <p *ngIf="erro" style="color: #c62828; margin-top: 0.5rem;">{{ erro }}</p>
+        @if (erro) {
+          <p class="text-critical mt-2">{{ erro }}</p>
+        }
       </mat-card-content>
     </mat-card>
 
-    <mat-card *ngIf="resultado">
-      <mat-card-header>
-        <mat-card-title>Relatório Anual {{ resultado.ano }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-chip-set>
-          <mat-chip [highlighted]="true" color="primary">{{ resultado.status }}</mat-chip>
-        </mat-chip-set>
-        <pre style="white-space: pre-wrap; background: #f7f7f7; padding: 0.75rem; margin-top: 0.75rem; border-radius: 4px;">{{ resultado.conteudo }}</pre>
-      </mat-card-content>
-    </mat-card>
+    @if (carregando) {
+      <div class="flex justify-center p-8">
+        <mat-spinner diameter="40" />
+      </div>
+    }
+
+    @if (resultado) {
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Relatório Anual {{ resultado.ano }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-chip-set>
+            <mat-chip [highlighted]="true" color="primary">{{ resultado.status }}</mat-chip>
+          </mat-chip-set>
+          <pre class="whitespace-pre-wrap bg-background p-3 mt-3 rounded">{{ resultado.conteudo }}</pre>
+        </mat-card-content>
+      </mat-card>
+    }
   `,
 })
 export class RelatorioAnualFormComponent {
   ano: number | null = new Date().getFullYear();
   resultado: any = null;
   erro = '';
+  carregando = false;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly auth: AuthService,
+  ) {}
 
   async gerar() {
     this.erro = '';
     this.resultado = null;
     if (!this.ano) return;
+    this.carregando = true;
     try {
       this.resultado = await firstValueFrom(
-        this.http.post<any>(`${API}/relatorios-anuais`, {
+        this.http.post<any>(`${environment.apiUrl}/relatorios-anuais`, {
           ano: this.ano,
-          autorId: AUTOR_ID,
+          autorId: this.auth.user()?.id || '',
         }),
       );
     } catch (e: any) {
       this.erro = e?.error?.message || 'Erro ao gerar relatório anual (já existe para o ano?)';
+    } finally {
+      this.carregando = false;
     }
   }
 }

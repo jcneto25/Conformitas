@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -8,8 +8,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
-
-const API = 'http://localhost:3001/api/v1';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-classificacao-selector',
@@ -18,48 +18,54 @@ const API = 'http://localhost:3001/api/v1';
     CommonModule, FormsModule,
     MatFormFieldModule, MatSelectModule,
     MatInputModule, MatButtonModule, MatChipsModule,
+    MatProgressSpinnerModule,
   ],
   template: `
-    <div style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
-      <!-- Classificação atual -->
-      <div *ngIf="classificacaoAtual; else semClassificacao">
-        <mat-chip [style.background]="nivelColor(classificacaoAtual.nivelSigilo)" style="color: #fff;">
-          {{ classificacaoAtual.nivelSigilo }}
-        </mat-chip>
-      </div>
-      <ng-template #semClassificacao>
-        <span style="color: #999; font-size: 0.85rem;">Não classificado</span>
-      </ng-template>
+    <div class="flex gap-4 items-end flex-wrap">
+      @if (loading) {
+        <mat-spinner diameter="24" />
+      } @else {
+        @if (classificacaoAtual) {
+          <mat-chip [class]="'text-white ' + nivelColor(classificacaoAtual.nivelSigilo)">
+            {{ classificacaoAtual.nivelSigilo }}
+          </mat-chip>
+        } @else {
+          <span class="text-text-sec text-sm">Não classificado</span>
+        }
 
-      <!-- Formulário de classificação -->
-      <mat-form-field appearance="outline" style="min-width: 180px;">
-        <mat-label>Nível de Sigilo</mat-label>
-        <mat-select [(ngModel)]="nivelSelecionado" name="nivelSigilo" required>
-          <mat-option value="PUBLICO">Público</mat-option>
-          <mat-option value="INTERNO">Interno</mat-option>
-          <mat-option value="RESTRITO">Restrito</mat-option>
-          <mat-option value="SIGILOSO">Sigiloso</mat-option>
-        </mat-select>
-      </mat-form-field>
+        <mat-form-field appearance="outline" class="min-w-[180px]">
+          <mat-label>Nível de Sigilo</mat-label>
+          <mat-select [(ngModel)]="nivelSelecionado" name="nivelSigilo" required>
+            <mat-option value="PUBLICO">Público</mat-option>
+            <mat-option value="INTERNO">Interno</mat-option>
+            <mat-option value="RESTRITO">Restrito</mat-option>
+            <mat-option value="SIGILOSO">Sigiloso</mat-option>
+          </mat-select>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline" style="min-width: 250px;">
-        <mat-label>Justificativa (opcional)</mat-label>
-        <input matInput [(ngModel)]="justificativa" name="justificativa" />
-      </mat-form-field>
+        <mat-form-field appearance="outline" class="min-w-[250px]">
+          <mat-label>Justificativa (opcional)</mat-label>
+          <input matInput [(ngModel)]="justificativa" name="justificativa" />
+        </mat-form-field>
 
-      <button mat-stroked-button color="primary" (click)="classificar()"
-              [disabled]="!nivelSelecionado || classificando">
-        {{ classificando ? 'Classificando...' : 'Classificar' }}
-      </button>
+        <button mat-stroked-button color="primary" (click)="classificar()"
+                [disabled]="!nivelSelecionado || classificando">
+          {{ classificando ? 'Classificando...' : 'Classificar' }}
+        </button>
 
-      <button mat-button *ngIf="classificacaoAtual" (click)="carregar()" style="margin-left: 0.5rem;">
-        Recarregar
-      </button>
+        @if (classificacaoAtual) {
+          <button mat-button (click)="carregar()" class="ml-2">
+            Recarregar
+          </button>
+        }
+      }
     </div>
-    <p *ngIf="error" style="color: #c62828; margin-top: 0.25rem; font-size: 0.85rem;">{{ error }}</p>
+    @if (error) {
+      <p class="text-critical mt-1 text-sm">{{ error }}</p>
+    }
   `,
 })
-export class ClassificacaoSelectorComponent {
+export class ClassificacaoSelectorComponent implements OnInit {
   @Input() entidadeTipo = '';
   @Input() entidadeId = '';
   @Output() classificacaoChange = new EventEmitter<any>();
@@ -69,6 +75,7 @@ export class ClassificacaoSelectorComponent {
   justificativa = '';
   classificando = false;
   error = '';
+  loading = true;
 
   constructor(private readonly http: HttpClient) {}
 
@@ -78,12 +85,15 @@ export class ClassificacaoSelectorComponent {
 
   async carregar() {
     if (!this.entidadeTipo || !this.entidadeId) return;
+    this.loading = true;
     try {
       this.classificacaoAtual = await firstValueFrom(
-        this.http.get<any>(`${API}/etica/${this.entidadeTipo}/${this.entidadeId}/classificacao`),
+        this.http.get<any>(`${environment.apiUrl}/etica/${this.entidadeTipo}/${this.entidadeId}/classificacao`),
       );
     } catch {
       this.classificacaoAtual = null;
+    } finally {
+      this.loading = false;
     }
   }
 
@@ -93,7 +103,7 @@ export class ClassificacaoSelectorComponent {
     this.classificando = true;
     try {
       this.classificacaoAtual = await firstValueFrom(
-        this.http.put(`${API}/etica/${this.entidadeTipo}/${this.entidadeId}/classificacao`, {
+        this.http.put(`${environment.apiUrl}/etica/${this.entidadeTipo}/${this.entidadeId}/classificacao`, {
           nivelSigilo: this.nivelSelecionado,
           justificativa: this.justificativa || undefined,
         }),
@@ -110,11 +120,11 @@ export class ClassificacaoSelectorComponent {
 
   nivelColor(nivel: string): string {
     const m: Record<string, string> = {
-      PUBLICO: '#2e7d32',
-      INTERNO: '#1565c0',
-      RESTRITO: '#e65100',
-      SIGILOSO: '#c62828',
+      PUBLICO: 'bg-green-600',
+      INTERNO: 'bg-blue-600',
+      RESTRITO: 'bg-orange-600',
+      SIGILOSO: 'bg-red-600',
     };
-    return m[nivel] || '#888';
+    return m[nivel] || 'bg-gray-500';
   }
 }

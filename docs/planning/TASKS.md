@@ -228,12 +228,12 @@
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
 | T-103 | Criar migrations: `avaliacoes_qualidade`, `nao_conformidades`, `indicadores_qualidade` | dev | ❌ | T-007 | 2 | ⏳ |
-| T-104 | Implementar AvaliacaoService: monitoramento, autoavaliação, externa | dev | ❌ | T-103 | 4 | ⏳ |
-| T-105 | Implementar acesso temporário P07 (Avaliador Externo) | dev | ❌ | T-104 | 2 | ⏳ |
-| T-106 | Implementar NaoConformidadeService: workflow ABERTA→CORRIGIDA | dev | ⚠️ | T-103 | 3 | ⏳ |
+| T-104 | Implementar AvaliacaoService: monitoramento, autoavaliação, externa | dev | ❌ | T-103 | 4 | ✅ |
+| T-105 | Implementar acesso temporário P07 (Avaliador Externo) | dev | ❌ | T-104 | 2 | ✅ |
+| T-106 | Implementar NaoConformidadeService: workflow ABERTA→CORRIGIDA | dev | ⚠️ | T-103 | 3 | ✅ |
 | T-107 | Tela AvaliacaoList + Form (P01, P07) | dev | ❌ | T-006,T-104 | 4 | ✅ |
-| T-108 | Tela NaoConformidadeList + PlanoAcao | dev | ❌ | T-106 | 3 | ⏳ |
-| T-109 | Testes: autoavaliação, externa, acesso temporário, workflow NC | qa | ❌ | T-104,T-105,T-106 | 4 | ⏳ |
+| T-108 | Tela NaoConformidadeList + PlanoAcao | dev | ❌ | T-106 | 3 | ✅ |
+| T-109 | Testes: autoavaliação, externa, acesso temporário, workflow NC | qa | ❌ | T-104,T-105,T-106 | 4 | ✅ |
 
 **PRP-011 total: 22h**
 
@@ -242,13 +242,13 @@
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
 | T-110 | Criar migrations: `riscos`, `competencias`, `capacitacoes`, `documentos_metodologicos` | dev | ❌ | T-007 | 2 | ⏳ |
-| T-111 | Implementar RiscoService: matriz probabilidade×impacto, nível calculado | dev | ❌ | T-110 | 5 | ⏳ |
-| T-112 | Implementar CapacitacaoService: CRUD + totalização horas + alerta 40h | dev | ✅ | T-110 | 4 | ⏳ |
-| T-113 | Implementar BibliotecaService: upload, versionamento, busca | dev | ✅ | T-110 | 3 | ⏳ |
-| T-114 | Tela RiscoList + MatrizRiscos | dev | ❌ | T-111 | 4 | ⏳ |
-| T-115 | Tela CapacitacaoList + alerta meta 40h | dev | ❌ | T-112 | 3 | ⏳ |
-| T-116 | Tela BibliotecaList + Upload/Dowload | dev | ❌ | T-113 | 2 | ⏳ |
-| T-117 | Testes: cálculo nível risco, totalização horas, versionamento | qa | ❌ | T-111,T-112,T-113 | 4 | ⏳ |
+| T-111 | Implementar RiscoService: matriz probabilidade×impacto, nível calculado | dev | ❌ | T-110 | 5 | ✅ |
+| T-112 | Implementar CapacitacaoService: CRUD + totalização horas + alerta 40h | dev | ✅ | T-110 | 4 | ✅ |
+| T-113 | Implementar BibliotecaService: upload, versionamento, busca | dev | ✅ | T-110 | 3 | ✅ |
+| T-114 | Tela RiscoList + MatrizRiscos | dev | ❌ | T-111 | 4 | ✅ |
+| T-115 | Tela CapacitacaoList + alerta meta 40h | dev | ❌ | T-112 | 3 | ✅ |
+| T-116 | Tela BibliotecaList + Upload/Dowload | dev | ❌ | T-113 | 2 | ✅ |
+| T-117 | Testes: cálculo nível risco, totalização horas, versionamento | qa | ❌ | T-111,T-112,T-113 | 4 | ✅ |
 
 **PRP-012 total: 27h**
 
@@ -257,11 +257,11 @@
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
 | T-118 | Criar migrations: `determinacoes_externas`, `registros_fraude` | dev | ❌ | T-007 | 1 | ⏳ |
-| T-119 | Implementar DeterminacaoService: registro TCE/CNJ, prazo, status | dev | ❌ | T-118 | 3 | ⏳ |
-| T-120 | Implementar RegistroFraudeService: workflow superior→60 dias→TCE | dev | ❌ | T-118 | 4 | ⏳ |
-| T-121 | Tela DeterminacaoList + Form (P01) | dev | ❌ | T-119 | 3 | ⏳ |
-| T-122 | Tela FraudeList + workflow comunicação | dev | ❌ | T-120 | 3 | ⏳ |
-| T-123 | Testes: prazos determinação, workflow fraude 60 dias | qa | ❌ | T-119,T-120 | 3 | ⏳ |
+| T-119 | Implementar DeterminacaoService: registro TCE/CNJ, prazo, status | dev | ❌ | T-118 | 3 | ✅ |
+| T-120 | Implementar RegistroFraudeService: workflow superior→60 dias→TCE | dev | ❌ | T-118 | 4 | ✅ |
+| T-121 | Tela DeterminacaoList + Form (P01) | dev | ❌ | T-119 | 3 | ✅ |
+| T-122 | Tela FraudeList + workflow comunicação | dev | ❌ | T-120 | 3 | ✅ |
+| T-123 | Testes: prazos determinação, workflow fraude 60 dias | qa | ❌ | T-119,T-120 | 3 | ✅ |
 
 **PRP-013 total: 17h**
 

@@ -8,109 +8,92 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
-
-const API = 'http://localhost:3001/api/v1';
+import { StatusBadgeComponent } from '../../shared/components/status-badge.component';
+import { environment } from '../../../environments/environment';
+import { PageHeaderComponent } from '../../shared/components/page-header.component';
 
 @Component({
   selector: 'app-painel-monitoramento',
   standalone: true,
   imports: [
-    CommonModule,
-    MatCardModule, MatChipsModule, MatProgressSpinnerModule,
-    MatIconModule, MatTableModule, MatButtonModule,
+    CommonModule, StatusBadgeComponent,
+    MatCardModule, MatProgressSpinnerModule,
+    MatIconModule, MatTableModule, MatButtonModule, PageHeaderComponent,
   ],
   template: `
-    <h1>Painel de Monitoramento (P01, P06)</h1>
+    <app-page-header title="Painel de Monitoramento (P01, P06)" />
 
-    <!-- Cards de status -->
-    <div class="status-grid">
-      <mat-card>
-        <mat-card-content>
-          <div class="card-metric" style="color: #1565c0;">{{ pendentes }}</div>
-          <div class="card-label">Pendentes</div>
-        </mat-card-content>
-      </mat-card>
+    @if (loading) {
+      <div class="flex justify-center p-8"><mat-spinner diameter="40" /></div>
+    } @else {
+      <div class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4">
+        <mat-card>
+          <mat-card-content>
+            <div class="text-4xl font-bold text-center text-info">{{ pendentes }}</div>
+            <div class="text-center text-text-sec text-sm">Pendentes</div>
+          </mat-card-content>
+        </mat-card>
 
-      <mat-card>
-        <mat-card-content>
-          <div class="card-metric" style="color: #e65100;">{{ emAndamento }}</div>
-          <div class="card-label">Em Andamento</div>
-        </mat-card-content>
-      </mat-card>
+        <mat-card>
+          <mat-card-content>
+            <div class="text-4xl font-bold text-center text-warning">{{ emAndamento }}</div>
+            <div class="text-center text-text-sec text-sm">Em Andamento</div>
+          </mat-card-content>
+        </mat-card>
 
-      <mat-card>
-        <mat-card-content>
-          <div class="card-metric" style="color: #2e7d32;">{{ cumpridas }}</div>
-          <div class="card-label">Cumpridas</div>
-        </mat-card-content>
-      </mat-card>
+        <mat-card>
+          <mat-card-content>
+            <div class="text-4xl font-bold text-center text-success">{{ cumpridas }}</div>
+            <div class="text-center text-text-sec text-sm">Cumpridas</div>
+          </mat-card-content>
+        </mat-card>
 
-      <mat-card>
-        <mat-card-content>
-          <div class="card-metric" style="color: #c62828;">{{ vencidas }}</div>
-          <div class="card-label">Vencidas</div>
-        </mat-card-content>
-      </mat-card>
-    </div>
+        <mat-card>
+          <mat-card-content>
+            <div class="text-4xl font-bold text-center text-critical">{{ vencidas }}</div>
+            <div class="text-center text-text-sec text-sm">Vencidas</div>
+          </mat-card-content>
+        </mat-card>
+      </div>
 
-    <!-- Vencidas em destaque -->
-    <mat-card *ngIf="recomendacoesVencidas.length" style="margin-top: 1rem; border-left: 4px solid #c62828;">
-      <mat-card-header>
-        <mat-card-title style="color: #c62828;">
-          <mat-icon style="vertical-align: middle;">warning</mat-icon>
-          Recomendações Vencidas ({{ recomendacoesVencidas.length }})
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <table mat-table [dataSource]="recomendacoesVencidas" class="mat-elevation-z0" style="width: 100%;">
-          <ng-container matColumnDef="descricao">
-            <th mat-header-cell *matHeaderCellDef>Descrição</th>
-            <td mat-cell *matCellDef="let r">{{ r.descricao }}</td>
-          </ng-container>
-          <ng-container matColumnDef="criticidade">
-            <th mat-header-cell *matHeaderCellDef>Criticidade</th>
-            <td mat-cell *matCellDef="let r">
-              <mat-chip [style.background]="criticidadeColor(r.criticidade)" style="color: #fff; font-size: 0.75rem;">
-                {{ r.criticidade }}
-              </mat-chip>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="prazo">
-            <th mat-header-cell *matHeaderCellDef>Prazo</th>
-            <td mat-cell *matCellDef="let r" style="color: #c62828; font-weight: 600;">
-              {{ r.prazo | date:'dd/MM/yyyy' }}
-            </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="['descricao', 'criticidade', 'prazo']"></tr>
-          <tr mat-row *matRowDef="let row; columns: ['descricao', 'criticidade', 'prazo'];"></tr>
-        </table>
-      </mat-card-content>
-    </mat-card>
+      @if (recomendacoesVencidas.length) {
+        <mat-card class="mt-4 border-l-4 border-red-600">
+          <mat-card-header>
+            <mat-card-title class="text-critical">
+              <mat-icon class="align-middle">warning</mat-icon>
+              Recomendações Vencidas ({{ recomendacoesVencidas.length }})
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <table mat-table [dataSource]="recomendacoesVencidas" class="mat-elevation-z0 w-full">
+              <ng-container matColumnDef="descricao">
+                <th mat-header-cell *matHeaderCellDef>Descrição</th>
+                <td mat-cell *matCellDef="let r">{{ r.descricao }}</td>
+              </ng-container>
+              <ng-container matColumnDef="criticidade">
+                <th mat-header-cell *matHeaderCellDef>Criticidade</th>
+                <td mat-cell *matCellDef="let r">
+                  <app-status-badge [status]="r.criticidade" />
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="prazo">
+                <th mat-header-cell *matHeaderCellDef>Prazo</th>
+                <td mat-cell *matCellDef="let r" class="text-critical font-semibold">
+                  {{ r.prazo | date:'dd/MM/yyyy' }}
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="['descricao', 'criticidade', 'prazo']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['descricao', 'criticidade', 'prazo'];"></tr>
+            </table>
+          </mat-card-content>
+        </mat-card>
+      }
+    }
 
-    <!-- Card loading -->
-    <div *ngIf="loading" style="display: flex; justify-content: center; padding: 2rem;">
-      <mat-spinner diameter="32" />
-    </div>
-
-    <p *ngIf="error" style="color: #c62828; text-align: center; margin-top: 1rem;">{{ error }}</p>
+    @if (error) {
+      <p class="text-critical text-center mt-4">{{ error }}</p>
+    }
   `,
-  styles: [`
-    .status-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 1rem;
-    }
-    .card-metric {
-      font-size: 2.5rem;
-      font-weight: 700;
-      text-align: center;
-    }
-    .card-label {
-      text-align: center;
-      color: #888;
-      font-size: 0.85rem;
-    }
-  `],
 })
 export class PainelMonitoramentoComponent implements OnInit {
   recomendacoes: any[] = [];
@@ -129,7 +112,7 @@ export class PainelMonitoramentoComponent implements OnInit {
     this.error = '';
     try {
       this.recomendacoes = await firstValueFrom(
-        this.http.get<any[]>(`${API}/recomendacoes`),
+        this.http.get<any[]>(`${environment.apiUrl}/recomendacoes`),
       );
       this.recomendacoesVencidas = this.recomendacoes.filter(r => r.status === 'VENCIDA');
     } catch (err: any) {
@@ -155,8 +138,5 @@ export class PainelMonitoramentoComponent implements OnInit {
     return this.recomendacoesVencidas.length;
   }
 
-  criticidadeColor(criticidade: string): string {
-    const m: Record<string, string> = { ALTA: '#c62828', MEDIA: '#e65100', BAIXA: '#2e7d32' };
-    return m[criticidade] || '#888';
-  }
+
 }

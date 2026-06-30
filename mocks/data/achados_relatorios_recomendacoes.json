@@ -10,7 +10,9 @@
       "causa": "Falta de procedimento formal de conciliação bancária mensal na Secretaria de Finanças",
       "efeito": "Impossibilidade de assegurar a fidedignidade dos saldos contábeis, com risco de distorção material nas demonstrações",
       "status": "EM_MANIFESTACAO",
-      "evidencia_ids": ["evd-002"],
+      "evidencia_ids": [
+        "evd-002"
+      ],
       "autor_id": "mock-user-002",
       "prazo_manifestacao": "2026-02-27",
       "data_consolidacao": null
@@ -25,7 +27,10 @@
       "causa": "Processo de empenho realizado sem observância da ordem cronológica de pré-empenho",
       "efeito": "Risco de assunção de obrigações sem lastro orçamentário formalizado",
       "status": "PRELIMINAR",
-      "evidencia_ids": ["evd-001", "evd-003"],
+      "evidencia_ids": [
+        "evd-001",
+        "evd-003"
+      ],
       "autor_id": "mock-user-002",
       "prazo_manifestacao": null,
       "data_consolidacao": null
@@ -40,7 +45,9 @@
       "causa": "Implementação de checklist de conformidade documental pela SEC-FIN em 2024",
       "efeito": "Redução do risco de pagamentos indevidos e aumento da confiabilidade dos processos",
       "status": "PRELIMINAR",
-      "evidencia_ids": ["evd-001"],
+      "evidencia_ids": [
+        "evd-001"
+      ],
       "autor_id": "mock-user-002",
       "prazo_manifestacao": null,
       "data_consolidacao": null
@@ -55,15 +62,32 @@
       "causa": "Insuficiência de servidores na SEC-ADM para cobertura de todos os contratos ativos",
       "efeito": "Risco de execução contratual sem supervisão adequada, com potencial prejuízo ao erário",
       "status": "CONSOLIDADO",
-      "evidencia_ids": ["evd-005", "evd-006"],
+      "evidencia_ids": [
+        "evd-005",
+        "evd-006"
+      ],
       "autor_id": "mock-user-005",
       "prazo_manifestacao": "2025-10-15",
       "data_consolidacao": "2025-10-20"
     }
   ],
   "manifestacoes": [
-    { "id": "man-001", "achado_id": "ach-001", "conteudo": "A divergência identificada refere-se a um depósito judicial transitório na conta 1234-5, cuja regularização contábil estava programada para fev/2026. Documento comprobatório anexo.", "tipo": "JUSTIFICATIVA", "autor_id": "mock-user-008", "data_manifestacao": "2026-02-22T14:00:00Z" },
-    { "id": "man-002", "achado_id": "ach-004", "conteudo": "Concordamos com o achado. A SEC-ADM já está em processo de nomeação de 2 novos fiscais, com conclusão prevista para jan/2026.", "tipo": "CONCORDANCIA", "autor_id": "mock-user-011", "data_manifestacao": "2025-10-18T10:00:00Z" }
+    {
+      "id": "man-001",
+      "achado_id": "ach-001",
+      "conteudo": "A divergência identificada refere-se a um depósito judicial transitório na conta 1234-5, cuja regularização contábil estava programada para fev/2026. Documento comprobatório anexo.",
+      "tipo": "JUSTIFICATIVA",
+      "autor_id": "mock-user-008",
+      "data_manifestacao": "2026-02-22T14:00:00Z"
+    },
+    {
+      "id": "man-002",
+      "achado_id": "ach-004",
+      "conteudo": "Concordamos com o achado. A SEC-ADM já está em processo de nomeação de 2 novos fiscais, com conclusão prevista para jan/2026.",
+      "tipo": "CONCORDANCIA",
+      "autor_id": "mock-user-011",
+      "data_manifestacao": "2025-10-18T10:00:00Z"
+    }
   ],
   "relatorios_auditoria": [
     {
@@ -86,13 +110,85 @@
     }
   ],
   "recomendacoes": [
-    { "id": "rec-001", "relatorio_id": "rel-001", "achado_id": "ach-004", "descricao": "Designar formalmente fiscal para cada contrato de serviço terceirizado ativo", "criticidade": "ALTA", "prazo": "2026-03-01", "responsavel_id": "mock-user-011", "status": "EM_ANDAMENTO" },
-    { "id": "rec-002", "relatorio_id": "rel-001", "achado_id": "ach-004", "descricao": "Implementar checklist de fiscalização mensal para todos os contratos terceirizados", "criticidade": "MEDIA", "prazo": "2026-04-01", "responsavel_id": "mock-user-011", "status": "PENDENTE" },
-    { "id": "rec-003", "relatorio_id": "rel-001", "achado_id": null, "descricao": "Realizar inventário físico de bens patrimoniais da SEC-ADM", "criticidade": "MEDIA", "prazo": "2026-06-01", "responsavel_id": "mock-user-011", "status": "PENDENTE" },
-    { "id": "rec-004", "relatorio_id": "rel-002", "achado_id": null, "descricao": "Instaurar Tomada de Contas Especial para apuração de responsabilidade pelos pagamentos irregulares identificados", "criticidade": "CRITICA", "prazo": "2025-08-15", "responsavel_id": "mock-user-008", "status": "CUMPRIDA" }
+    {
+      "id": "rec-001",
+      "relatorio_id": "rel-001",
+      "achado_id": "ach-004",
+      "descricao": "Designar formalmente fiscal para cada contrato de serviço terceirizado ativo",
+      "criticidade": "ALTA",
+      "prazo": "2026-03-01",
+      "responsavel_id": "mock-user-011",
+      "status": "EM_ANDAMENTO"
+    },
+    {
+      "id": "rec-002",
+      "relatorio_id": "rel-001",
+      "achado_id": "ach-004",
+      "descricao": "Implementar checklist de fiscalização mensal para todos os contratos terceirizados",
+      "criticidade": "MEDIA",
+      "prazo": "2026-04-01",
+      "responsavel_id": "mock-user-011",
+      "status": "PENDENTE"
+    },
+    {
+      "id": "rec-003",
+      "relatorio_id": "rel-001",
+      "achado_id": null,
+      "descricao": "Realizar inventário físico de bens patrimoniais da SEC-ADM",
+      "criticidade": "MEDIA",
+      "prazo": "2026-06-01",
+      "responsavel_id": "mock-user-011",
+      "status": "PENDENTE"
+    },
+    {
+      "id": "rec-004",
+      "relatorio_id": "rel-002",
+      "achado_id": null,
+      "descricao": "Instaurar Tomada de Contas Especial para apuração de responsabilidade pelos pagamentos irregulares identificados",
+      "criticidade": "CRITICA",
+      "prazo": "2025-08-15",
+      "responsavel_id": "mock-user-008",
+      "status": "CUMPRIDA"
+    },
+    {
+      "id": "rec-005",
+      "auditoria_id": "aud-004",
+      "descricao": "Apresentar plano de ação corretiva para falhas de governança de TI identificadas na auditoria de segurança da informação",
+      "status": "VENCIDA",
+      "criticidade": "ALTA",
+      "prazo": "2026-05-15",
+      "responsavel_id": "user-004",
+      "created_at": "2026-01-15T00:00:00Z",
+      "updated_at": "2026-05-16T00:00:00Z"
+    },
+    {
+      "id": "rec-006",
+      "auditoria_id": "aud-003",
+      "descricao": "Atualizar manual de procedimentos administrativos conforme novas diretrizes do CNJ",
+      "status": "VENCIDA",
+      "criticidade": "MEDIA",
+      "prazo": "2026-04-30",
+      "responsavel_id": "user-002",
+      "created_at": "2026-02-01T00:00:00Z",
+      "updated_at": "2026-05-01T00:00:00Z"
+    }
   ],
   "providencias": [
-    { "id": "prv-001", "recomendacao_id": "rec-001", "descricao": "Publicada portaria de designação de 2 novos fiscais em 15/01/2026. Aguardando nomeação dos demais.", "data": "2026-01-20", "autor_id": "mock-user-011", "evidencia_path": null },
-    { "id": "prv-002", "recomendacao_id": "rec-004", "descricao": "TCE instaurada — Processo 456/2025. Enviado ao TCE-CE em 20/07/2025.", "data": "2025-07-20", "autor_id": "mock-user-008", "evidencia_path": null }
+    {
+      "id": "prv-001",
+      "recomendacao_id": "rec-001",
+      "descricao": "Publicada portaria de designação de 2 novos fiscais em 15/01/2026. Aguardando nomeação dos demais.",
+      "data": "2026-01-20",
+      "autor_id": "mock-user-011",
+      "evidencia_path": null
+    },
+    {
+      "id": "prv-002",
+      "recomendacao_id": "rec-004",
+      "descricao": "TCE instaurada — Processo 456/2025. Enviado ao TCE-CE em 20/07/2025.",
+      "data": "2025-07-20",
+      "autor_id": "mock-user-008",
+      "evidencia_path": null
+    }
   ]
 }

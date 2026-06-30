@@ -212,6 +212,20 @@
       "avatar": null
     },
     {
+      "id": "mock-user-017",
+      "nome": "Admin do Sistema (TJCE)",
+      "email": "admin@tjce.jus.br",
+      "senha": "Senha@123",
+      "perfil": "P10",
+      "perfilNome": "Administrador do Sistema",
+      "matricula": "TJCE-ADM",
+      "cargo": "Analista de TI",
+      "unidade": "SEC-TI",
+      "mfaEnabled": true,
+      "ativo": true,
+      "avatar": null
+    },
+    {
       "id": "mock-user-016",
       "nome": "Admin do Sistema",
       "email": "admin.sistema@mvp.local",
