@@ -1,6 +1,6 @@
 # Execution Waves — Ondas de Execução
 
-> **Versão:** 1.2 | **Data:** 2026-06-29 | **Status:** Atualizado (Pós Onda-1 e Onda-2)
+> **Versão:** 1.3 | **Data:** 2026-06-29 | **Status:** Atualizado (Pós Onda-1, Onda-2 e Onda-3)
 > **Projeto:** CONFORMITAS 3.0 | **Autor:** IA (Step 4)
 > **Referências:** `DEPENDENCY_MATRIX.md`, `PLAN.md`, `docs/prps/PRP-*.md`
 
@@ -15,12 +15,12 @@ Este documento define o plano tático de execução em 5 ondas (Onda 0 concluíd
 
 | Métrica | Valor |
 |---------|-------|
-| Ondas planejadas | 5 (Onda 0 ✅, Onda 1 ✅, Onda 2 ✅ concluídas) |
-| Ondas em andamento | 2 (Onda 3 🔄, Onda 4 🔄) |
+| Ondas planejadas | 5 (Onda 0 ✅, Onda 1 ✅, Onda 2 ✅, Onda 3 ✅ concluídas) |
+| Ondas em andamento | 1 (Onda 4 🔄) |
 | PRPs totais | 14 |
-| PRPs concluídos | 10 (001-010) |
-| PRPs em andamento | 4 (011-014 — backend sem testes) |
-| Progresso geral | ~71% |
+| PRPs concluídos | 13 (001-013) |
+| PRPs em andamento | 1 (014 — backend completo, sem testes frontend) |
+| Progresso geral | ~93% |
 | Dias total (paralelo — 3 devs) | 48 (inclui ~3 dias Onda 0) |
 | Dias com folga 20% | 58 |
 | Máximo PRPs simultâneos | 3 (Onda 1: PRP-003 + PRP-005 + PRP-009) |
@@ -123,32 +123,32 @@ Este documento define o plano tático de execução em 5 ondas (Onda 0 concluíd
 
 ---
 
-### Onda 3: Qualidade e Governança (Should) — Em Andamento 🔄
+### Onda 3: Qualidade e Governança (Should) — Concluída ✅
 
 #### 2.1 Metadados
 
 | Atributo | Valor Planejado | Valor Real |
 |----------|----------------|------------|
 | **PRPs** | 011, 012, 013 | 011, 012, 013 |
-| **Pré-condição** | Onda 2 concluída | Ok (backend implementado) |
-| **Paralelo** | PRP-012 independente | Todos simultâneos |
-| **Duração real** | 8 dias | ~4 dias (backend) |
-| **Status** | Planejada | 🔄 Backend completo, sem testes |
+| **Pré-condição** | Onda 2 concluída | Ok |
+| **Paralelo** | PRP-012 independente | PRP-011 + PRP-012 + PRP-013 simultâneos (worktrees) |
+| **Duração real** | 8 dias | ~4 dias (backend completo com testes) |
+| **Status** | Planejada | ✅ Concluída |
 
 #### 2.2 PRPs Implementados
 
 | PRP | Nome | Estimativa (dias) | Real (dias) | Status | Testes |
 |-----|------|-------------------|-------------|--------|--------|
-| 011 | Qualidade e PQAUD | 5 | 4 | 🔄 | ❌ |
-| 012 | Riscos, Competências e Biblioteca | 6 | 4 | 🔄 | ❌ |
-| 013 | Governança e Fraudes | 4 | 3 | 🔄 | ❌ |
+| 011 | Qualidade e PQAUD | 5 | 4 | ✅ | service + controller (217/217) |
+| 012 | Riscos, Competências e Biblioteca | 6 | 4 | ✅ | service + controller (223/223) |
+| 013 | Governança e Fraudes | 4 | 3 | ✅ | service + controller (217/217) |
 
 #### 2.3 Critérios de Saída
 
-- [ ] Autoavaliação PQAUD funcional
-- [ ] Matriz de riscos com níveis calculados
-- [ ] PAC-Aud com alerta de meta 40h
-- [ ] Workflow de fraude: superior → 60 dias → TCE
+- [x] Autoavaliação PQAUD funcional
+- [x] Matriz de riscos com níveis calculados (BAIXO/MEDIO/ALTO/CRITICO)
+- [x] PAC-Aud com alerta de meta 40h
+- [x] Workflow de fraude: superior → 60 dias → TCE
 
 ---
 
@@ -192,11 +192,11 @@ Execução em paralelo com 3 devs: 48 dias
 | 3-4 | PRP-003 (Universo) ✅ | PRP-005 (Auditorias) ✅ | PRP-009 (Ética/Sigilo) ✅ |
 | 4 | PRP-004 (PALP/PAA) ✅ | PRP-005 (cont.) ✅ | — |
 | 5 | PRP-004 (cont.) ✅ | PRP-006 (Achados) ✅ | — |
-| 6 | PRP-007 (Relatórios) ✅ | PRP-010 (Consultorias) ✅ | PRP-012 (Riscos/Comp) 🔄 |
-| 7 | PRP-008 (Recomendações) ✅ | PRP-011 (Qualidade) 🔄 | PRP-012 (cont.) 🔄 |
-| 8 | PRP-008 (cont.) ✅ | PRP-013 (Governança) 🔄 | — |
+| 6 | PRP-007 (Relatórios) ✅ | PRP-010 (Consultorias) ✅ | PRP-012 (Riscos/Comp) ✅ |
+| 7 | PRP-008 (Recomendações) ✅ | PRP-011 (Qualidade) ✅ | PRP-012 (cont.) ✅ |
+| 8 | PRP-008 (cont.) ✅ | PRP-013 (Governança) ✅ | — |
 | 9-10 | PRP-014 (Dashboards back) 🔄 | PRP-014 (Dashboards front) 🔄 | PRP-014 (Integrações) 🔄 |
 
 ---
 
-**Versão:** 1.1 | **Data:** 2026-06-25
+**Versão:** 1.3 | **Data:** 2026-06-29
