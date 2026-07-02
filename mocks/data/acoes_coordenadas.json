@@ -1,0 +1,50 @@
+[
+  {
+    "id": "ac-001",
+    "codigo_siaud": "SIAUD-2025-001",
+    "titulo": "Avaliação do Sistema de Controle Interno - TI",
+    "descricao": "Avaliação dos controles gerais de TI e conformidade com a Resolução CNJ 396/2021",
+    "metodologia": "Análise documental e testes de controle",
+    "data_aprovacao_cpa": "2025-03-15T10:00:00Z",
+    "prazo_execucao": "2025-08-30T23:59:59Z",
+    "status": "EM_EXECUCAO",
+    "auditoria_id": "mock-aud-001",
+    "resultado_reportado": false
+  },
+  {
+    "id": "ac-002",
+    "codigo_siaud": "SIAUD-2025-002",
+    "titulo": "Auditoria em Processos de Licitação",
+    "descricao": "Avaliação da conformidade dos processos licitatórios do exercício 2025",
+    "metodologia": "Exame de 20 processos amostrados",
+    "data_aprovacao_cpa": "2025-04-20T14:30:00Z",
+    "prazo_execucao": "2025-10-15T23:59:59Z",
+    "status": "EM_EXECUCAO",
+    "auditoria_id": "mock-aud-002",
+    "resultado_reportado": false
+  },
+  {
+    "id": "ac-003",
+    "codigo_siaud": "SIAUD-2024-015",
+    "titulo": "Monitoramento de Recomendações Prioritárias",
+    "descricao": "Acompanhamento das recomendações com prazo vencido e impacto crítico",
+    "metodologia": "Análise de relatórios e reuniões com gestores",
+    "data_aprovacao_cpa": "2024-11-10T09:00:00Z",
+    "prazo_execucao": "2025-02-28T23:59:59Z",
+    "status": "CONCLUIDA",
+    "auditoria_id": "mock-aud-003",
+    "resultado_reportado": true
+  },
+  {
+    "id": "ac-004",
+    "codigo_siaud": "SIAUD-2025-003",
+    "titulo": "Avaliação da Execução Orçamentária",
+    "descricao": "Verificação da execução orçamentária do 1º semestre de 2025",
+    "metodologia": "Análise de relatórios contábeis e entrevistas",
+    "data_aprovacao_cpa": null,
+    "prazo_execucao": "2025-12-20T23:59:59Z",
+    "status": "AGENDADA",
+    "auditoria_id": null,
+    "resultado_reportado": false
+  }
+]
