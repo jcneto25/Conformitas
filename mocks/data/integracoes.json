@@ -1,0 +1,80 @@
+[
+  {
+    "id": "int-001",
+    "nome": "Ouvidoria TJCE",
+    "sistema_externo": "Sistema de Ouvidoria",
+    "tipo": "ENTRADA",
+    "protocolo": "REST",
+    "endpoint": "https://ouvidoria.tjce.jus.br/api/v1/manifestacoes",
+    "metodo_autenticacao": "API_KEY",
+    "frequencia": "DIARIA",
+    "status": "ATIVA",
+    "health_status": "ONLINE",
+    "created_at": "2025-01-15T08:00:00Z"
+  },
+  {
+    "id": "int-002",
+    "nome": "SEI - Processos Eletrônicos",
+    "sistema_externo": "SEI",
+    "tipo": "SAIDA",
+    "protocolo": "SOAP",
+    "endpoint": "https://sei.tjce.jus.br/ws/sei.wsdl",
+    "metodo_autenticacao": "CERTIFICADO",
+    "frequencia": "TEMPO_REAL",
+    "status": "ATIVA",
+    "health_status": "ONLINE",
+    "created_at": "2025-02-10T10:30:00Z"
+  },
+  {
+    "id": "int-003",
+    "nome": "SIAUD-Jud Nacional",
+    "sistema_externo": "CNJ",
+    "tipo": "BIDIRECIONAL",
+    "protocolo": "REST",
+    "endpoint": "https://siaud.cnj.jus.br/api/v2",
+    "metodo_autenticacao": "OAUTH2",
+    "frequencia": "SEMANAL",
+    "status": "EM_CONFIGURACAO",
+    "health_status": "NAO_TESTADO",
+    "created_at": "2025-06-01T14:00:00Z"
+  },
+  {
+    "id": "int-004",
+    "nome": "Sistema de Pessoal - Folha",
+    "sistema_externo": "SGP",
+    "tipo": "ENTRADA",
+    "protocolo": "REST",
+    "endpoint": "https://sgp.tjce.jus.br/api/folha",
+    "metodo_autenticacao": "API_KEY",
+    "frequencia": "MENSAL",
+    "status": "ATIVA",
+    "health_status": "ONLINE",
+    "created_at": "2025-03-20T09:15:00Z"
+  },
+  {
+    "id": "int-005",
+    "nome": "Portal da Transparência",
+    "sistema_externo": "TCE",
+    "tipo": "SAIDA",
+    "protocolo": "GRAPHQL",
+    "endpoint": "https://transparencia.tce.ce.gov.br/graphql",
+    "metodo_autenticacao": null,
+    "frequencia": "DIARIA",
+    "status": "ATIVA",
+    "health_status": "OFFLINE",
+    "created_at": "2025-04-05T11:00:00Z"
+  },
+  {
+    "id": "int-006",
+    "nome": "Sistema de Compras",
+    "sistema_externo": "SISCOMP",
+    "tipo": "ENTRADA",
+    "protocolo": "FILE",
+    "endpoint": "sftp://siscomp.tjce.jus.br/import",
+    "metodo_autenticacao": "CHAVE_SSH",
+    "frequencia": "DIARIA",
+    "status": "INATIVA",
+    "health_status": "ERRO",
+    "created_at": "2025-05-12T16:45:00Z"
+  }
+]

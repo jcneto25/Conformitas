@@ -12,6 +12,7 @@ import mandatosData from '../../../../../mocks/data/mandatos.json';
 import itensPlanoData from '../../../../../mocks/data/itens_plano.json';
 import forcaTrabalhoData from '../../../../../mocks/data/forca_trabalho.json';
 import acoesCoordenadasData from '../../../../../mocks/data/acoes_coordenadas.json';
+import integracoesData from '../../../../../mocks/data/integracoes.json';
 
 const API = 'http://localhost:3001/api/v1';
 const users: any[] = (usersData as any).users;
@@ -67,6 +68,7 @@ register('mandatos', mandatosData);
 register('itens_plano', itensPlanoData);
 register('forca_trabalho', forcaTrabalhoData);
 register('acoes_coordenadas', acoesCoordenadasData);
+register('integracoes', integracoesData);
 register('users', users);
 // Junction table for profiles
 const usuariosPerfisData: any[] = [];
@@ -103,6 +105,7 @@ const ENTITY_ROUTES: [string, string][] = [
   ['usuarios-perfis', 'usuarios_perfis'],
   ['mandatos', 'mandatos'],
   ['acoes-coordenadas', 'acoes_coordenadas'],
+  ['integracoes', 'integracoes'],
   ['etica', 'classificacoes_documento'],
   ['relatorios-anuais', 'relatorios_anuais'],
 ];
