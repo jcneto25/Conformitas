@@ -65,21 +65,30 @@ describe('RelatoriosController', () => {
   // ── GET /relatorios (RF-007.6: P05 vê só da unidade) ──
 
   describe('GET /relatorios', () => {
-    it('deve repassar filtros da query', async () => {
+    it('deve repassar filtros da query com unidadeEscopo do usuário', async () => {
+      const mockReq = { user: { sub: 'user-p05', email: 'p05@test.com', roles: ['P05'], unidadeEscopo: 'SECRETARIA-X' } };
       service.findAll.mockResolvedValue([{ id: 'rel-1' }]);
-      await controller.findAll({ auditoriaId: 'aud-1', status: 'ASSINADO' });
+      await controller.findAll({ auditoriaId: 'aud-1', status: 'ASSINADO' }, mockReq as any);
       expect(service.findAll).toHaveBeenCalledWith({
         auditoriaId: 'aud-1',
         status: 'ASSINADO',
-      });
+      }, 'SECRETARIA-X');
+    });
+
+    it('deve lidar com usuário sem escopo (P01)', async () => {
+      const mockReq = { user: { sub: 'user-p01', email: 'p01@test.com', roles: ['P01'] } };
+      service.findAll.mockResolvedValue([{ id: 'rel-1' }]);
+      await controller.findAll({}, mockReq as any);
+      expect(service.findAll).toHaveBeenCalledWith({}, undefined);
     });
   });
 
   describe('GET /relatorios/:id', () => {
-    it('deve delegar findOne', async () => {
+    it('deve delegar findOne com escopo', async () => {
+      const mockReq = { user: { sub: 'user-p05', roles: ['P05'], unidadeEscopo: 'SECRETARIA-X' } };
       service.findOne.mockResolvedValue({ id: 'rel-1' });
-      const result = await controller.findOne('rel-1');
-      expect(service.findOne).toHaveBeenCalledWith('rel-1');
+      const result = await controller.findOne('rel-1', mockReq as any);
+      expect(service.findOne).toHaveBeenCalledWith('rel-1', 'SECRETARIA-X');
       expect(result.id).toBe('rel-1');
     });
   });
@@ -114,14 +123,15 @@ describe('RelatoriosController', () => {
 
   describe('GET /relatorios/:id/pdf', () => {
     it('deve buscar o relatório e gerar o PDF', async () => {
+      const mockReq = { user: { sub: 'user-p02', roles: ['P02'] } };
       const relatorio = { id: 'rel-1', tipo: 'PRELIMINAR', conteudo: 'X' };
       const pdfBuffer = Buffer.from('%PDF-fake');
       service.findOne.mockResolvedValue(relatorio);
       pdfService.gerarPdf.mockResolvedValue(pdfBuffer);
 
-      const result = await controller.pdf('rel-1');
+      const result = await controller.pdf('rel-1', mockReq as any);
 
-      expect(service.findOne).toHaveBeenCalledWith('rel-1');
+      expect(service.findOne).toHaveBeenCalledWith('rel-1', undefined);
       expect(pdfService.gerarPdf).toHaveBeenCalledWith(relatorio);
       expect(result).toBe(pdfBuffer);
     });

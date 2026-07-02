@@ -205,8 +205,31 @@ describe('RelatoriosService', () => {
       prisma.relatorioAuditoria.findUnique.mockResolvedValue({
         id: 'rel-1',
         tipo: 'PRELIMINAR',
+        auditoria: { unidadeAuditada: 'AUDIN' },
       });
       const result = await service.findOne('rel-1');
+      expect(result.id).toBe('rel-1');
+    });
+
+    it('deve bloquear P05 vendo relatório de outra unidade', async () => {
+      prisma.relatorioAuditoria.findUnique.mockResolvedValue({
+        id: 'rel-1',
+        tipo: 'FINAL',
+        auditoria: { unidadeAuditada: 'SECRETARIA-Y' },
+      });
+
+      await expect(service.findOne('rel-1', 'SECRETARIA-X')).rejects.toThrow(NotFoundException);
+    });
+
+    it('deve permitir P05 vendo relatório da própria unidade', async () => {
+      const rel = {
+        id: 'rel-1',
+        tipo: 'FINAL',
+        auditoria: { unidadeAuditada: 'SECRETARIA-X' },
+      };
+      prisma.relatorioAuditoria.findUnique.mockResolvedValue(rel);
+
+      const result = await service.findOne('rel-1', 'SECRETARIA-X');
       expect(result.id).toBe('rel-1');
     });
 
@@ -231,6 +254,18 @@ describe('RelatoriosService', () => {
             auditoriaId: 'aud-1',
             tipo: 'FINAL',
             status: 'ASSINADO',
+          }),
+        }),
+      );
+    });
+
+    it('deve filtrar por unidadeEscopo quando fornecido (P05)', async () => {
+      prisma.relatorioAuditoria.findMany.mockResolvedValue([]);
+      await service.findAll({}, 'SECRETARIA-X');
+      expect(prisma.relatorioAuditoria.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            auditoria: { unidadeAuditada: 'SECRETARIA-X' },
           }),
         }),
       );
