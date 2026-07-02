@@ -46,6 +46,19 @@ export class PerfisService {
       }
     }
 
+    // SOD: P02 e P05 não podem ter a mesma unidade de escopo
+    if (unidadeEscopo && (perfilNovo.codigo === 'P02' || perfilNovo.codigo === 'P05')) {
+      const outroCodigo = perfilNovo.codigo === 'P02' ? 'P05' : 'P02';
+      const conflito = perfisAtuais.find(
+        (up) => up.perfil.codigo === outroCodigo && up.unidadeEscopo === unidadeEscopo,
+      );
+      if (conflito) {
+        throw new Error(
+          `SOD_VIOLATION: Usuário não pode ter P02 e P05 na mesma unidade (${unidadeEscopo})`,
+        );
+      }
+    }
+
     return this.prisma.usuarioPerfil.create({
       data: {
         usuarioId,

@@ -8,6 +8,7 @@ interface JwtPayload {
   sub: string;
   email: string;
   roles: string[];
+  unidadeEscopo?: string | null;
   iat?: number;
   exp?: number;
 }
@@ -47,6 +48,7 @@ export class AuthGuard implements CanActivate {
         sub: payload.sub,
         email: payload.email,
         roles: Array.isArray(payload.roles) ? payload.roles : [],
+        unidadeEscopo: payload.unidadeEscopo ?? null,
       };
 
       request['user'] = userPayload;

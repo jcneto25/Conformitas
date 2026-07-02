@@ -9,7 +9,7 @@ import { CriarRequisicaoDto } from './dto/criar-requisicao.dto';
 import { Roles } from '../common/decorators/roles.decorator';
 
 interface RequestWithUser extends Request {
-  user: { sub: string; email: string; roles: string[] };
+  user: { sub: string; email: string; roles: string[]; unidadeEscopo?: string | null };
 }
 
 @ApiTags('auditorias')
@@ -26,10 +26,15 @@ export class AuditoriasController {
   }
 
   @Get('auditorias')
-  @Roles('P01', 'P02', 'P10')
+  @Roles('P01', 'P02', 'P05', 'P10')
   @ApiOperation({ summary: 'Listar auditorias' })
-  findAll(@Query('status') status?: string, @Query('unidade') unidade?: string, @Query('search') search?: string) {
-    return this.service.findAll({ status, unidade, search });
+  findAll(
+    @Query('status') status?: string,
+    @Query('unidade') unidade?: string,
+    @Query('search') search?: string,
+    @Req() req?: RequestWithUser,
+  ) {
+    return this.service.findAll({ status, unidade, search }, req?.user?.unidadeEscopo);
   }
 
   @Get('auditorias/:id')

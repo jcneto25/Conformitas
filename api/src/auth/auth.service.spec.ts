@@ -14,6 +14,7 @@ const mockPrisma = () => ({
     findFirst: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
+    updateMany: jest.fn(),
   },
   sessaoMfa: {
     findUnique: jest.fn(),
@@ -180,6 +181,25 @@ describe('AuthService', () => {
       prisma.refreshToken.findFirst.mockResolvedValue(null);
 
       await expect(service.refresh('invalid-token')).rejects.toThrow(UnauthorizedException);
+    });
+  });
+
+  describe('logout', () => {
+    it('deve revogar tokens e registrar LOGOUT', async () => {
+      prisma.refreshToken.updateMany.mockResolvedValue({ count: 3 } as any);
+
+      const result = await service.logout('user-uuid');
+
+      expect(prisma.refreshToken.updateMany).toHaveBeenCalledWith({
+        where: { usuarioId: 'user-uuid', revoked: false },
+        data: { revoked: true },
+      });
+      expect(prisma.logSistema.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ acao: 'LOGOUT', usuarioId: 'user-uuid' }),
+        }),
+      );
+      expect(result).toHaveProperty('mensagem');
     });
   });
 

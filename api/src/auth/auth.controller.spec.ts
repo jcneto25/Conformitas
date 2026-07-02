@@ -21,6 +21,7 @@ describe('AuthController', () => {
       setupMfa: jest.fn(),
       getProfile: jest.fn(),
       changePassword: jest.fn(),
+      logout: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -100,6 +101,18 @@ describe('AuthController', () => {
       const result = await controller.changePassword(mockReq as any, { senha_atual: 'Old@123', nova_senha: 'New@123456' });
 
       expect(authService.changePassword).toHaveBeenCalledWith('user-uuid', 'Old@123', 'New@123456');
+      expect(result).toHaveProperty('mensagem');
+    });
+  });
+
+  describe('POST /auth/logout', () => {
+    it('deve chamar authService.logout com usuário logado', async () => {
+      const mockReq = { user: { sub: 'user-uuid', email: 'test@test.com', roles: ['P10'] } };
+      authService.logout.mockResolvedValue({ mensagem: 'Logout realizado com sucesso' });
+
+      const result = await controller.logout(mockReq as any);
+
+      expect(authService.logout).toHaveBeenCalledWith('user-uuid');
       expect(result).toHaveProperty('mensagem');
     });
   });

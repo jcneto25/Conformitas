@@ -92,7 +92,7 @@ describe('UniversoService', () => {
       ]);
       const result = await service.matrizPriorizacao();
       expect(result.itens).toHaveLength(2);
-      expect(result.itens[0].indicePriorizacao).toBeGreaterThanOrEqual(result.itens[1].indicePriorizacao);
+      expect((result.itens[0]!.indicePriorizacao ?? 0)).toBeGreaterThanOrEqual((result.itens[1]!.indicePriorizacao ?? 0));
     });
   });
 });
