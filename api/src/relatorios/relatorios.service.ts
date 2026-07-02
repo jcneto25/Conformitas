@@ -123,7 +123,7 @@ export class RelatoriosService {
 
   // ── Consultas ──────────────────────────────────
 
-  async findOne(id: string) {
+  async findOne(id: string, unidadeEscopo?: string | null) {
     const relatorio = await this.prisma.relatorioAuditoria.findUnique({
       where: { id },
       include: {
@@ -132,14 +132,23 @@ export class RelatoriosService {
       },
     });
     if (!relatorio) throw new NotFoundException('Relatório não encontrado');
+
+    // P05: só vê relatórios da própria unidade
+    if (unidadeEscopo && relatorio.auditoria?.unidadeAuditada !== unidadeEscopo) {
+      throw new NotFoundException('Relatório não encontrado');
+    }
+
     return relatorio;
   }
 
-  async findAll(params?: FindRelatoriosParams) {
+  async findAll(params?: FindRelatoriosParams, unidadeEscopo?: string | null) {
     const where: any = {};
     if (params?.auditoriaId) where.auditoriaId = params.auditoriaId;
     if (params?.tipo) where.tipo = params.tipo;
     if (params?.status) where.status = params.status;
+    if (unidadeEscopo) {
+      where.auditoria = { unidadeAuditada: unidadeEscopo };
+    }
 
     return this.prisma.relatorioAuditoria.findMany({
       where,
