@@ -37,20 +37,27 @@ describe('AuditoriasController', () => {
   });
 
   describe('POST /auditorias', () => {
+    const mockReq = (sub = 'user-1') => ({
+      user: { sub, email: 'test@test.com', roles: ['P01'] },
+    }) as any;
+
     it('deve abrir auditoria a partir de item do PAA', async () => {
       service.create.mockResolvedValue({
         id: 'aud-1', codigo: 'AUD-2026-0001', status: 'ABERTA',
         itemPlanoId: 'item-1', sigilosa: false,
       });
 
-      const result = await controller.create({
+      const result = await controller.create(mockReq(), {
         itemPlanoId: 'item-1',
         observacoes: 'Teste',
         sigilosa: false,
       });
 
       expect(result).toHaveProperty('codigo', 'AUD-2026-0001');
-      expect(service.create).toHaveBeenCalled();
+      expect(service.create).toHaveBeenCalledWith(
+        { itemPlanoId: 'item-1', observacoes: 'Teste', sigilosa: false },
+        'user-1',
+      );
     });
 
     it('deve abrir auditoria sigilosa', async () => {
@@ -59,7 +66,7 @@ describe('AuditoriasController', () => {
         itemPlanoId: 'item-2', sigilosa: true,
       });
 
-      const result = await controller.create({
+      const result = await controller.create(mockReq(), {
         itemPlanoId: 'item-2',
         sigilosa: true,
       });
@@ -115,6 +122,7 @@ describe('AuditoriasController', () => {
 
       const result = await controller.suspender('1', 'Falta de pessoal');
       expect(result).toHaveProperty('status', 'SUSPENSA');
+      expect(service.suspender).toHaveBeenCalledWith('1', 'Falta de pessoal');
     });
   });
 
@@ -132,18 +140,19 @@ describe('AuditoriasController', () => {
   });
 
   describe('POST /auditorias/:id/evidencias', () => {
-    it('deve adicionar evidência à auditoria', async () => {
+    it('deve adicionar evidência com arquivo à auditoria', async () => {
       service.criarEvidencia.mockResolvedValue({
         id: 'ev-1', tipo: 'DOCUMENTO', descricao: 'Relatório X',
-        arquivoPath: '/files/doc.pdf',
+        arquivoPath: '/uploads/file.pdf',
       });
 
-      const result = await controller.criarEvidencia('aud-1', {
-        tipo: 'DOCUMENTO', descricao: 'Relatório X', arquivoPath: '/files/doc.pdf',
-      });
+      const dto = { tipo: 'DOCUMENTO', descricao: 'Relatório X' };
+      const mockFile = { path: '/uploads/file.pdf' } as Express.Multer.File;
+
+      const result = await controller.criarEvidencia('aud-1', dto, mockFile);
 
       expect(result).toHaveProperty('tipo', 'DOCUMENTO');
-      expect(service.criarEvidencia).toHaveBeenCalled();
+      expect(service.criarEvidencia).toHaveBeenCalledWith('aud-1', dto, '/uploads/file.pdf');
     });
   });
 

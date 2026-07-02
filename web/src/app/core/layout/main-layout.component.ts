@@ -187,6 +187,7 @@ export class MainLayoutComponent {
     { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
     { label: 'Dashboard PAA', icon: 'bar_chart', route: '/dashboard/paa', roles: ['P01', 'P02', 'P03'] },
     { label: 'Dashboard Recomendações', icon: 'assignment_late', route: '/dashboard/recomendacoes', roles: ['P01', 'P02', 'P06'] },
+    { label: 'Planos', icon: 'assignment', route: '/planos', roles: ['P01', 'P02', 'P03'] },
     { label: 'Planos / Aprovação', icon: 'check_circle', route: '/planos-aprovacao', roles: ['P01', 'P03'] },
     { label: 'Monitoramento', icon: 'monitor_heart', route: '/painel-monitoramento', roles: ['P01', 'P06'] },
     { label: 'Recomendações', icon: 'recommend', route: '/recomendacoes' },

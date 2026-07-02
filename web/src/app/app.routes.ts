@@ -129,6 +129,26 @@ export const routes: Routes = [
         canDeactivate: [confirmDeactivate],
       },
       {
+        path: 'planos',
+        loadComponent: () =>
+          import('./features/planos/plano-list.component').then((m) => m.PlanoListComponent),
+        canActivate: [rolesGuard(['P01', 'P02', 'P03'])],
+      },
+      {
+        path: 'planos/novo',
+        loadComponent: () =>
+          import('./features/planos/plano-form.component').then((m) => m.PlanoFormComponent),
+        canActivate: [rolesGuard(['P01'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
+        path: 'planos/:id',
+        loadComponent: () =>
+          import('./features/planos/plano-form.component').then((m) => m.PlanoFormComponent),
+        canActivate: [rolesGuard(['P01'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
         path: 'planos-aprovacao',
         loadComponent: () =>
           import('./features/planos/plano-aprovacao.component').then((m) => m.PlanoAprovacaoComponent),

@@ -28,6 +28,7 @@ import { AcoesCoordenadasModule } from './acoes-coordenadas/acoes-coordenadas.mo
 import { ConfigModule } from './config/config.module';
 import { MandatosModule } from './mandatos/mandatos.module';
 import { LogsSistemaModule } from './logs/logs-sistema.module';
+import { NotificacoesModule } from './notificacoes/notificacoes.module';
 import { HealthController } from './app.controller';
 
 import appConfig from './config/app.config';
@@ -63,6 +64,7 @@ import appConfig from './config/app.config';
     ConfigModule,
     MandatosModule,
     LogsSistemaModule,
+    NotificacoesModule,
   ],
   controllers: [HealthController],
   providers: [

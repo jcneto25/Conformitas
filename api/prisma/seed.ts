@@ -135,6 +135,155 @@ async function main() {
     console.log(`⏩ Universo auditável já existe (${existingUniverso}), pulando...`);
   }
 
+  // ── Planos de Auditoria (PAA) ─────────────────────
+  const existingPlanos = await prisma.planoAuditoria.count();
+  if (existingPlanos === 0) {
+    const auditorChefe = await prisma.usuario.findUnique({ where: { email: 'auditor-chefe@audin.tjce.gov.br' } });
+    const brunoAuditor = await prisma.usuario.findUnique({ where: { email: 'auditor@audin.tjce.gov.br' } });
+    const presidente = await prisma.usuario.findUnique({ where: { email: 'presidente@tjce.gov.br' } });
+
+    const sefinUniv = await prisma.universoAuditavel.findFirst({ where: { nome: 'Secretaria de Finanças' } });
+    const diradUniv = await prisma.universoAuditavel.findFirst({ where: { nome: 'Diretoria Administrativa' } });
+    const nutecUniv = await prisma.universoAuditavel.findFirst({ where: { nome: 'Núcleo de Informática' } });
+    const dirhuUniv = await prisma.universoAuditavel.findFirst({ where: { nome: 'Divisão de Recursos Humanos' } });
+    const dilicUniv = await prisma.universoAuditavel.findFirst({ where: { nome: 'Divisão de Licitações' } });
+
+    if (auditorChefe && brunoAuditor && sefinUniv) {
+      // PAA 2026 — aprovado e publicado
+      const paa = await prisma.planoAuditoria.create({
+        data: {
+          tipo: 'PAA',
+          anoInicio: 2026,
+          anoFim: 2026,
+          status: 'PUBLICADO',
+          versao: 1,
+          criadoPorId: auditorChefe.id,
+          dataSubmissao: new Date('2025-11-15T10:00:00Z'),
+          dataAprovacao: new Date('2025-11-28T14:30:00Z'),
+          dataPublicacao: new Date('2025-12-10T09:00:00Z'),
+        },
+      });
+
+      await prisma.itemPlano.create({
+        data: {
+          planoId: paa.id,
+          universoAuditavelId: sefinUniv.id,
+          tipoAuditoria: 'FINANCEIRA',
+          formaExecucao: 'DIRETA',
+          horasEstimadas: 320,
+          equipeIds: [brunoAuditor.id],
+          escopo: 'Auditoria financeira na Secretaria de Finanças — exercício 2025',
+          objetivo: 'Verificar conformidade da execução orçamentária e financeira',
+          resultadosEsperados: 'Relatório com achados de conformidade',
+          questoesAuditoria: ['Os empenhos estão em conformidade com a LOA?', 'As conciliações bancárias estão atualizadas?'],
+          testesPrevistos: ['Amostragem de 50 empenhos', 'Circularização de saldos bancários'],
+          cronogramaInicio: new Date('2026-02-01'),
+          cronogramaFim: new Date('2026-04-30'),
+          prioridade: 'ALTA',
+        },
+      });
+
+      await prisma.forcaTrabalho.create({
+        data: {
+          planoId: paa.id,
+          usuarioId: brunoAuditor.id,
+          horasDisponiveisAno: 1600,
+          horasAlocadasAuditoria: 320,
+          ano: 2026,
+        },
+      });
+
+      console.log('✅ PAA 2026 criado com itens e força de trabalho');
+    }
+
+    if (auditorChefe && presidente && diradUniv && nutecUniv && dirhuUniv && dilicUniv) {
+      // PALP 2025-2028 — aprovado
+      const palp = await prisma.planoAuditoria.create({
+        data: {
+          tipo: 'PALP',
+          anoInicio: 2025,
+          anoFim: 2028,
+          status: 'APROVADO',
+          versao: 1,
+          criadoPorId: auditorChefe.id,
+          dataSubmissao: new Date('2024-11-10T08:00:00Z'),
+          dataAprovacao: new Date('2024-11-25T11:00:00Z'),
+        },
+      });
+
+      await prisma.itemPlano.create({
+        data: {
+          planoId: palp.id,
+          universoAuditavelId: diradUniv.id,
+          tipoAuditoria: 'OPERACIONAL',
+          formaExecucao: 'DIRETA',
+          horasEstimadas: 400,
+          escopo: 'Avaliação da gestão administrativa e contratos',
+          objetivo: 'Avaliar economicidade e eficiência',
+          prioridade: 'ALTA',
+        },
+      });
+
+      await prisma.itemPlano.create({
+        data: {
+          planoId: palp.id,
+          universoAuditavelId: nutecUniv.id,
+          tipoAuditoria: 'GESTAO',
+          formaExecucao: 'INTEGRADA',
+          horasEstimadas: 300,
+          escopo: 'Avaliação da governança de TI',
+          objetivo: 'Avaliar maturidade da governança',
+          prioridade: 'MEDIA',
+        },
+      });
+
+      await prisma.itemPlano.create({
+        data: {
+          planoId: palp.id,
+          universoAuditavelId: dirhuUniv.id,
+          tipoAuditoria: 'CONFORMIDADE',
+          formaExecucao: 'DIRETA',
+          horasEstimadas: 250,
+          escopo: 'Folha de pagamento e benefícios',
+          objetivo: 'Verificar legalidade dos pagamentos',
+          prioridade: 'ALTA',
+        },
+      });
+
+      await prisma.itemPlano.create({
+        data: {
+          planoId: palp.id,
+          universoAuditavelId: dilicUniv.id,
+          tipoAuditoria: 'OPERACIONAL',
+          formaExecucao: 'DIRETA',
+          horasEstimadas: 350,
+          escopo: 'Processos licitatórios',
+          objetivo: 'Avaliar conformidade e eficiência',
+          prioridade: 'MEDIA',
+        },
+      });
+
+      console.log('✅ PALP 2025-2028 criado com itens');
+    }
+
+    // RASCUNHO de PAA para 2027 (em elaboração)
+    if (auditorChefe) {
+      await prisma.planoAuditoria.create({
+        data: {
+          tipo: 'PAA',
+          anoInicio: 2027,
+          anoFim: 2027,
+          status: 'RASCUNHO',
+          versao: 1,
+          criadoPorId: auditorChefe.id,
+        },
+      });
+      console.log('✅ PAA 2027 rascunho criado');
+    }
+  } else {
+    console.log(`⏩ Planos já existem (${existingPlanos}), pulando...`);
+  }
+
   console.log('🌱 Seed concluído!');
 }
 

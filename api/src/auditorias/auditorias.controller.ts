@@ -1,5 +1,8 @@
-import { Controller, Get, Post, Patch, Body, Param, Query, Req, ParseUUIDPipe } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, Post, Patch, Body, Param, Query, Req, ParseUUIDPipe, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname, join } from 'path';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuditoriasService } from './auditorias.service';
 import { CreateAuditoriaDto } from './dto/create-auditoria.dto';
@@ -21,8 +24,8 @@ export class AuditoriasController {
   @Post('auditorias')
   @Roles('P01')
   @ApiOperation({ summary: 'Abrir auditoria a partir de item do PAA (P01)' })
-  create(@Body() dto: CreateAuditoriaDto) {
-    return this.service.create(dto);
+  create(@Req() req: RequestWithUser, @Body() dto: CreateAuditoriaDto) {
+    return this.service.create(dto, req.user.sub);
   }
 
   @Get('auditorias')
@@ -76,9 +79,46 @@ export class AuditoriasController {
 
   @Post('auditorias/:id/evidencias')
   @Roles('P02')
-  @ApiOperation({ summary: 'Adicionar evidência à auditoria (P02)' })
-  criarEvidencia(@Param('id', ParseUUIDPipe) id: string, @Body() dto: CriarEvidenciaDto) {
-    return this.service.criarEvidencia(id, dto);
+  @ApiOperation({ summary: 'Adicionar evidência com arquivo à auditoria (P02)' })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(
+    FileInterceptor('arquivo', {
+      storage: diskStorage({
+        destination: join(process.cwd(), 'uploads'),
+        filename: (_req, file, cb) => {
+          const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname)}`;
+          cb(null, uniqueName);
+        },
+      }),
+      limits: { fileSize: 25 * 1024 * 1024 },
+      fileFilter: (_req, file, cb) => {
+        const allowedMimes = [
+          'application/pdf',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'image/jpeg',
+          'image/png',
+          'image/tiff',
+          'application/zip',
+          'application/x-zip-compressed',
+        ];
+        if (allowedMimes.includes(file.mimetype)) {
+          cb(null, true);
+        } else {
+          cb(new BadRequestException(`Tipo de arquivo não permitido: ${file.mimetype}`), false);
+        }
+      },
+    }),
+  )
+  criarEvidencia(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: CriarEvidenciaDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) throw new BadRequestException('Arquivo é obrigatório');
+    return this.service.criarEvidencia(id, dto, file.path);
   }
 
   @Get('auditorias/:id/evidencias')
