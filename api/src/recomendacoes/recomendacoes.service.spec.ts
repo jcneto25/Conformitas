@@ -87,12 +87,45 @@ describe('RecomendacoesService', () => {
         }),
       );
     });
+
+    it('deve filtrar por unidadeEscopo quando fornecido (P05)', async () => {
+      prisma.recomendacao.findMany.mockResolvedValue([]);
+      await service.findAll({}, 'SECRETARIA-X');
+      expect(prisma.recomendacao.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            relatorio: expect.objectContaining({
+              auditoria: { unidadeAuditada: 'SECRETARIA-X' },
+            }),
+          }),
+        }),
+      );
+    });
   });
 
   describe('findOne', () => {
     it('deve lançar NotFoundException se não existir', async () => {
       prisma.recomendacao.findUnique.mockResolvedValue(null);
       await expect(service.findOne('x')).rejects.toThrow(NotFoundException);
+    });
+
+    it('deve bloquear P05 vendo recomendação de outra unidade', async () => {
+      prisma.recomendacao.findUnique.mockResolvedValue({
+        id: 'rec-1',
+        relatorio: { id: 'rel-1', tipo: 'FINAL', auditoria: { unidadeAuditada: 'SECRETARIA-Y' } },
+      });
+
+      await expect(service.findOne('rec-1', 'SECRETARIA-X')).rejects.toThrow(NotFoundException);
+    });
+
+    it('deve permitir P05 vendo recomendação da própria unidade', async () => {
+      prisma.recomendacao.findUnique.mockResolvedValue({
+        id: 'rec-1',
+        relatorio: { id: 'rel-1', tipo: 'FINAL', auditoria: { unidadeAuditada: 'SECRETARIA-X' } },
+      });
+
+      const result = await service.findOne('rec-1', 'SECRETARIA-X');
+      expect(result.id).toBe('rec-1');
     });
   });
 
