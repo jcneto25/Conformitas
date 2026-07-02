@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Delete, Body, Param, Query, Req, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, Req, ParseUUIDPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { PlanosService } from './planos.service';
 import { CreatePlanoDto } from './dto/create-plano.dto';
+import { UpdatePlanoDto } from './dto/update-plano.dto';
 import { CreateItemPlanoDto } from './dto/create-item-plano.dto';
 import { CreateForcaTrabalhoDto } from './dto/create-forca-trabalho.dto';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -44,6 +45,13 @@ export class PlanosController {
     return this.service.findOne(id);
   }
 
+  @Patch('planos/:id')
+  @Roles('P01')
+  @ApiOperation({ summary: 'Atualizar plano em RASCUNHO (P01)' })
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdatePlanoDto) {
+    return this.service.update(id, dto);
+  }
+
   @Post('planos/:id/submeter')
   @Roles('P01')
   @ApiOperation({ summary: 'Submeter plano para aprovação (P01)' })
@@ -56,6 +64,13 @@ export class PlanosController {
   @ApiOperation({ summary: 'Aprovar plano (P03)' })
   aprovar(@Param('id', ParseUUIDPipe) id: string) {
     return this.service.aprovar(id);
+  }
+
+  @Post('planos/:id/devolver')
+  @Roles('P03')
+  @ApiOperation({ summary: 'Devolver plano para ajustes (P03)' })
+  devolver(@Param('id', ParseUUIDPipe) id: string, @Body('motivo') motivo: string) {
+    return this.service.devolver(id, motivo);
   }
 
   @Post('planos/:id/publicar')

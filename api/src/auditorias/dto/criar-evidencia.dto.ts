@@ -16,9 +16,4 @@ export class CriarEvidenciaDto {
   @IsOptional()
   @IsString()
   fonte?: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  arquivoPath: string;
 }

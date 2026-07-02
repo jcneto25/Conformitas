@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePlanoDto } from './dto/create-plano.dto';
+import { UpdatePlanoDto } from './dto/update-plano.dto';
 import { CreateItemPlanoDto } from './dto/create-item-plano.dto';
 import { CreateForcaTrabalhoDto } from './dto/create-forca-trabalho.dto';
 
@@ -116,9 +117,40 @@ export class PlanosService {
     });
   }
 
+  async update(id: string, dto: UpdatePlanoDto) {
+    const plano = await this.prisma.planoAuditoria.findUnique({ where: { id } });
+    if (!plano || plano.deletedAt) throw new NotFoundException('Plano não encontrado');
+    if (plano.status !== 'RASCUNHO') {
+      throw new BadRequestException('Apenas planos em RASCUNHO podem ser editados');
+    }
+    return this.prisma.planoAuditoria.update({
+      where: { id },
+      data: {
+        tipo: dto.tipo,
+        anoInicio: dto.anoInicio,
+        anoFim: dto.anoFim,
+      },
+    });
+  }
+
+  async devolver(id: string, motivo: string) {
+    const plano = await this.prisma.planoAuditoria.findUnique({ where: { id } });
+    if (!plano) throw new NotFoundException('Plano não encontrado');
+    if (plano.status !== 'SUBMETIDO') {
+      throw new BadRequestException('Apenas planos SUBMETIDOS podem ser devolvidos');
+    }
+    if (!motivo) {
+      throw new BadRequestException('Motivo da devolução é obrigatório');
+    }
+    return this.prisma.planoAuditoria.update({
+      where: { id },
+      data: { status: 'RASCUNHO' },
+    });
+  }
+
   async criarRevisao(id: string, criadoPorId: string) {
     const plano = await this.findOne(id);
-    return this.prisma.planoAuditoria.create({
+    const novoPlano = await this.prisma.planoAuditoria.create({
       data: {
         tipo: plano.tipo,
         anoInicio: plano.anoInicio,
@@ -128,6 +160,32 @@ export class PlanosService {
         criadoPorId,
       },
     });
+
+    if (plano.itensPlano?.length) {
+      const itensParaCopiar = (plano as any).itensPlano || [];
+      for (const item of itensParaCopiar) {
+        await this.prisma.itemPlano.create({
+          data: {
+            planoId: novoPlano.id,
+            universoAuditavelId: item.universoAuditavelId,
+            tipoAuditoria: item.tipoAuditoria,
+            formaExecucao: item.formaExecucao,
+            horasEstimadas: item.horasEstimadas,
+            escopo: item.escopo,
+            objetivo: item.objetivo,
+            resultadosEsperados: item.resultadosEsperados,
+            equipeIds: item.equipeIds,
+            questoesAuditoria: item.questoesAuditoria,
+            testesPrevistos: item.testesPrevistos,
+            cronogramaInicio: item.cronogramaInicio,
+            cronogramaFim: item.cronogramaFim,
+            prioridade: item.prioridade,
+          },
+        });
+      }
+    }
+
+    return this.findOne(novoPlano.id);
   }
 
   // ── Itens do Plano ────────────────────────────
@@ -148,6 +206,12 @@ export class PlanosService {
         horasEstimadas: dto.horasEstimadas,
         escopo: dto.escopo,
         objetivo: dto.objetivo,
+        resultadosEsperados: dto.resultadosEsperados,
+        equipeIds: dto.equipeIds ? JSON.parse(JSON.stringify(dto.equipeIds)) : undefined,
+        questoesAuditoria: dto.questoesAuditoria ? JSON.parse(JSON.stringify(dto.questoesAuditoria)) : undefined,
+        testesPrevistos: dto.testesPrevistos ? JSON.parse(JSON.stringify(dto.testesPrevistos)) : undefined,
+        cronogramaInicio: dto.cronogramaInicio ? new Date(dto.cronogramaInicio) : undefined,
+        cronogramaFim: dto.cronogramaFim ? new Date(dto.cronogramaFim) : undefined,
         prioridade: dto.prioridade,
       },
       include: { universo: true },

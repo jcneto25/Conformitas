@@ -19,8 +19,10 @@ describe('PlanosController', () => {
       create: jest.fn(),
       findAll: jest.fn(),
       findOne: jest.fn(),
+      update: jest.fn(),
       submeter: jest.fn(),
       aprovar: jest.fn(),
+      devolver: jest.fn(),
       publicar: jest.fn(),
       criarRevisao: jest.fn(),
       adicionarItem: jest.fn(),
@@ -54,6 +56,16 @@ describe('PlanosController', () => {
       service.aprovar.mockResolvedValue({ id: 'p1', status: 'APROVADO' });
       const result = await controller.aprovar('p1');
       expect(result).toHaveProperty('status', 'APROVADO');
+    });
+  });
+
+  describe('POST /planos/:id/devolver', () => {
+    it('deve devolver plano SUBMETIDO para RASCUNHO', async () => {
+      service.devolver.mockResolvedValue({ id: 'p1', status: 'RASCUNHO' });
+
+      const result = await controller.devolver('p1', 'Ajustar escopo');
+      expect(result).toHaveProperty('status', 'RASCUNHO');
+      expect(service.devolver).toHaveBeenCalledWith('p1', 'Ajustar escopo');
     });
   });
 
@@ -136,6 +148,18 @@ describe('PlanosController', () => {
 
       expect(result).toHaveProperty('tipo', 'PALP');
       expect(service.create).toHaveBeenCalledWith(expect.any(Object), 'user-1');
+    });
+  });
+
+  describe('PATCH /planos/:id', () => {
+    it('deve atualizar plano em RASCUNHO', async () => {
+      service.update.mockResolvedValue({
+        id: 'p1', tipo: 'PAA', anoInicio: 2026, anoFim: 2027, status: 'RASCUNHO',
+      });
+
+      const result = await controller.update('p1', { tipo: 'PAA', anoInicio: 2026, anoFim: 2027 });
+      expect(result).toHaveProperty('status', 'RASCUNHO');
+      expect(service.update).toHaveBeenCalledWith('p1', expect.any(Object));
     });
   });
 

@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { NotificacoesService } from '../notificacoes/notificacoes.service';
 import { CreateAuditoriaDto } from './dto/create-auditoria.dto';
 import { CriarEvidenciaDto } from './dto/criar-evidencia.dto';
 import { CriarPapelTrabalhoDto } from './dto/criar-papel-trabalho.dto';
@@ -7,7 +8,10 @@ import { CriarRequisicaoDto } from './dto/criar-requisicao.dto';
 
 @Injectable()
 export class AuditoriasService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notificacoes: NotificacoesService,
+  ) {}
 
   private async gerarNumeroSequencial(): Promise<string> {
     const count = await this.prisma.auditoria.count();
@@ -17,7 +21,7 @@ export class AuditoriasService {
 
   // ── Auditorias ────────────────────────────────
 
-  async create(dto: CreateAuditoriaDto) {
+  async create(dto: CreateAuditoriaDto, criadoPorId: string) {
     const itemPlano = await this.prisma.itemPlano.findUnique({
       where: { id: dto.itemPlanoId },
       include: { plano: true, universo: true },
@@ -29,22 +33,34 @@ export class AuditoriasService {
 
     const numero = await this.gerarNumeroSequencial();
 
-    return this.prisma.auditoria.create({
+    const auditoria = await this.prisma.auditoria.create({
       data: {
         itemPlanoId: dto.itemPlanoId,
         numero,
-        tipo: 'CONFORMIDADE',
-        forma: 'DIRETA',
+        tipo: dto.tipo || 'CONFORMIDADE',
+        forma: dto.forma || 'DIRETA',
         status: 'ABERTA',
         unidadeAuditada: itemPlano.universo.unidadeResponsavel,
         objetivo: itemPlano.objetivo,
         sigilosa: dto.sigilosa || false,
         escopo: itemPlano.escopo,
+        dataFimPrevista: dto.dataFimPrevista ? new Date(dto.dataFimPrevista) : undefined,
       },
       include: {
         itemPlano: { include: { universo: true } },
       },
     });
+
+    await this.gerarComunicado(auditoria.id, criadoPorId);
+
+    await this.notificarGestoresUnidade(
+      auditoria.unidadeAuditada,
+      'AUDITORIA_ABERTA',
+      `Nova auditoria ${auditoria.numero} aberta para sua unidade.`,
+      auditoria.id,
+    );
+
+    return auditoria;
   }
 
   async findAll(params?: { status?: string; unidade?: string; search?: string }, unidadeEscopo?: string | null) {
@@ -113,10 +129,25 @@ export class AuditoriasService {
   async suspender(id: string, motivo: string) {
     const auditoria = await this.prisma.auditoria.findUnique({ where: { id } });
     if (!auditoria) throw new NotFoundException('Auditoria não encontrada');
-    return this.prisma.auditoria.update({
+    const result = await this.prisma.auditoria.update({
       where: { id },
-      data: { status: 'SUSPENSA' },
+      data: { status: 'SUSPENSA', motivoSuspensao: motivo },
     });
+
+    await this.notificarPorPerfil(
+      'P01',
+      'AUDITORIA_SUSPENSA',
+      `Auditoria ${auditoria.numero} foi suspensa. Motivo: ${motivo}`,
+      auditoria.id,
+    );
+    await this.notificarPorPerfil(
+      'P03',
+      'AUDITORIA_SUSPENSA',
+      `Auditoria ${auditoria.numero} foi suspensa. Motivo: ${motivo}`,
+      auditoria.id,
+    );
+
+    return result;
   }
 
   // ── Comunicado ────────────────────────────────
@@ -144,7 +175,7 @@ export class AuditoriasService {
 
   // ── Evidências ────────────────────────────────
 
-  async criarEvidencia(auditoriaId: string, dto: CriarEvidenciaDto) {
+  async criarEvidencia(auditoriaId: string, dto: CriarEvidenciaDto, arquivoPath: string) {
     const auditoria = await this.prisma.auditoria.findUnique({ where: { id: auditoriaId } });
     if (!auditoria) throw new NotFoundException('Auditoria não encontrada');
 
@@ -154,7 +185,7 @@ export class AuditoriasService {
         tipo: dto.tipo,
         descricao: dto.descricao,
         fonte: dto.fonte,
-        arquivoPath: dto.arquivoPath,
+        arquivoPath,
       },
     });
   }
@@ -213,5 +244,32 @@ export class AuditoriasService {
       where: { auditoriaId },
       orderBy: { createdAt: 'desc' },
     });
+  }
+
+  // ── Notificações ──────────────────────────────
+
+  private async notificarGestoresUnidade(unidade: string | null, tipo: string, mensagem: string, auditoriaId?: string) {
+    if (!unidade) return;
+    const perfisP05 = await this.prisma.usuarioPerfil.findMany({
+      where: {
+        perfil: { codigo: 'P05' },
+        unidadeEscopo: unidade,
+        ativo: true,
+      },
+      include: { usuario: true },
+    });
+    for (const up of perfisP05) {
+      await this.notificacoes.criar(up.usuario.id, tipo, mensagem, auditoriaId);
+    }
+  }
+
+  private async notificarPorPerfil(codigoPerfil: string, tipo: string, mensagem: string, auditoriaId?: string) {
+    const perfis = await this.prisma.usuarioPerfil.findMany({
+      where: { perfil: { codigo: codigoPerfil }, ativo: true },
+      include: { usuario: true },
+    });
+    for (const up of perfis) {
+      await this.notificacoes.criar(up.usuario.id, tipo, mensagem, auditoriaId);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsIn, IsBoolean } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsBoolean, IsIn, IsDateString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateAuditoriaDto {
@@ -6,6 +6,18 @@ export class CreateAuditoriaDto {
   @IsString()
   @IsNotEmpty()
   itemPlanoId: string;
+
+  @ApiPropertyOptional({ enum: ['CONFORMIDADE', 'OPERACIONAL', 'FINANCEIRA', 'GESTAO', 'ESPECIAL'] })
+  @IsOptional()
+  @IsString()
+  @IsIn(['CONFORMIDADE', 'OPERACIONAL', 'FINANCEIRA', 'GESTAO', 'ESPECIAL'])
+  tipo?: string;
+
+  @ApiPropertyOptional({ enum: ['DIRETA', 'INTEGRADA', 'INDIRETA', 'TERCEIRIZADA'] })
+  @IsOptional()
+  @IsString()
+  @IsIn(['DIRETA', 'INTEGRADA', 'INDIRETA', 'TERCEIRIZADA'])
+  forma?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -16,4 +28,9 @@ export class CreateAuditoriaDto {
   @IsOptional()
   @IsBoolean()
   sigilosa?: boolean;
+
+  @ApiPropertyOptional({ description: 'Data prevista para conclusão' })
+  @IsOptional()
+  @IsDateString()
+  dataFimPrevista?: string;
 }

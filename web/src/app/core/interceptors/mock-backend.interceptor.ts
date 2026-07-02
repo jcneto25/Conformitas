@@ -319,10 +319,20 @@ function handleCrud(req: HttpRequest<unknown>, segments: Array<string>): Observa
       if (item) item.status = 'ASSINADO';
       return json({ message: 'Relatório assinado', success: true });
     }
+    if (subPath === 'submeter') {
+      const item = store.data.find((r: any) => r[store.idKey] === id);
+      if (item) item.status = 'SUBMETIDO';
+      return json({ message: 'Plano submetido', success: true });
+    }
     if (subPath === 'aprovar') {
       const item = store.data.find((r: any) => r[store.idKey] === id);
       if (item) item.status = 'APROVADO';
       return json({ message: 'Plano aprovado', success: true });
+    }
+    if (subPath === 'devolver') {
+      const item = store.data.find((r: any) => r[store.idKey] === id);
+      if (item) item.status = 'RASCUNHO';
+      return json({ message: 'Plano devolvido', success: true });
     }
     if (subPath === 'publicar') {
       const item = store.data.find((r: any) => r[store.idKey] === id);

@@ -43,6 +43,66 @@ describe('PlanosService', () => {
     });
   });
 
+  describe('update', () => {
+    it('deve atualizar plano em RASCUNHO', async () => {
+      prisma.planoAuditoria.findUnique.mockResolvedValue({ id: 'p1', status: 'RASCUNHO', deletedAt: null });
+      prisma.planoAuditoria.update.mockResolvedValue({ id: 'p1', tipo: 'PAA', status: 'RASCUNHO' });
+      const result = await service.update('p1', { tipo: 'PAA' });
+      expect(result.status).toBe('RASCUNHO');
+    });
+
+    it('deve rejeitar update de plano não-RASCUNHO', async () => {
+      prisma.planoAuditoria.findUnique.mockResolvedValue({ id: 'p1', status: 'SUBMETIDO', deletedAt: null });
+      await expect(service.update('p1', { tipo: 'PAA' })).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('devolver', () => {
+    it('deve devolver plano SUBMETIDO para RASCUNHO', async () => {
+      prisma.planoAuditoria.findUnique.mockResolvedValue({ id: 'p1', status: 'SUBMETIDO' });
+      prisma.planoAuditoria.update.mockResolvedValue({ id: 'p1', status: 'RASCUNHO' });
+      const result = await service.devolver('p1', 'Ajustar escopo');
+      expect(result.status).toBe('RASCUNHO');
+    });
+
+    it('deve rejeitar devolução sem motivo', async () => {
+      prisma.planoAuditoria.findUnique.mockResolvedValue({ id: 'p1', status: 'SUBMETIDO' });
+      await expect(service.devolver('p1', '')).rejects.toThrow(BadRequestException);
+    });
+
+    it('deve rejeitar devolução de plano não-SUBMETIDO', async () => {
+      prisma.planoAuditoria.findUnique.mockResolvedValue({ id: 'p1', status: 'RASCUNHO' });
+      await expect(service.devolver('p1', 'Motivo')).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('criarRevisao', () => {
+    it('deve copiar itens da versão anterior', async () => {
+      prisma.planoAuditoria.findUnique
+        .mockResolvedValueOnce({
+          id: 'p1', tipo: 'PAA', versao: 1, status: 'PUBLICADO', deletedAt: null,
+          anoInicio: 2026, anoFim: 2026, criadoPorId: 'u1',
+          itensPlano: [
+            { id: 'i1', universoAuditavelId: 'u1', tipoAuditoria: 'CONFORMIDADE' },
+          ],
+          forcTrabalho: [],
+        })
+        .mockResolvedValueOnce({
+          id: 'p2', tipo: 'PAA', versao: 2, status: 'RASCUNHO',
+          itensPlano: [
+            { id: 'i2', universoAuditavelId: 'u1', tipoAuditoria: 'CONFORMIDADE' },
+          ],
+          forcTrabalho: [],
+        });
+      prisma.planoAuditoria.create.mockResolvedValue({ id: 'p2', versao: 2 });
+      prisma.itemPlano.create.mockResolvedValue({ id: 'i2' });
+
+      const result = await service.criarRevisao('p1', 'u2');
+      expect(result.versao).toBe(2);
+      expect(prisma.itemPlano.create).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('workflow', () => {
     it('deve submeter plano RASCUNHO', async () => {
       prisma.planoAuditoria.findUnique.mockResolvedValue({
