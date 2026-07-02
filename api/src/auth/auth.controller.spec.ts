@@ -20,6 +20,7 @@ describe('AuthController', () => {
       verifyMfa: jest.fn(),
       setupMfa: jest.fn(),
       getProfile: jest.fn(),
+      changePassword: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -88,6 +89,18 @@ describe('AuthController', () => {
 
       expect(authService.getProfile).toHaveBeenCalledWith('user-uuid');
       expect(result).toHaveProperty('email');
+    });
+  });
+
+  describe('PATCH /auth/change-password', () => {
+    it('deve chamar authService.changePassword com senha atual e nova senha', async () => {
+      const mockReq = { user: { sub: 'user-uuid', email: 'test@test.com', roles: ['P10'] } };
+      authService.changePassword.mockResolvedValue({ mensagem: 'Senha alterada com sucesso' });
+
+      const result = await controller.changePassword(mockReq as any, { senha_atual: 'Old@123', nova_senha: 'New@123456' });
+
+      expect(authService.changePassword).toHaveBeenCalledWith('user-uuid', 'Old@123', 'New@123456');
+      expect(result).toHaveProperty('mensagem');
     });
   });
 });

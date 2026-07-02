@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsOptional, IsNotEmpty, MinLength, Matches } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateUsuarioDto {
@@ -21,4 +21,12 @@ export class UpdateUsuarioDto {
   @IsOptional()
   @IsNotEmpty()
   unidade?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @MinLength(8)
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\]{};':"\\|,.<>/?]).{8,}$/, {
+    message: 'Senha deve conter 8+ caracteres com maiúscula, minúscula, número e símbolo',
+  })
+  senha?: string;
 }

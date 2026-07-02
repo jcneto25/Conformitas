@@ -1,11 +1,13 @@
-import { Controller, Post, Get, Body, Req } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Body, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { MfaVerifyDto } from './dto/mfa-verify.dto';
 import { MfaSetupDto } from './dto/mfa-setup.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { Public } from '../common/decorators/public.decorator';
 
 interface RequestWithUser extends Request {
@@ -19,6 +21,7 @@ export class AuthController {
 
   @Public()
   @Post('login')
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @ApiOperation({ summary: 'Login com email e senha' })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto.email, dto.senha);
@@ -50,5 +53,12 @@ export class AuthController {
   @ApiOperation({ summary: 'Obter perfil do usuário logado' })
   getProfile(@Req() req: RequestWithUser) {
     return this.authService.getProfile(req.user.sub);
+  }
+
+  @Patch('change-password')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Alterar própria senha (qualquer perfil autenticado)' })
+  changePassword(@Req() req: RequestWithUser, @Body() dto: ChangePasswordDto) {
+    return this.authService.changePassword(req.user.sub, dto.senha_atual, dto.nova_senha);
   }
 }

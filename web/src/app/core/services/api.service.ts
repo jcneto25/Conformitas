@@ -98,4 +98,25 @@ export class ApiService {
   reportarResultadoCPA(id: string, data: { auditoriaId: string }) {
     return firstValueFrom(this.http.post<any>(`${API}/acoes-coordenadas/${id}/reportar`, data));
   }
+
+  // ── Universo Auditável (PRP-003) ──────────────
+  getUniverso(params?: { tipo?: string; search?: string }) {
+    return firstValueFrom(this.http.get<any[]>(`${API}/universo-auditavel`, { params }));
+  }
+
+  getUniversoItem(id: string) {
+    return firstValueFrom(this.http.get<any>(`${API}/universo-auditavel/${id}`));
+  }
+
+  criarUniversoItem(data: any) {
+    return firstValueFrom(this.http.post<any>(`${API}/universo-auditavel`, data));
+  }
+
+  atualizarUniversoItem(id: string, data: any) {
+    return firstValueFrom(this.http.patch<any>(`${API}/universo-auditavel/${id}`, data));
+  }
+
+  removerUniversoItem(id: string) {
+    return firstValueFrom(this.http.delete(`${API}/universo-auditavel/${id}`));
+  }
 }

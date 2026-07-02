@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class ConfigService {
   async update(chave: string, valor: string) {
     const config = await this.findOne(chave);
     if (!config.editavel) {
-      throw new NotFoundException('Configuração não é editável');
+      throw new ForbiddenException('Configuração não é editável');
     }
 
     return this.prisma.configuracaoSistema.update({

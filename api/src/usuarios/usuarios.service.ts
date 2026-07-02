@@ -81,9 +81,15 @@ export class UsuariosService {
   async update(id: string, dto: UpdateUsuarioDto) {
     await this.findOne(id);
 
+    const data: any = { ...dto };
+    if (dto.senha) {
+      data.senhaHash = await bcrypt.hash(dto.senha, SALT_ROUNDS);
+      delete data.senha;
+    }
+
     const usuario = await this.prisma.usuario.update({
       where: { id },
-      data: dto,
+      data,
       include: {
         usuariosPerfis: {
           where: { ativo: true },

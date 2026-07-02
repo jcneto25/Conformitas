@@ -85,13 +85,14 @@ describe('UniversoService', () => {
   });
 
   describe('matrizPriorizacao', () => {
-    it('deve retornar itens ordenados por índice', async () => {
+    it('deve retornar itens ordenados por índice descendente', async () => {
       prisma.universoAuditavel.findMany.mockResolvedValue([
-        { id: '2', nome: 'Baixo', indicePriorizacao: 1.0 },
         { id: '1', nome: 'Alto', indicePriorizacao: 5.0 },
+        { id: '2', nome: 'Baixo', indicePriorizacao: 1.0 },
       ]);
       const result = await service.matrizPriorizacao();
       expect(result.itens).toHaveLength(2);
+      expect(result.itens[0].indicePriorizacao).toBeGreaterThanOrEqual(result.itens[1].indicePriorizacao);
     });
   });
 });

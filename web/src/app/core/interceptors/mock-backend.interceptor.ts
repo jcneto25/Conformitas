@@ -223,7 +223,7 @@ function handleCrud(req: HttpRequest<unknown>, segments: Array<string>): Observa
       const r = u.relevancia ?? Math.floor(Math.random() * 10) + 1;
       const c = u.criticidade ?? Math.floor(Math.random() * 10) + 1;
       const riscoVal = u.risco ?? Math.floor(Math.random() * 10) + 1;
-      const indice = u.indicePriorizacao ?? Math.round(((m * r * c) / (riscoVal || 1)) / 10 * 100) / 100;
+      const indice = u.indicePriorizacao ?? Math.round(Math.pow(m * r * c * (riscoVal || 1), 1 / 4) * 100) / 100;
       return { ...u, materialidade: m, relevancia: r, criticidade: c, risco: riscoVal, indicePriorizacao: indice };
     });
     itens.sort((a: any, b: any) => b.indicePriorizacao - a.indicePriorizacao);
@@ -233,7 +233,7 @@ function handleCrud(req: HttpRequest<unknown>, segments: Array<string>): Observa
       for (const item of itens) {
         if (horasRest <= 0) break;
         destaques.push(item.id);
-        horasRest -= 40;
+        horasRest -= 100;
       }
     }
     return json({ itens, destaques });

@@ -53,6 +53,11 @@ describe('RolesGuard', () => {
       expect(() => guard.canActivate(ctx)).toThrow(ForbiddenException);
     });
 
+    it('P05 não tem acesso ao universo auditável — endpoint que requer P01 deve retornar 403', () => {
+      const ctx = mockContext(['P01'], { sub: 'user-p05', roles: ['P05'] });
+      expect(() => guard.canActivate(ctx)).toThrow(ForbiddenException);
+    });
+
     it('deve permitir acesso quando sem roles requeridas (endpoint público)', () => {
       const ctx = mockContext([], { sub: 'user-1' });
       expect(guard.canActivate(ctx)).toBe(true);

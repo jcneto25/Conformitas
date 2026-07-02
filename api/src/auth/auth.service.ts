@@ -6,15 +6,8 @@ import { authenticator } from 'otplib';
 import { PrismaService } from '../prisma/prisma.service';
 import appConfig from '../config/app.config';
 
-interface MfaSession {
-  usuarioId: string;
-  createdAt: Date;
-}
-
 @Injectable()
 export class AuthService {
-  private mfaSessions = new Map<string, MfaSession>();
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
@@ -41,11 +34,14 @@ export class AuthService {
 
     const senhaValida = await bcrypt.compare(senha, usuario.senhaHash);
     if (!senhaValida) {
+      const tentativasMax = Number(await this.getConfig('tentativas_login_max', '5'));
+      const bloqueioMinutos = Number(await this.getConfig('bloqueio_login_minutos', '30'));
+
       const novasTentativas = usuario.tentativasLogin + 1;
       const dadosBloqueio: any = { tentativasLogin: novasTentativas };
 
-      if (novasTentativas >= 5) {
-        dadosBloqueio.bloqueadoAte = new Date(Date.now() + 30 * 60 * 1000);
+      if (novasTentativas >= tentativasMax) {
+        dadosBloqueio.bloqueadoAte = new Date(Date.now() + bloqueioMinutos * 60 * 1000);
       }
 
       await this.prisma.usuario.update({
@@ -59,7 +55,7 @@ export class AuthService {
           acao: 'LOGIN_FALHA',
           ip: null,
           userAgent: null,
-          detalhes: { tentativas: novasTentativas },
+          detalhes: { tentativas: novasTentativas, tentativasMax },
         },
       });
 
@@ -73,10 +69,20 @@ export class AuthService {
 
     if (usuario.mfaEnabled) {
       const sessionToken = crypto.randomUUID();
-      this.mfaSessions.set(sessionToken, {
-        usuarioId: usuario.id,
-        createdAt: new Date(),
+      const mfaTtl = 5 * 60 * 1000; // 5 minutos
+
+      await this.prisma.sessaoMfa.create({
+        data: {
+          sessionToken,
+          usuarioId: usuario.id,
+          expiresAt: new Date(Date.now() + mfaTtl),
+        },
       });
+
+      // Limpar sessões expiradas (fire-and-forget)
+      this.prisma.sessaoMfa.deleteMany({
+        where: { expiresAt: { lt: new Date() } },
+      }).catch(() => {});
 
       return { mfa_required: true, session_token: sessionToken };
     }
@@ -122,9 +128,14 @@ export class AuthService {
   }
 
   async verifyMfa(sessionToken: string, totpCode: string) {
-    const session = this.mfaSessions.get(sessionToken);
+    const session = await this.prisma.sessaoMfa.findUnique({
+      where: { sessionToken },
+    });
 
-    if (!session) {
+    if (!session || session.expiresAt < new Date()) {
+      if (session) {
+        await this.prisma.sessaoMfa.delete({ where: { id: session.id } });
+      }
       throw new UnauthorizedException('Sessão MFA inválida ou expirada');
     }
 
@@ -139,7 +150,7 @@ export class AuthService {
     });
 
     if (!usuario || !usuario.mfaSecret) {
-      this.mfaSessions.delete(sessionToken);
+      await this.prisma.sessaoMfa.delete({ where: { id: session.id } });
       throw new UnauthorizedException('Usuário não encontrado ou MFA não configurado');
     }
 
@@ -152,7 +163,7 @@ export class AuthService {
       throw new UnauthorizedException('Código TOTP inválido');
     }
 
-    this.mfaSessions.delete(sessionToken);
+    await this.prisma.sessaoMfa.delete({ where: { id: session.id } });
     return this.generateTokens(usuario);
   }
 
@@ -184,6 +195,40 @@ export class AuthService {
       secret,
       qr_code_url: authenticator.keyuri(usuario.email, appConfig.totp.issuer, secret),
     };
+  }
+
+  async changePassword(usuarioId: string, senhaAtual: string, novaSenha: string) {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: { id: usuarioId },
+    });
+
+    if (!usuario || !usuario.ativo || usuario.deletedAt) {
+      throw new UnauthorizedException('Usuário não encontrado ou inativo');
+    }
+
+    const senhaValida = await bcrypt.compare(senhaAtual, usuario.senhaHash);
+    if (!senhaValida) {
+      throw new UnauthorizedException('Senha atual inválida');
+    }
+
+    const novaHash = await bcrypt.hash(novaSenha, 12);
+
+    await this.prisma.usuario.update({
+      where: { id: usuarioId },
+      data: { senhaHash: novaHash },
+    });
+
+    await this.prisma.logSistema.create({
+      data: {
+        usuarioId,
+        acao: 'SENHA_ALTERADA',
+        ip: null,
+        userAgent: null,
+        detalhes: {},
+      },
+    });
+
+    return { mensagem: 'Senha alterada com sucesso' };
   }
 
   async getProfile(usuarioId: string) {
@@ -244,12 +289,15 @@ export class AuthService {
   }
 
   private hashToken(token: string): string {
-    let hash = 0;
-    for (let i = 0; i < token.length; i++) {
-      const char = token.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash = hash & hash;
+    return crypto.createHash('sha256').update(token).digest('hex');
+  }
+
+  private async getConfig(chave: string, padrao: string): Promise<string> {
+    try {
+      const config = await this.prisma.configuracaoSistema.findUnique({ where: { chave } });
+      return config?.valor ?? padrao;
+    } catch {
+      return padrao;
     }
-    return Math.abs(hash).toString(36);
   }
 }
