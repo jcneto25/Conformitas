@@ -1,8 +1,14 @@
 import {
-  Controller, Get, Post, Patch, Param, Body, Query, UseGuards,
+  Controller, Get, Post, Patch, Param, Body, Query, Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Request } from 'express';
 import { AchadosService } from './achados.service';
+import { Roles } from '../common/decorators/roles.decorator';
+
+interface RequestWithUser extends Request {
+  user: { sub: string; email: string; roles: string[]; unidadeEscopo?: string | null };
+}
 
 @ApiTags('achados')
 @ApiBearerAuth()
@@ -18,8 +24,8 @@ export class AchadosController {
 
   @Get()
   @ApiOperation({ summary: 'Listar achados (com filtros)' })
-  findAll(@Query() query: any) {
-    return this.service.findAll(query);
+  findAll(@Query() query: any, @Req() req: RequestWithUser) {
+    return this.service.findAll(query, req.user?.unidadeEscopo);
   }
 
   @Get(':id')

@@ -79,7 +79,7 @@ describe('MandatosService', () => {
       const result = await service.create({
         usuarioId: 'user-id',
         dataInicio: '2027-06-01',
-        dataFimPrevista: '2029-06-01',
+        dataFimPrevista: '2029-05-01',
         atoDesignacao: 'ATO-002/2027',
       });
 

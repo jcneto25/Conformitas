@@ -47,10 +47,14 @@ export class AuditoriasService {
     });
   }
 
-  async findAll(params?: { status?: string; unidade?: string; search?: string }) {
+  async findAll(params?: { status?: string; unidade?: string; search?: string }, unidadeEscopo?: string | null) {
     const where: any = { deletedAt: null };
     if (params?.status) where.status = params.status;
-    if (params?.unidade) where.unidadeAuditada = params.unidade;
+    if (params?.unidade) {
+      where.unidadeAuditada = params.unidade;
+    } else if (unidadeEscopo) {
+      where.unidadeAuditada = unidadeEscopo;
+    }
     if (params?.search) {
       where.OR = [
         { numero: { contains: params.search } },

@@ -40,6 +40,9 @@ export class MandatosService {
 
     if (concluidos.length >= 2) {
       const ultimo = concluidos[0];
+      if (!ultimo) {
+        throw new BadRequestException('Erro ao validar mandatos anteriores');
+      }
       const ultimoFim = ultimo.dataFimReal || ultimo.dataFimPrevista;
       const diferencaMs = dataInicio.getTime() - new Date(ultimoFim).getTime();
       const diferencaAnos = diferencaMs / (1000 * 60 * 60 * 24 * 365.25);

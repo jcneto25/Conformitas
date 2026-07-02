@@ -197,6 +197,26 @@ export class AuthService {
     };
   }
 
+  async logout(usuarioId: string) {
+    // Revogar todos os refresh tokens ativos do usuário
+    await this.prisma.refreshToken.updateMany({
+      where: { usuarioId, revoked: false },
+      data: { revoked: true },
+    });
+
+    await this.prisma.logSistema.create({
+      data: {
+        usuarioId,
+        acao: 'LOGOUT',
+        ip: null,
+        userAgent: null,
+        detalhes: {},
+      },
+    });
+
+    return { mensagem: 'Logout realizado com sucesso' };
+  }
+
   async changePassword(usuarioId: string, senhaAtual: string, novaSenha: string) {
     const usuario = await this.prisma.usuario.findUnique({
       where: { id: usuarioId },
@@ -252,11 +272,13 @@ export class AuthService {
 
   private async generateTokens(usuario: any) {
     const roles = usuario.usuariosPerfis?.map((up: any) => up.perfil.codigo) || [];
+    const unidadeEscopo = usuario.usuariosPerfis?.find((up: any) => up.unidadeEscopo)?.unidadeEscopo || null;
 
     const accessToken = await this.jwtService.signAsync({
       sub: usuario.id,
       email: usuario.email,
       roles,
+      unidadeEscopo,
     });
 
     const refreshTokenRaw = crypto.randomUUID();

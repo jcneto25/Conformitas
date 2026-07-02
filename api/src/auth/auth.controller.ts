@@ -55,6 +55,13 @@ export class AuthController {
     return this.authService.getProfile(req.user.sub);
   }
 
+  @Post('logout')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Logout — revoga tokens e registra evento' })
+  logout(@Req() req: RequestWithUser) {
+    return this.authService.logout(req.user.sub);
+  }
+
   @Patch('change-password')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Alterar própria senha (qualquer perfil autenticado)' })

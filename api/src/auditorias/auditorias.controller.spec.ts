@@ -72,11 +72,11 @@ describe('AuditoriasController', () => {
     it('deve listar auditorias com filtro opcional', async () => {
       service.findAll.mockResolvedValue([{ id: '1', codigo: 'AUD-001', status: 'EM_EXECUCAO' }]);
 
-      const result = await controller.findAll('EM_EXECUCAO');
+      const result = await controller.findAll('EM_EXECUCAO', undefined, undefined, { user: { sub: 'user-uuid', email: 'test@test.com', roles: ['P01'] } } as any);
       expect(result).toHaveLength(1);
       expect(service.findAll).toHaveBeenCalledWith({
         status: 'EM_EXECUCAO', unidade: undefined, search: undefined,
-      });
+      }, undefined);
     });
   });
 

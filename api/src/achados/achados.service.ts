@@ -58,10 +58,13 @@ export class AchadosService {
     });
   }
 
-  async findAll(params?: { status?: string; auditoriaId?: string; search?: string }) {
+  async findAll(params?: { status?: string; auditoriaId?: string; search?: string }, unidadeEscopo?: string | null) {
     const where: any = {};
     if (params?.status) where.status = params.status;
     if (params?.auditoriaId) where.auditoriaId = params.auditoriaId;
+    if (unidadeEscopo) {
+      where.auditoria = { unidadeAuditada: unidadeEscopo };
+    }
     if (params?.search) {
       where.OR = [
         { codigo: { contains: params.search } },
