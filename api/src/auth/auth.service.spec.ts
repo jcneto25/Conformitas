@@ -15,6 +15,15 @@ const mockPrisma = () => ({
     create: jest.fn(),
     update: jest.fn(),
   },
+  sessaoMfa: {
+    findUnique: jest.fn(),
+    create: jest.fn().mockResolvedValue({ id: 'mfa-session-id' }),
+    delete: jest.fn(),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+  },
+  configuracaoSistema: {
+    findUnique: jest.fn(),
+  },
   logSistema: {
     create: jest.fn(),
   },
@@ -176,7 +185,23 @@ describe('AuthService', () => {
 
   describe('verifyMfa', () => {
     it('deve lançar UnauthorizedException para session_token inválido', async () => {
+      prisma.sessaoMfa.findUnique.mockResolvedValue(null);
+
       await expect(service.verifyMfa('invalid-session', '123456')).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('deve lançar UnauthorizedException para sessão expirada', async () => {
+      prisma.sessaoMfa.findUnique.mockResolvedValue({
+        id: 'expired-id',
+        sessionToken: 'expired-session',
+        usuarioId: mockUser.id,
+        expiresAt: new Date(Date.now() - 1000),
+        createdAt: new Date(),
+      });
+      prisma.sessaoMfa.delete.mockResolvedValue({} as any);
+
+      await expect(service.verifyMfa('expired-session', '123456')).rejects.toThrow(UnauthorizedException);
+      expect(prisma.sessaoMfa.delete).toHaveBeenCalled();
     });
   });
 });

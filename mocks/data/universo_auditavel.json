@@ -1,6 +1,6 @@
 {
   "universo_auditavel": [
-    { "id": "univ-001", "nome": "Secretaria de Finanças", "descricao": "Gestão orçamentária, financeira e contábil do TJCE", "tipo": "AREA", "unidade_responsavel": "SEC-FIN", "materialidade": 5, "relevancia": 5, "criticidade": 4, "risco": 3, "indice_priorizacao": 4.21, "ativo": true },
+    { "id": "univ-001", "nome": "Secretaria de Finanças", "descricao": "Gestão orçamentária, financeira e contábil do TJCE", "tipo": "AREA", "unidade_responsavel": "SEC-FIN", "materialidade": 5, "relevancia": 5, "criticidade": 4, "risco": 3, "indice_priorizacao": 4.16, "ativo": true },
     { "id": "univ-002", "nome": "Secretaria de Gestão de Pessoas", "descricao": "Folha de pagamento, registros funcionais e benefícios", "tipo": "AREA", "unidade_responsavel": "SEC-PES", "materialidade": 5, "relevancia": 4, "criticidade": 5, "risco": 4, "indice_priorizacao": 4.47, "ativo": true },
     { "id": "univ-003", "nome": "Secretaria de Tecnologia da Informação", "descricao": "Infraestrutura, sistemas e segurança da informação", "tipo": "AREA", "unidade_responsavel": "SEC-TI", "materialidade": 4, "relevancia": 5, "criticidade": 4, "risco": 4, "indice_priorizacao": 4.23, "ativo": true },
     { "id": "univ-004", "nome": "Secretaria de Administração e Infraestrutura", "descricao": "Contratos, licitações, patrimônio e serviços gerais", "tipo": "AREA", "unidade_responsavel": "SEC-ADM", "materialidade": 5, "relevancia": 4, "criticidade": 4, "risco": 3, "indice_priorizacao": 3.94, "ativo": true },

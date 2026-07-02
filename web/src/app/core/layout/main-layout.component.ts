@@ -191,6 +191,7 @@ export class MainLayoutComponent {
     { label: 'Monitoramento', icon: 'monitor_heart', route: '/painel-monitoramento', roles: ['P01', 'P06'] },
     { label: 'Recomendações', icon: 'recommend', route: '/recomendacoes' },
     { label: 'Auditorias', icon: 'search', route: '/auditorias' },
+    { label: 'Universo Auditável', icon: 'account_tree', route: '/universo', roles: ['P01', 'P02'] },
     { label: 'Matriz Priorização', icon: 'priority_high', route: '/matriz-priorizacao' },
     { label: 'Perfis', icon: 'admin_panel_settings', route: '/perfis', roles: ['P10'] },
     { label: 'Mandatos', icon: 'gavel', route: '/mandatos', roles: ['P01', 'P03', 'P04'] },

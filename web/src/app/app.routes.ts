@@ -92,6 +92,26 @@ export const routes: Routes = [
           import('./features/universo/matriz-priorizacao.component').then((m) => m.MatrizPriorizacaoComponent),
       },
       {
+        path: 'universo',
+        loadComponent: () =>
+          import('./features/universo/universo-list.component').then((m) => m.UniversoListComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+      },
+      {
+        path: 'universo/novo',
+        loadComponent: () =>
+          import('./features/universo/universo-form.component').then((m) => m.UniversoFormComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
+        path: 'universo/:id',
+        loadComponent: () =>
+          import('./features/universo/universo-form.component').then((m) => m.UniversoFormComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
         path: 'auditorias',
         loadComponent: () =>
           import('./features/auditorias/auditoria-list.component').then((m) => m.AuditoriaListComponent),

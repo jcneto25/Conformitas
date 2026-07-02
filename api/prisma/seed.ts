@@ -113,6 +113,28 @@ async function main() {
     console.log(`⏩ Integrações já existem (${existingIntegracoes}), pulando...`);
   }
 
+  // ── Universo Auditável ─────────────────────────
+  const existingUniverso = await prisma.universoAuditavel.count();
+  if (existingUniverso === 0) {
+    const itensUniverso = [
+      { nome: 'Secretaria de Finanças', descricao: 'Gestão orçamentária, financeira e contábil do TJCE', tipo: 'PROCESSO', unidadeResponsavel: 'SEFIN', materialidade: 5, relevancia: 5, criticidade: 4, risco: 3, indicePriorizacao: 4.16, ativo: true },
+      { nome: 'Diretoria Administrativa', descricao: 'Administração geral e contratos', tipo: 'AREA', unidadeResponsavel: 'DIRAD', materialidade: 5, relevancia: 4, criticidade: 5, risco: 4, indicePriorizacao: 4.47, ativo: true },
+      { nome: 'Divisão de Licitações', descricao: 'Processos licitatórios e compras', tipo: 'PROCESSO', unidadeResponsavel: 'DILIC', materialidade: 4, relevancia: 5, criticidade: 4, risco: 4, indicePriorizacao: 4.23, ativo: true },
+      { nome: 'Gabinete da Presidência', descricao: 'Assessoria direta à Presidência', tipo: 'AREA', unidadeResponsavel: 'GABPRES', materialidade: 5, relevancia: 4, criticidade: 4, risco: 3, indicePriorizacao: 3.94, ativo: true },
+      { nome: 'Núcleo de Informática', descricao: 'Infraestrutura e sistemas de TI', tipo: 'AREA', unidadeResponsavel: 'NUTEC', materialidade: 3, relevancia: 5, criticidade: 4, risco: 3, indicePriorizacao: 3.66, ativo: true },
+      { nome: 'Setor de Protocolo', descricao: 'Protocolo e tramitação documental', tipo: 'PROCESSO', unidadeResponsavel: 'SETPRO', materialidade: 5, relevancia: 3, criticidade: 4, risco: 5, indicePriorizacao: 4.16, ativo: true },
+      { nome: 'Divisão de Recursos Humanos', descricao: 'Gestão de pessoas e folha de pagamento', tipo: 'AREA', unidadeResponsavel: 'DIRHU', materialidade: 4, relevancia: 4, criticidade: 3, risco: 2, indicePriorizacao: 3.13, ativo: true },
+      { nome: 'Coordenadoria de Controle Interno', descricao: 'Controles internos e conformidade', tipo: 'AREA', unidadeResponsavel: 'COCIN', materialidade: 3, relevancia: 3, criticidade: 5, risco: 4, indicePriorizacao: 3.66, ativo: true },
+    ];
+
+    for (const item of itensUniverso) {
+      await prisma.universoAuditavel.create({ data: item });
+    }
+    console.log(`✅ ${itensUniverso.length} itens do universo auditável criados`);
+  } else {
+    console.log(`⏩ Universo auditável já existe (${existingUniverso}), pulando...`);
+  }
+
   console.log('🌱 Seed concluído!');
 }
 
