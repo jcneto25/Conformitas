@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard, rolesGuard } from './core/guards/auth.guard';
+import { confirmDeactivate } from './core/guards/dirty-form.guard';
 
 export const routes: Routes = [
   {
@@ -15,6 +16,16 @@ export const routes: Routes = [
           import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
       },
       {
+        path: 'dashboard/paa',
+        loadComponent: () =>
+          import('./features/dashboard/dashboard-paa.component').then((m) => m.DashboardPaaComponent),
+      },
+      {
+        path: 'dashboard/recomendacoes',
+        loadComponent: () =>
+          import('./features/dashboard/dashboard-recomendacoes.component').then((m) => m.DashboardRecomendacoesComponent),
+      },
+      {
         path: 'achados',
         loadComponent: () =>
           import('./features/achados/quadro-achados.component').then((m) => m.QuadroAchadosComponent),
@@ -23,11 +34,13 @@ export const routes: Routes = [
         path: 'achados/novo',
         loadComponent: () =>
           import('./features/achados/achado-form.component').then((m) => m.AchadoFormComponent),
+        canDeactivate: [confirmDeactivate],
       },
       {
         path: 'achados/:id',
         loadComponent: () =>
           import('./features/achados/achado-form.component').then((m) => m.AchadoFormComponent),
+        canDeactivate: [confirmDeactivate],
       },
       {
         path: 'usuarios',
@@ -40,12 +53,14 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/usuarios/usuario-form.component').then((m) => m.UsuarioFormComponent),
         canActivate: [rolesGuard(['P10'])],
+        canDeactivate: [confirmDeactivate],
       },
       {
         path: 'usuarios/:id',
         loadComponent: () =>
           import('./features/usuarios/usuario-form.component').then((m) => m.UsuarioFormComponent),
         canActivate: [rolesGuard(['P10'])],
+        canDeactivate: [confirmDeactivate],
       },
       {
         path: 'perfis',
@@ -85,11 +100,13 @@ export const routes: Routes = [
         path: 'auditorias/novo',
         loadComponent: () =>
           import('./features/auditorias/auditoria-form.component').then((m) => m.AuditoriaFormComponent),
+        canDeactivate: [confirmDeactivate],
       },
       {
         path: 'auditorias/:id',
         loadComponent: () =>
           import('./features/auditorias/auditoria-form.component').then((m) => m.AuditoriaFormComponent),
+        canDeactivate: [confirmDeactivate],
       },
       {
         path: 'planos-aprovacao',
@@ -122,6 +139,38 @@ export const routes: Routes = [
         path: 'recomendacoes/:id',
         loadComponent: () =>
           import('./features/recomendacoes/recomendacao-detail.component').then((m) => m.RecomendacaoDetailComponent),
+      },
+      {
+        path: 'integracoes',
+        loadComponent: () =>
+          import('./features/integracoes/integracao-list.component').then((m) => m.IntegracaoListComponent),
+        canActivate: [rolesGuard(['P01', 'P10'])],
+      },
+      {
+        path: 'integracoes/novo',
+        loadComponent: () =>
+          import('./features/integracoes/integracao-form.component').then((m) => m.IntegracaoFormComponent),
+        canActivate: [rolesGuard(['P10'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
+        path: 'integracoes/:id',
+        loadComponent: () =>
+          import('./features/integracoes/integracao-form.component').then((m) => m.IntegracaoFormComponent),
+        canActivate: [rolesGuard(['P10'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
+        path: 'acoes-coordenadas',
+        loadComponent: () =>
+          import('./features/acoes-coordenadas/acao-coordenada-list.component').then((m) => m.AcaoCoordenadaListComponent),
+        canActivate: [rolesGuard(['P01', 'P08'])],
+      },
+      {
+        path: 'acoes-coordenadas/:id',
+        loadComponent: () =>
+          import('./features/acoes-coordenadas/acao-coordenada-detail.component').then((m) => m.AcaoCoordenadaDetailComponent),
+        canActivate: [rolesGuard(['P01', 'P08'])],
       },
     ],
   },

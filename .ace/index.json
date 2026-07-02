@@ -299,6 +299,136 @@
       "tags": [],
       "timestamp": "2026-06-29T19:48:21.933465",
       "completed_at": "2026-06-29T19:50:44.875253"
+    },
+    {
+      "session_id": "2026-07-01-001",
+      "file": "2026-07-01-001.md",
+      "status": "completed",
+      "llc_step": 11.0,
+      "tags": [
+        "onboarding llc-docs"
+      ],
+      "timestamp": "2026-07-01T16:11:36.966151",
+      "completed_at": "2026-07-01T16:12:57.532337"
+    },
+    {
+      "session_id": "2026-07-01-002",
+      "file": "2026-07-01-002.md",
+      "status": "completed",
+      "llc_step": 11.0,
+      "tags": [
+        "docker setup"
+      ],
+      "timestamp": "2026-07-01T16:14:57.693138",
+      "completed_at": "2026-07-01T18:02:51.671332"
+    },
+    {
+      "session_id": "2026-07-01-003",
+      "file": "2026-07-01-003.md",
+      "status": "completed",
+      "llc_step": 11.0,
+      "tags": [
+        "docker debug web"
+      ],
+      "timestamp": "2026-07-01T18:04:59.628426",
+      "completed_at": "2026-07-01T18:13:37.285488"
+    },
+    {
+      "session_id": "2026-07-01-004",
+      "file": "2026-07-01-004.md",
+      "status": "completed",
+      "llc_step": 11.0,
+      "tags": [
+        "mock setup docs"
+      ],
+      "timestamp": "2026-07-01T18:20:28.173102",
+      "completed_at": "2026-07-01T18:21:44.003800"
+    },
+    {
+      "session_id": "2026-07-01-005",
+      "file": "2026-07-01-005.md",
+      "status": "completed",
+      "llc_step": 11.0,
+      "tags": [
+        "design ui formularios angular material tailwind"
+      ],
+      "timestamp": "2026-07-01T21:50:23.175674",
+      "completed_at": "2026-07-01T21:53:58.723637"
+    },
+    {
+      "session_id": "2026-07-01-006",
+      "file": "2026-07-01-006.md",
+      "status": "in_progress",
+      "llc_step": 11.0,
+      "tags": [
+        "investigacao ui material design"
+      ],
+      "timestamp": "2026-07-01T21:56:34.210930"
+    },
+    {
+      "session_id": "2026-07-01-007",
+      "file": "2026-07-01-007.md",
+      "status": "completed",
+      "llc_step": 11.0,
+      "tags": [
+        "wave-4",
+        "prp-014",
+        "dashboards",
+        "integracoes",
+        "acoes-coordenadas"
+      ],
+      "timestamp": "2026-07-01T22:17:26.068091",
+      "completed_at": "2026-07-01T23:01:05.973112"
+    },
+    {
+      "session_id": "2026-07-01-008",
+      "file": "2026-07-01-008.md",
+      "status": "completed",
+      "llc_step": 11.0,
+      "tags": [
+        "finalizacao",
+        "e2e",
+        "security",
+        "deploy",
+        "docs"
+      ],
+      "timestamp": "2026-07-01T23:10:38.846209",
+      "completed_at": "2026-07-01T23:29:54.701079"
+    },
+    {
+      "session_id": "2026-07-02-001",
+      "file": "2026-07-02-001.md",
+      "status": "completed",
+      "llc_step": 11.0,
+      "tags": [
+        "wave-1 ui-repaginação c2 b3 h2 sticky error helpers"
+      ],
+      "timestamp": "2026-07-02T13:29:07.492411",
+      "completed_at": "2026-07-02T13:34:17.170212"
+    },
+    {
+      "session_id": "2026-07-02-002",
+      "file": "2026-07-02-002.md",
+      "status": "in_progress",
+      "llc_step": 11.0,
+      "tags": [
+        "wave-1 ui-repaginação c3 g4 sort contrast"
+      ],
+      "timestamp": "2026-07-02T13:37:45.965938"
+    },
+    {
+      "session_id": "2026-07-02-003",
+      "file": "2026-07-02-003.md",
+      "status": "in_progress",
+      "llc_step": 11.0,
+      "tags": [
+        "wave-1",
+        "c4",
+        "density",
+        "d3",
+        "stepper"
+      ],
+      "timestamp": "2026-07-02T14:40:58.640898"
     }
   ]
 }

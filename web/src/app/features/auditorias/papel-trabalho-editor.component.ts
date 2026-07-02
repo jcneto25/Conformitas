@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { environment } from '../../../environments/environment';
+import { ValidationService } from '../../shared/services/validation.service';
 
 @Component({
   selector: 'app-papel-trabalho-editor',
@@ -21,46 +22,55 @@ import { environment } from '../../../environments/environment';
     CommonModule, FormsModule,
     MatCardModule, MatFormFieldModule, MatSelectModule,
     MatInputModule, MatButtonModule, MatListModule,
-    MatIconModule, MatDividerModule, MatProgressSpinnerModule,
+    MatIconModule, MatDividerModule, MatProgressSpinnerModule, EmptyStateComponent,
   ],
   template: `
-    <mat-card>
-      <mat-card-content>
-        <h3>Papéis de Trabalho</h3>
-
+    <mat-card class="border-t-4 border-primary shadow-md rounded-xl overflow-hidden">
+      <mat-card-header class="bg-slate-50/50 px-6 py-4 border-b border-gray-100">
+        <mat-card-title class="text-lg font-semibold text-text-main flex items-center gap-2">
+          <mat-icon class="text-primary">description</mat-icon>
+          Papéis de Trabalho
+        </mat-card-title>
+        <mat-card-subtitle class="text-xs text-text-sec">Documentação organizada que sustenta os achados da auditoria.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="p-6">
         @if (loading) {
-          <div class="flex justify-center p-4">
+          <div class="flex justify-center py-6">
             <mat-spinner diameter="30" />
           </div>
         } @else if (papeis.length) {
           <mat-list>
             @for (p of papeis; track p.id) {
               <mat-list-item>
-                <span matListItemTitle>
-                  <strong>{{ p.codigo }}</strong> — {{ p.descricao }}
+                <mat-icon aria-hidden="true" matListItemIcon class="text-primary">folder</mat-icon>
+                <span matListItemTitle class="text-sm font-medium text-text-main">
+                  {{ p.codigo }} — {{ p.descricao }}
                 </span>
                 @if (p.evidencias?.length) {
-                  <span matListItemLine>Evidências: {{ p.evidencias.length }}</span>
+                  <span matListItemLine class="text-text-sec text-xs">Evidências: {{ p.evidencias.length }}</span>
                 }
                 @if (p.responsavel) {
-                  <span matListItemLine>Responsável: {{ p.responsavel?.nome || p.responsavelId }}</span>
+                  <span matListItemLine class="text-text-sec text-xs">Responsável: {{ p.responsavel?.nome || p.responsavelId }}</span>
                 }
               </mat-list-item>
               <mat-divider />
             }
           </mat-list>
         } @else {
-          <p class="text-text-sec p-4">Nenhum papel de trabalho criado.</p>
+          <app-empty-state icon="inbox" title="Nenhum papel de trabalho criado" description="Crie papéis de trabalho para documentar os procedimentos de auditoria executados." size="sm" />
         }
 
-        <h4>Criar Papel de Trabalho</h4>
-        <form (ngSubmit)="criar()" class="flex gap-4 items-end flex-wrap">
+        <h4 class="text-sm font-semibold text-text-main mb-3 mt-6 flex items-center gap-2">
+          <mat-icon class="text-[18px] text-primary">add</mat-icon>
+          Criar Papel de Trabalho
+        </h4>
+        <form (ngSubmit)="criar()" class="filter-bar gap-4 items-end">
           <mat-form-field appearance="outline" class="min-w-[150px]">
             <mat-label>Código</mat-label>
             <input matInput #codigoModel="ngModel" [(ngModel)]="form.codigo" name="codigo" required
                    placeholder="PT-001" />
             @if (codigoModel.invalid && codigoModel.touched) {
-              <mat-error>Código obrigatório</mat-error>
+              <mat-error>{{ validation.required('Código') }}</mat-error>
             }
           </mat-form-field>
 
@@ -68,7 +78,7 @@ import { environment } from '../../../environments/environment';
             <mat-label>Descrição</mat-label>
             <input matInput #descModel="ngModel" [(ngModel)]="form.descricao" name="descricao" required />
             @if (descModel.invalid && descModel.touched) {
-              <mat-error>Descrição obrigatória</mat-error>
+              <mat-error>{{ validation.required('Descrição') }}</mat-error>
             }
           </mat-form-field>
 
@@ -84,16 +94,20 @@ import { environment } from '../../../environments/environment';
           </mat-form-field>
 
           <button mat-raised-button color="primary" type="submit"
-                  [disabled]="!form.codigo || !form.descricao || criando">
+                  [disabled]="!form.codigo || !form.descricao || criando" class="flex items-center gap-2">
             @if (criando) {
               <mat-spinner diameter="16" class="inline-block mr-1" />
             }
+            <mat-icon>add_circle</mat-icon>
             Criar
           </button>
         </form>
 
         @if (error) {
-          <p class="text-critical mt-2">{{ error }}</p>
+          <div class="flex items-center gap-2 text-red-600 text-sm p-3 bg-red-50 rounded-lg border border-red-100 mt-3" role="alert">
+            <mat-icon class="text-[18px]">error_outline</mat-icon>
+            <span>{{ error }}</span>
+          </div>
         }
       </mat-card-content>
     </mat-card>
@@ -110,7 +124,10 @@ export class PapelTrabalhoEditorComponent implements OnInit {
   loading = true;
   criando = false;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    public readonly validation: ValidationService,
+  ) {}
 
   async ngOnInit() {
     try {

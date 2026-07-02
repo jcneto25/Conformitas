@@ -7,7 +7,11 @@ describe('DashboardsController', () => {
   let service: DashboardsService;
 
   const mockService = {
-    findAll: jest.fn(),
+    dashboardPaa: jest.fn(),
+    dashboardExecucao: jest.fn(),
+    dashboardRecomendacoes: jest.fn(),
+    dashboardQualidade: jest.fn(),
+    exportSummary: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -26,11 +30,37 @@ describe('DashboardsController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('findAll', () => {
-    it('should return service.findAll() result', () => {
-      mockService.findAll.mockReturnValue([{ id: '1' }]);
-      expect(controller.findAll()).toEqual([{ id: '1' }]);
-      expect(mockService.findAll).toHaveBeenCalled();
+  describe('dashboardPaa', () => {
+    it('should call service.dashboardPaa', async () => {
+      mockService.dashboardPaa.mockResolvedValue({ totalPlanos: 2 });
+      const result = await controller.dashboardPaa({ ano: 2026 });
+      expect(result).toEqual({ totalPlanos: 2 });
+      expect(mockService.dashboardPaa).toHaveBeenCalledWith({ ano: 2026 });
+    });
+  });
+
+  describe('dashboardExecucao', () => {
+    it('should call service.dashboardExecucao', async () => {
+      mockService.dashboardExecucao.mockResolvedValue({ total: 5, porStatus: {} });
+      const result = await controller.dashboardExecucao({});
+      expect(result.total).toBe(5);
+      expect(mockService.dashboardExecucao).toHaveBeenCalled();
+    });
+  });
+
+  describe('dashboardRecomendacoes', () => {
+    it('should call service.dashboardRecomendacoes', async () => {
+      mockService.dashboardRecomendacoes.mockResolvedValue({ total: 10, vencidas: 2 });
+      const result = await controller.dashboardRecomendacoes({});
+      expect(result.vencidas).toBe(2);
+    });
+  });
+
+  describe('dashboardQualidade', () => {
+    it('should call service.dashboardQualidade', async () => {
+      mockService.dashboardQualidade.mockResolvedValue({ totalAvaliacoes: 3 });
+      const result = await controller.dashboardQualidade({});
+      expect(result.totalAvaliacoes).toBe(3);
     });
   });
 });

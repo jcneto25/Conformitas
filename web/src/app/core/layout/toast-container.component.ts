@@ -11,10 +11,16 @@ import { ToastService } from '../../core/services/toast.service';
   template: `
     <div class="toast-container" aria-live="polite">
       @for (toast of toastService.toasts(); track toast.id) {
-        <div class="toast" [class]="toast.type" role="alert">
-          <mat-icon class="toast-icon">{{ iconFor(toast.type) }}</mat-icon>
-          <span class="toast-message">{{ toast.message }}</span>
-          <button mat-icon-button class="toast-close" (click)="toastService.dismiss(toast.id)" aria-label="Fechar notificação">
+        <div class="toast flex items-center gap-2 p-3 rounded-lg text-white text-sm shadow-lg animate-[slideIn_0.25s_ease-out]"
+             [class.bg-critical]="toast.type === 'error'"
+             [class.bg-warning]="toast.type === 'warning'"
+             [class.bg-info]="toast.type === 'info'"
+             [class.bg-success]="toast.type === 'success'"
+             role="alert">
+          <mat-icon class="flex-shrink-0">{{ iconFor(toast.type) }}</mat-icon>
+          <span class="flex-1">{{ toast.message }}</span>
+          <button mat-icon-button class="text-white! flex-shrink-0"
+                  (click)="toastService.dismiss(toast.id)" aria-label="Fechar notificação">
             <mat-icon>close</mat-icon>
           </button>
         </div>
@@ -24,36 +30,13 @@ import { ToastService } from '../../core/services/toast.service';
   styles: [`
     .toast-container {
       position: fixed;
-      bottom: 1rem;
+      top: 1rem;
       right: 1rem;
       z-index: 9999;
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
       max-width: 420px;
-    }
-
-    .toast {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      color: #fff;
-      font-size: 0.9rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-      animation: slideIn 0.25s ease-out;
-    }
-
-    .toast.error { background: #c62828; }
-    .toast.warning { background: #e65100; }
-    .toast.info { background: #1565c0; }
-
-    .toast-icon { flex-shrink: 0; }
-    .toast-message { flex: 1; }
-    .toast-close {
-      flex-shrink: 0;
-      color: #fff !important;
     }
 
     @keyframes slideIn {
@@ -64,7 +47,7 @@ import { ToastService } from '../../core/services/toast.service';
 })
 export class ToastContainerComponent {
   iconFor(type: string): string {
-    const map: Record<string, string> = { error: 'error', warning: 'warning', info: 'info' };
+    const map: Record<string, string> = { error: 'error', warning: 'warning', info: 'info', success: 'check_circle' };
     return map[type] || 'info';
   }
 

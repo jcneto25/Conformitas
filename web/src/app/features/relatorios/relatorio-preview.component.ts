@@ -16,6 +16,7 @@ import { environment } from '../../../environments/environment';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { HasRoleDirective } from '../../core/directives/has-role.directive';
 import { AuthService } from '../../core/services/auth.service';
+import { EmptyStateComponent } from '../../shared/components/empty-state.component';
 
 @Component({
   selector: 'app-relatorio-preview',
@@ -24,29 +25,37 @@ import { AuthService } from '../../core/services/auth.service';
     CommonModule, FormsModule,
     MatCardModule, MatFormFieldModule, MatInputModule,
     MatSelectModule, MatButtonModule, MatChipsModule,
-    MatIconModule, MatDividerModule, MatProgressSpinnerModule, PageHeaderComponent, HasRoleDirective,
+    MatIconModule, MatDividerModule, MatProgressSpinnerModule, PageHeaderComponent, HasRoleDirective, EmptyStateComponent,
   ],
   template: `
     <app-page-header title="Relatórios de Auditoria" />
 
-    <mat-card class="mb-4">
-      <mat-card-content>
-        <div class="flex gap-4 items-center flex-wrap">
+    <!-- Card de busca por auditoria -->
+    <mat-card class="border-l-4 border-primary shadow-sm rounded-r-xl overflow-hidden">
+      <mat-card-content class="p-4 bg-slate-50/30">
+        <div class="filter-bar gap-4 items-center">
           <mat-form-field appearance="outline" class="flex-1 min-w-[240px]">
             <mat-label>ID da Auditoria</mat-label>
             <input matInput [(ngModel)]="auditoriaId" name="auditoriaId" placeholder="uuid da auditoria" />
           </mat-form-field>
-          <button mat-raised-button color="primary" (click)="carregar()" [disabled]="!auditoriaId">
+          <button mat-raised-button color="primary" (click)="carregar()" [disabled]="!auditoriaId" class="h-[48px] flex items-center gap-2 px-5">
             <mat-icon>search</mat-icon> Carregar
           </button>
         </div>
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="mb-4">
-      <mat-card-header><mat-card-title>Gerar Relatório</mat-card-title></mat-card-header>
-      <mat-card-content>
-        <div class="flex gap-4 items-center flex-wrap">
+    <!-- Card de geração de relatório -->
+    <mat-card class="mt-6 border-t-4 border-primary shadow-md rounded-xl overflow-hidden">
+      <mat-card-header class="bg-slate-50/50 px-6 py-4 border-b border-gray-100">
+        <mat-card-title class="text-lg font-semibold text-text-main flex items-center gap-2">
+          <mat-icon class="text-primary">picture_as_pdf</mat-icon>
+          Gerar Relatório
+        </mat-card-title>
+        <mat-card-subtitle class="text-xs text-text-sec">Compile os achados da auditoria em um relatório.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="p-6">
+        <div class="filter-bar gap-4 items-center">
           <mat-form-field appearance="outline" class="w-[220px]">
             <mat-label>Tipo</mat-label>
             <mat-select [(ngModel)]="gerarTipo" name="tipo">
@@ -54,7 +63,7 @@ import { AuthService } from '../../core/services/auth.service';
               <mat-option value="FINAL">Final</mat-option>
             </mat-select>
           </mat-form-field>
-          <button mat-raised-button color="accent" (click)="gerar()" [disabled]="!auditoriaId">
+          <button mat-raised-button color="accent" (click)="gerar()" [disabled]="!auditoriaId" class="flex items-center gap-2">
             <mat-icon>picture_as_pdf</mat-icon> Gerar
           </button>
           <span class="text-text-sec text-sm">
@@ -67,18 +76,18 @@ import { AuthService } from '../../core/services/auth.service';
     <mat-divider />
 
     @if (carregando) {
-      <div class="flex justify-center p-8">
+      <div class="flex justify-center py-8">
         <mat-spinner diameter="40" />
       </div>
     }
 
     @if (relatorios.length > 0) {
-      <h2>Relatórios ({{ relatorios.length }})</h2>
+      <h2 class="text-lg font-semibold text-text-main mt-6 mb-2">Relatórios ({{ relatorios.length }})</h2>
     }
 
     @for (r of relatorios; track r.id) {
-      <mat-card class="mt-4">
-        <mat-card-content>
+      <mat-card class="mt-4 border-t-4 border-primary shadow-md rounded-xl overflow-hidden">
+        <mat-card-content class="p-6">
           <div class="flex justify-between items-center flex-wrap">
             <div>
               <mat-chip-set>
@@ -90,27 +99,32 @@ import { AuthService } from '../../core/services/auth.service';
               }
             </div>
             <div class="flex gap-2">
-              <button mat-stroked-button (click)="baixarPdf(r.id)">
+              <button mat-stroked-button (click)="baixarPdf(r.id)" class="flex items-center gap-1">
                 <mat-icon>download</mat-icon> PDF
               </button>
               @if (r.status === 'RASCUNHO') {
-                <button mat-raised-button color="primary" (click)="assinar(r.id)" *appHasRole="'P01'">
+                <button mat-raised-button color="primary" (click)="assinar(r.id)" *appHasRole="'P01'" class="flex items-center gap-1">
                   <mat-icon>draw</mat-icon> Assinar (P01)
                 </button>
               }
             </div>
           </div>
-          <pre class="whitespace-pre-wrap bg-background p-3 mt-3 rounded">{{ preview(r.conteudo) }}</pre>
+          <pre class="whitespace-pre-wrap bg-slate-50 border border-gray-100 text-text-main p-3 mt-3 rounded-lg text-sm">{{ preview(r.conteudo) }}</pre>
         </mat-card-content>
       </mat-card>
     } @empty {
       @if (auditoriaId && !carregando) {
-        <p class="text-text-sec">Nenhum relatório para esta auditoria.</p>
+        <app-empty-state icon="description" title="Nenhum relatório para esta auditoria" description="O relatório será gerado após a consolidação dos achados." size="sm" />
       }
     }
 
     @if (error) {
-      <p class="text-critical text-center">{{ error }}</p>
+      <mat-card class="mt-4 border border-red-200 bg-red-50 rounded-xl shadow-sm">
+        <mat-card-content class="flex items-center gap-2 text-red-600 p-4">
+          <mat-icon>error_outline</mat-icon>
+          <span class="text-sm">{{ error }}</span>
+        </mat-card-content>
+      </mat-card>
     }
   `,
 })

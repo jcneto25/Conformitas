@@ -24,6 +24,7 @@ import { GovernancaModule } from './governanca/governanca.module';
 import { BibliotecaModule } from './biblioteca/biblioteca.module';
 import { DashboardsModule } from './dashboards/dashboards.module';
 import { IntegracoesModule } from './integracoes/integracoes.module';
+import { AcoesCoordenadasModule } from './acoes-coordenadas/acoes-coordenadas.module';
 import { ConfigModule } from './config/config.module';
 import { MandatosModule } from './mandatos/mandatos.module';
 import { LogsSistemaModule } from './logs/logs-sistema.module';
@@ -58,6 +59,7 @@ import appConfig from './config/app.config';
     BibliotecaModule,
     DashboardsModule,
     IntegracoesModule,
+    AcoesCoordenadasModule,
     ConfigModule,
     MandatosModule,
     LogsSistemaModule,

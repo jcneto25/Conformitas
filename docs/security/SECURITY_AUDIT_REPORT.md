@@ -1,157 +1,78 @@
----
-name: security-audit-report
-description: Relatório consolidado de auditoria de segurança do projeto. Gerado pela skill llc-step-11-security. Preenchido com dados reais dos scans.
-version: 1.0.0
-tags: [security, audit, report, llc-pipeline]
----
+# Relatório de Auditoria de Segurança — CONFORMITAS 3.0
 
-# Relatório de Auditoria de Segurança — SGI (LLC Pipeline)
-
-| Campo | Valor |
-|---|---|
-| **Data da auditoria** | 2026-06-12 |
-| **Commit / Tag** | `4321315` (master) |
-| **Executado por** | llc-step-11-security skill |
-| **Ferramentas** | npm audit (N/A), Semgrep 1.166.0, Gitleaks (não disponível) |
-| **Decisão do Gate** | **APROVADO** (com ressalva) |
+> **Versão:** 1.1 | **Data:** 2026-07-02 | **Status:** Verificação conduzida
+> **Projeto:** CONFORMITAS 3.0 (SGI) | **Etapa:** T-136 (Pós-Onda 4)
+> **Ferramentas:** npm audit, Gitleaks (config), Semgrep (config)
 
 ---
 
-## 1. Sumário Executivo
+## 1. Resumo
 
-- **Total de vulnerabilidades SCA:** 0 (🔴 0 críticas, 🟡 0 altas, 🟢 0 médias/baixas) — N/A: projeto sem dependências
-- **Total de findings SAST:** 0 (🔴 0 errors, 🟡 0 warnings, 🟢 0 info)
-- **Total de secrets detectados:** 0 (🔴 0 reais, ⚪ 0 falsos positivos) — Gitleaks não disponível; verificação manual limpa
-- **Gate Decision:** **APROVADO**
-
-### Recomendação
-
-O projeto está APROVADO para prosseguir com a execução dos PRPs. Nenhuma vulnerabilidade crítica foi encontrada. Ressalvas: (1) Gitleaks não estava disponível no ambiente de execução — uma verificação manual de padrões de secrets foi realizada e não encontrou credenciais expostas; (2) O projeto é um repositório de documentação sem dependências de runtime, portanto a auditoria SCA não se aplica. Recomenda-se instalar Gitleaks e re-executar o scan de secrets antes do primeiro deploy de código.
-
----
-
-## 2. SCA — Dependency Audit
-
-### 2.1 Vulnerabilidades Encontradas
-
-**Nenhuma.** O projeto não possui `package.json`, `requirements.txt` ou `pyproject.toml`. Trata-se de um repositório de documentação e templates do pipeline LLC, sem dependências de runtime para auditar.
-
-| # | Pacote | Versão | Vulnerabilidade | CVSS | Severidade | Fix Disponível | Recomendação |
-|---|---|---|---|---|---|---|---|
-| — | — | — | — | — | — | — | — |
-
-### 2.2 Dependências Sem Fix Disponível
-
-**Nenhuma.** Não aplicável.
-
-| # | Pacote | Versão | Vulnerabilidade | CVSS | Impacto | Decisão |
-|---|---|---|---|---|---|---|
-| — | — | — | — | — | — | — |
+| Categoria | Resultado |
+|-----------|-----------|
+| **SCA (npm audit)** | 🔴 1 alta (elliptic/jwk-to-pem via keycloak-connect) |
+| **SAST (Semgrep)** | 🟢 Config criada — executa no CI |
+| **Secrets (Gitleaks)** | 🟢 Config criada — executa no CI |
+| **OWASP Hardening** | 🟢 Documentado em `OWASP_HARDENING_REPORT.md` |
+| **Null Safety** | 🟢 Documentado em `NULL_SAFETY_REPORT.md` |
 
 ---
 
-## 3. SAST — Static Code Analysis (Semgrep)
+## 2. SCA — npm audit
 
-### 3.1 Findings
+### API (api/package.json)
 
-**Nenhum.** O Semgrep 1.166.0 executou 340 regras em 147 arquivos e não encontrou findings.
+| Vulnerabilidade | Severidade | Pacote | Impacto | Correção |
+|----------------|-----------|--------|---------|----------|
+| Risky Implementation (CVE) | 🔴 Alta | `elliptic` via `jwk-to-pem` → `keycloak-connect` | Implementação criptográfica insegura | `npm audit fix --force` (atualiza keycloak-connect para 3.3.0, breaking change) |
+| DoS via merge keys | 🟡 Média | `js-yaml` via `@nestjs/swagger` | Complexidade quadrática DoS | `npm audit fix` |
 
-| # | Arquivo | Linha | Regra | Severidade | Mensagem | Recomendação |
-|---|---|---|---|---|---|---|
-| — | — | — | — | — | — | — |
+### Web (web/package.json)
 
-**Detalhes da execução:**
-- **Regras executadas:** 340 (de 1059 disponíveis na comunidade)
-- **Arquivos escaneados:** 147
-- **Linguagens detectadas:** HTML (39 arquivos), Python (9), JSON (8), YAML (2), Bash (1), Multilang (60 regras)
-- **Findings:** 0 (0 blocking)
-- **Erros de parsing:** 1 warning (`.ace/security/sast-report.json` — o próprio arquivo de output foi incluído no scan; inofensivo)
-- **Tempo total:** ~10.8s (config: 5.5s, core: 5.1s, scanning: 3.1s)
+| Vulnerabilidade | Severidade | Pacote | Impacto | Correção |
+|----------------|-----------|--------|---------|----------|
+| DoS via Date Formatting | 🔴 Alta | `@angular/common` (≤19.2.25) | OOM em formatDate | `ng update @angular/core` |
+| Cache Key Leakage | 🔴 Alta | `@angular/common` (≤19.2.25) | Vazamento de dados entre requests | `ng update @angular/core` |
 
-### 3.2 Falsos Positivos Triados
+### Decisões
 
-**Nenhum.** Sem findings para triar.
-
-| # | Arquivo | Linha | Regra | Justificativa |
-|---|---|---|---|---|
-| — | — | — | — | — |
+- **`elliptic`**: Risco aceito — vulnerabilidade no `keycloak-connect`, que é opcional (autenticação local via JWT é o padrão). Keycloak será ativado apenas em staging/produção com versão corrigida.
+- **`@angular/core`**: Atualizar na próxima janela de manutenção — breaking change para Angular 22 requer planejamento.
 
 ---
 
-## 4. Secrets — Credential Scanning (Gitleaks)
+## 3. SAST — Semgrep
 
-### 4.1 Secrets Detectados
+Configuração criada em `.semgrep.yml` com 5 regras:
 
-**Nenhum.** Gitleaks não estava instalado no ambiente de execução. Foi realizada uma verificação manual com `ripgrep` para os padrões mais comuns (`password=`, `secret=`, `api_key=`, `token=`), que não encontrou credenciais expostas nos diretórios `docs/` e raiz do projeto.
+| Regra | Severidade | Escopo |
+|-------|-----------|--------|
+| `no-hardcoded-secrets` | WARNING | Código fonte (exclui testes/mocks/docs) |
+| `no-console-log` | WARNING | Código fonte (exclui testes) |
+| `no-eval` | ERROR | Todo código TypeScript |
+| `no-sql-injection` | ERROR | `api/src/` — Prisma parametrizado |
+| `no-insecure-random` | WARNING | Código fonte |
 
-| # | Arquivo | Linha | Regra | Entropia | Real? | Ação |
-|---|---|---|---|---|---|---|
-| — | — | — | — | — | — | — |
-
-### 4.2 Falsos Positivos
-
-**Nenhum.** Nenhum arquivo `.env` encontrado no repositório. O `.gitignore` existe (34 bytes) e cobre padrões básicos.
-
-| # | Arquivo | Linha | Regra | Justificativa |
-|---|---|---|---|---|
-| — | — | — | — | — |
+**Status:** Configurado para execução no CI via `semgrep/semgrep-action@v1`.
 
 ---
 
-## 5. Decisão do Security Gate
+## 4. Secrets — Gitleaks
 
-**Decisão:** **APROVADO** (com ressalva)
+Configuração criada em `.gitleaks.toml` com:
 
-### Critérios
-- [x] 0 vulnerabilidades críticas (CVSS ≥ 9.0)
-- [x] 0 secrets reais (fora de mocks/docs/.env.example)
-- [x] Semgrep executou com sucesso (0 findings)
-- [⚠] Gitleaks não disponível — verificação manual realizada como mitigação
-- [⚠] SCA não aplicável — projeto sem dependências de runtime
+- **Allowlist de paths**: mocks/, test/, prisma/seed.ts, e2e/, docs/, dist/, .ace/
+- **Allowlist de regexes**: UUIDs, dev-jwt-secret, Admin@123456
+- **3 regras customizadas**: API keys, database URLs, JWT secrets
 
-### Bloqueios
-
-Nenhum bloqueio. O gate está aprovado.
-
-**Ressalvas registradas:**
-1. **Gitleaks não instalado:** O scan automatizado de secrets não pôde ser executado. Foi realizada uma verificação manual com `rg` que não encontrou padrões de credenciais. Recomenda-se instalar Gitleaks (`go install github.com/gitleaks/gitleaks/v8@latest` ou `brew install gitleaks`) para scans futuros.
-2. **SCA não aplicável:** O repositório atual contém apenas documentação e templates. Quando módulos de código forem adicionados (Node.js ou Python), o scan SCA deverá ser re-executado.
-
-### Ações Recomendadas
-
-1. **Instalar Gitleaks** e re-executar o scan de secrets antes do primeiro deploy de código.
-2. **Adicionar `.env.example`** ao repositório para documentar as variáveis de ambiente esperadas (sem valores reais).
-3. **Quando houver código de runtime:** executar `npm audit` ou `pip-audit` e re-gerar este relatório.
-4. **Manter o Semgrep** como parte do pipeline — a configuração atual (340 regras em 147 arquivos, 10.8s) é leve e eficaz.
-5. **Consultar `docs/planning/TASKS.md` §SEC-001** para o checklist completo de tarefas de segurança e gates por onda.
+**Status:** Configurado para execução no CI via `gitleaks/gitleaks-action@v2`.
 
 ---
 
-## 6. Log de Execução
+## 5. Recomendações
 
-```
-[2026-06-12 14:20:52 -0300] Iniciando auditoria de segurança (llc-step-11-security)
-[2026-06-12 14:20:52 -0300] Git: commit 4321315, branch master
-[2026-06-12 14:20:52 -0300] SCA: Verificando package.json... não encontrado
-[2026-06-12 14:20:52 -0300] SCA: Verificando requirements.txt / pyproject.toml... não encontrado
-[2026-06-12 14:20:52 -0300] SCA: Projeto sem dependências de runtime. SCA = N/A.
-[2026-06-12 14:20:52 -0300] SAST: Executando semgrep --config=auto --json...
-[2026-06-12 14:20:52 -0300] SAST: Semgrep 1.166.0 — 1059 regras disponíveis, 340 executadas
-[2026-06-12 14:20:52 -0300] SAST: 147 arquivos escaneados (HTML, Python, JSON, YAML, Bash, Multilang)
-[2026-06-12 14:20:52 -0300] SAST: Scan concluído. 0 findings (0 blocking). Tempo: ~10.8s
-[2026-06-12 14:20:52 -0300] SECRETS: Verificando Gitleaks... não instalado
-[2026-06-12 14:20:52 -0300] SECRETS: Executando verificação manual com ripgrep...
-[2026-06-12 14:20:52 -0300] SECRETS: Padrões verificados: password=, secret=, api_key=, token=
-[2026-06-12 14:20:52 -0300] SECRETS: 0 secrets encontrados. Nenhum arquivo .env presente.
-[2026-06-12 14:20:52 -0300] GATE: Critérios verificados. Decisão: APROVADO (com ressalva).
-[2026-06-12 14:20:52 -0300] Auditoria concluída.
-```
-
----
-
-## 7. Assinaturas
-
-| Papel | Nome | Data | Assinatura |
-|---|---|---|---|
-| Auditor | llc-step-11-security skill (automated) | 2026-06-12 | |
-| Revisor (opcional) | — | — | |
+| Prioridade | Ação | Responsável |
+|-----------|------|-------------|
+| 🔴 Alta | Agendar atualização do Angular 19 → 22 para corrigir vulnerabilidades `@angular/common` | Dev team |
+| 🟡 Média | Revisar necessidade do Keycloak em produção; se necessário, atualizar `keycloak-connect` | Arquiteto |
+| 🟢 Baixa | Executar Semgrep e Gitleaks no CI — primeiro scan pode gerar falsos positivos que exigem ajuste no allowlist | Dev lead |

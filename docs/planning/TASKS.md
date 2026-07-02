@@ -1,6 +1,6 @@
 # Tasks — Backlog de Desenvolvimento
 
-> **Versão:** 1.0 | **Data:** 2026-06-16 | **Status:** Planejado (Step 6)
+> **Versão:** 1.2 | **Data:** 2026-07-02 | **Status:** ~100% concluído (14/14 PRPs + finalização)
 > **Projeto:** CONFORMITAS 3.0 (SGI) | **Metodologia:** PRP-Based Development
 > **Autor:** IA (Step 6) | **Referências:** `DEPENDENCY_MATRIX.md`, `EXECUTION_WAVES.md`, `ARCHITECTURE.md`, `docs/prps/PRP-*.md`
 
@@ -11,9 +11,10 @@
 | Métrica | Valor |
 |---------|-------|
 | Total PRPs | 14 |
-| Total Tarefas | 112 |
+| Total Tarefas | 148 |
+| Tarefas concluídas | 148 |
 | Estimativa total (horas) | ~360h (~45 dias úteis com 3 devs) |
-| Ondas | 4 |
+| Ondas | 4 (4 concluídas) |
 
 ---
 
@@ -227,7 +228,7 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-103 | Criar migrations: `avaliacoes_qualidade`, `nao_conformidades`, `indicadores_qualidade` | dev | ❌ | T-007 | 2 | ⏳ |
+| T-103 | Tabelas já existentes na migration init (Step 8). N/A | dev | ❌ | T-007 | 0 | ✅ |
 | T-104 | Implementar AvaliacaoService: monitoramento, autoavaliação, externa | dev | ❌ | T-103 | 4 | ✅ |
 | T-105 | Implementar acesso temporário P07 (Avaliador Externo) | dev | ❌ | T-104 | 2 | ✅ |
 | T-106 | Implementar NaoConformidadeService: workflow ABERTA→CORRIGIDA | dev | ⚠️ | T-103 | 3 | ✅ |
@@ -235,13 +236,13 @@
 | T-108 | Tela NaoConformidadeList + PlanoAcao | dev | ❌ | T-106 | 3 | ✅ |
 | T-109 | Testes: autoavaliação, externa, acesso temporário, workflow NC | qa | ❌ | T-104,T-105,T-106 | 4 | ✅ |
 
-**PRP-011 total: 22h**
+**PRP-011 total: 20h**
 
 ### 6.2 PRP-012 — Riscos, Competências e Biblioteca (6 dias) ✅ Paralelo com PRP-011
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-110 | Criar migrations: `riscos`, `competencias`, `capacitacoes`, `documentos_metodologicos` | dev | ❌ | T-007 | 2 | ⏳ |
+| T-110 | Tabelas já existentes na migration init (Step 8). N/A | dev | ❌ | T-007 | 0 | ✅ |
 | T-111 | Implementar RiscoService: matriz probabilidade×impacto, nível calculado | dev | ❌ | T-110 | 5 | ✅ |
 | T-112 | Implementar CapacitacaoService: CRUD + totalização horas + alerta 40h | dev | ✅ | T-110 | 4 | ✅ |
 | T-113 | Implementar BibliotecaService: upload, versionamento, busca | dev | ✅ | T-110 | 3 | ✅ |
@@ -250,20 +251,20 @@
 | T-116 | Tela BibliotecaList + Upload/Dowload | dev | ❌ | T-113 | 2 | ✅ |
 | T-117 | Testes: cálculo nível risco, totalização horas, versionamento | qa | ❌ | T-111,T-112,T-113 | 4 | ✅ |
 
-**PRP-012 total: 27h**
+**PRP-012 total: 25h**
 
 ### 6.3 PRP-013 — Governança, Transparência e Fraudes (4 dias) ✅ Paralelo com PRP-011, PRP-012
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-118 | Criar migrations: `determinacoes_externas`, `registros_fraude` | dev | ❌ | T-007 | 1 | ⏳ |
+| T-118 | Tabelas já existentes na migration init (Step 8). N/A | dev | ❌ | T-007 | 0 | ✅ |
 | T-119 | Implementar DeterminacaoService: registro TCE/CNJ, prazo, status | dev | ❌ | T-118 | 3 | ✅ |
 | T-120 | Implementar RegistroFraudeService: workflow superior→60 dias→TCE | dev | ❌ | T-118 | 4 | ✅ |
 | T-121 | Tela DeterminacaoList + Form (P01) | dev | ❌ | T-119 | 3 | ✅ |
 | T-122 | Tela FraudeList + workflow comunicação | dev | ❌ | T-120 | 3 | ✅ |
 | T-123 | Testes: prazos determinação, workflow fraude 60 dias | qa | ❌ | T-119,T-120 | 3 | ✅ |
 
-**PRP-013 total: 17h**
+**PRP-013 total: 16h**
 
 ---
 
@@ -273,17 +274,17 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-124 | Criar migrations: `integracoes`, `acoes_coordenadas`, `logs_integracao` | dev | ❌ | T-007 | 2 | ⏳ |
+| T-124 | Criar migrations: `integracoes`, `acoes_coordenadas`, `logs_integracao` | dev | ❌ | T-007 | 2 | ✅ |
 | T-125 | Implementar DashboardService: queries agregadas PAA, execução, recomendações | dev | ❌ | T-064,T-045,T-092 | 5 | ✅ |
-| T-126 | Implementar export PDF/XLSX para dashboards | dev | ❌ | T-125 | 3 | ⏳ |
-| T-127 | Implementar IntegracaoService: catálogo, health check, teste conectividade | dev | ✅ | T-124 | 4 | ⏳ |
-| T-128 | Implementar webhook Ações Coordenadas SIAUD-Jud | dev | ✅ | T-124 | 4 | ⏳ |
-| T-129 | Implementar conector Ouvidoria TJCE (stub/mock inicial) | dev | ✅ | T-124 | 3 | ⏳ |
+| T-126 | Implementar export PDF/XLSX para dashboards | dev | ❌ | T-125 | 3 | ✅ |
+| T-127 | Implementar IntegracaoService: catálogo, health check, teste conectividade | dev | ✅ | T-124 | 4 | ✅ |
+| T-128 | Implementar webhook Ações Coordenadas SIAUD-Jud | dev | ✅ | T-124 | 4 | ✅ |
+| T-129 | Implementar conector Ouvidoria TJCE (stub/mock inicial) | dev | ✅ | T-124 | 3 | ✅ |
 | T-130 | Tela DashboardPAA, DashboardExecucao, DashboardRecomendacoes | dev | ❌ | T-006,T-125 | 6 | ✅ |
-| T-131 | Tela DashboardQualidade, DashboardForcaTrabalho | dev | ✅ | T-125 | 3 | ⏳ |
-| T-132 | Tela IntegracaoList + IntegracaoForm (P10) + health dashboard | dev | ❌ | T-127 | 4 | ⏳ |
-| T-133 | Tela AcaoCoordenadaList + Detail + Reporte CPA | dev | ❌ | T-128 | 3 | ⏳ |
-| T-134 | Testes: dashboards, export, integração health, webhook SIAUD | qa | ❌ | T-125,T-127,T-128 | 5 | ⏳ |
+| T-131 | Tela DashboardQualidade, DashboardForcaTrabalho | dev | ✅ | T-125 | 3 | ✅ |
+| T-132 | Tela IntegracaoList + IntegracaoForm (P10) + health dashboard | dev | ❌ | T-127 | 4 | ✅ |
+| T-133 | Tela AcaoCoordenadaList + Detail + Reporte CPA | dev | ❌ | T-128 | 3 | ✅ |
+| T-134 | Testes: dashboards, export, integração health, webhook SIAUD | qa | ❌ | T-125,T-127,T-128 | 5 | ✅ |
 
 **PRP-014 total: 42h**
 
@@ -293,10 +294,10 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-135 | E2E: fluxo completo planejamento→execução→achados→relatório→recomendação | qa | ❌ | Onda 2 | 8 | ⏳ |
-| T-136 | Security scan: npm audit, SAST (Semgrep), secrets (Gitleaks) | sec | ❌ | T-004 | 4 | ⏳ |
-| T-137 | Teste de carga básico (k6): login, listagem, upload | qa | ❌ | Onda 4 | 4 | ⏳ |
-| T-138 | Documentação de deploy: README, DEPLOYMENT.md | dev | ❌ | Onda 4 | 4 | ⏳ |
+| T-135 | E2E: fluxo completo planejamento→execução→achados→relatório→recomendação | qa | ❌ | Onda 2 | 8 | ✅ |
+| T-136 | Security scan: npm audit, SAST (Semgrep), secrets (Gitleaks) | sec | ❌ | T-004 | 4 | ✅ |
+| T-137 | Teste de carga básico (k6): login, listagem, upload | qa | ❌ | Onda 4 | 4 | ✅ |
+| T-138 | Documentação de deploy: README, DEPLOYMENT.md | dev | ❌ | Onda 4 | 4 | ✅ |
 
 ---
 
@@ -304,13 +305,13 @@
 
 | Onda | PRPs | Tarefas | Horas | Dias (~8h/dia, 3 devs) | Status |
 |------|------|---------|-------|------------------------|--------|
-| 0 — Setup | Transversal | 9 | 25 | ~3 | ✅ 8/9 concluídas |
-| 1 — Fundação e Core | 001,002,003,004,005,006,009 | 83 | 255 | ~11 | ✅ 85% |
-| 2 — Relatórios e Monitoramento | 007,008,010 | 20 | 72 | ~3 | ⏳ |
-| 3 — Qualidade e Governança | 011,012,013 | 21 | 66 | ~3 | ⏳ |
-| 4 — Dashboards e Integrações | 014 | 11 | 42 | ~2 | ⏳ |
-| Finalização | Transversal | 4 | 20 | ~1 | ⏳ |
-| **TOTAL** | **14 PRPs** | **148 tarefas** | **~480h** | **~23 dias (3 devs)** | **~43% concluído** |
+| 0 — Setup | Transversal | 9 | 25 | ~3 | ✅ Completo |
+| 1 — Fundação e Core | 001,002,003,004,005,006,009 | 83 | 255 | ~11 | ✅ Completo |
+| 2 — Relatórios e Monitoramento | 007,008,010 | 20 | 72 | ~3 | ✅ Completo |
+| 3 — Qualidade e Governança | 011,012,013 | 21 | 61 | ~3 | ✅ 100% |
+| 4 — Dashboards e Integrações | 014 | 11 | 42 | ~2 | ✅ Completo |
+| Finalização | Transversal | 4 | 20 | ~1 | ✅ Completo |
+| **TOTAL** | **14 PRPs** | **148 tarefas** | **~480h** | **~23 dias (3 devs)** | **~100% concluído** |
 
 ---
 

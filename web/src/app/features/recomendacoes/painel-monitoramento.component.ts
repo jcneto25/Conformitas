@@ -27,71 +27,73 @@ import { PageHeaderComponent } from '../../shared/components/page-header.compone
       <div class="flex justify-center p-8"><mat-spinner diameter="40" /></div>
     } @else {
       <div class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4">
-        <mat-card>
-          <mat-card-content>
-            <div class="text-4xl font-bold text-center text-info">{{ pendentes }}</div>
-            <div class="text-center text-text-sec text-sm">Pendentes</div>
+        <mat-card class="border-t-4 border-primary shadow-sm rounded-xl">
+          <mat-card-content class="p-5">
+            <div class="text-3xl font-bold text-text-main text-blue-700">{{ pendentes }}</div>
+            <div class="text-text-sec text-sm mt-1">Pendentes</div>
           </mat-card-content>
         </mat-card>
 
-        <mat-card>
-          <mat-card-content>
-            <div class="text-4xl font-bold text-center text-warning">{{ emAndamento }}</div>
-            <div class="text-center text-text-sec text-sm">Em Andamento</div>
+        <mat-card class="border-t-4 border-primary shadow-sm rounded-xl">
+          <mat-card-content class="p-5">
+            <div class="text-3xl font-bold text-text-main text-amber-700">{{ emAndamento }}</div>
+            <div class="text-text-sec text-sm mt-1">Em Andamento</div>
           </mat-card-content>
         </mat-card>
 
-        <mat-card>
-          <mat-card-content>
-            <div class="text-4xl font-bold text-center text-success">{{ cumpridas }}</div>
-            <div class="text-center text-text-sec text-sm">Cumpridas</div>
+        <mat-card class="border-t-4 border-primary shadow-sm rounded-xl">
+          <mat-card-content class="p-5">
+            <div class="text-3xl font-bold text-text-main text-green-700">{{ cumpridas }}</div>
+            <div class="text-text-sec text-sm mt-1">Cumpridas</div>
           </mat-card-content>
         </mat-card>
 
-        <mat-card>
-          <mat-card-content>
-            <div class="text-4xl font-bold text-center text-critical">{{ vencidas }}</div>
-            <div class="text-center text-text-sec text-sm">Vencidas</div>
+        <mat-card class="border-t-4 border-primary shadow-sm rounded-xl">
+          <mat-card-content class="p-5">
+            <div class="text-3xl font-bold text-text-main text-red-600">{{ vencidas }}</div>
+            <div class="text-text-sec text-sm mt-1">Vencidas</div>
           </mat-card-content>
         </mat-card>
       </div>
 
       @if (recomendacoesVencidas.length) {
-        <mat-card class="mt-4 border-l-4 border-red-600">
-          <mat-card-header>
-            <mat-card-title class="text-critical">
-              <mat-icon class="align-middle">warning</mat-icon>
+        <mat-card class="mt-6 border-l-4 border-red-600 shadow-md rounded-xl overflow-hidden">
+          <mat-card-header class="px-6 py-4 border-b border-gray-100">
+            <mat-card-title class="text-lg font-semibold text-red-600 flex items-center gap-2">
+              <mat-icon class="text-red-600">warning</mat-icon>
               Recomendações Vencidas ({{ recomendacoesVencidas.length }})
             </mat-card-title>
           </mat-card-header>
-          <mat-card-content>
-            <table mat-table [dataSource]="recomendacoesVencidas" class="mat-elevation-z0 w-full">
-              <ng-container matColumnDef="descricao">
-                <th mat-header-cell *matHeaderCellDef>Descrição</th>
-                <td mat-cell *matCellDef="let r">{{ r.descricao }}</td>
-              </ng-container>
-              <ng-container matColumnDef="criticidade">
-                <th mat-header-cell *matHeaderCellDef>Criticidade</th>
-                <td mat-cell *matCellDef="let r">
-                  <app-status-badge [status]="r.criticidade" />
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="prazo">
-                <th mat-header-cell *matHeaderCellDef>Prazo</th>
-                <td mat-cell *matCellDef="let r" class="text-critical font-semibold">
-                  {{ r.prazo | date:'dd/MM/yyyy' }}
-                </td>
-              </ng-container>
-              <tr mat-header-row *matHeaderRowDef="['descricao', 'criticidade', 'prazo']"></tr>
-              <tr mat-row *matRowDef="let row; columns: ['descricao', 'criticidade', 'prazo'];"></tr>
-            </table>
+          <mat-card-content class="p-0">
+            <div class="shadow-sm rounded-xl overflow-hidden border border-gray-100 bg-white">
+              <table mat-table [dataSource]="recomendacoesVencidas" class="mat-elevation-z0 w-full">
+                <ng-container matColumnDef="descricao">
+                  <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main">Descrição</th>
+                  <td mat-cell *matCellDef="let r" class="py-3 px-4">{{ r.descricao }}</td>
+                </ng-container>
+                <ng-container matColumnDef="criticidade">
+                  <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main">Criticidade</th>
+                  <td mat-cell *matCellDef="let r" class="py-3 px-4">
+                    <app-status-badge [status]="r.criticidade" />
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="prazo">
+                  <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main">Prazo</th>
+                  <td mat-cell *matCellDef="let r" class="py-3 px-4 text-red-600 font-semibold">
+                    {{ r.prazo | date:'dd/MM/yyyy' }}
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="['descricao', 'criticidade', 'prazo']; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['descricao', 'criticidade', 'prazo'];"></tr>
+              </table>
+            </div>
           </mat-card-content>
         </mat-card>
       }
     }
 
     @if (error) {
-      <p class="text-critical text-center mt-4">{{ error }}</p>
+      <p class="text-red-600 text-center mt-4">{{ error }}</p>
     }
   `,
 })

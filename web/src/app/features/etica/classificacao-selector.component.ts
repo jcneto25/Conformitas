@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { environment } from '../../../environments/environment';
+import { ValidationService } from '../../shared/services/validation.service';
 
 @Component({
   selector: 'app-classificacao-selector',
@@ -21,7 +22,7 @@ import { environment } from '../../../environments/environment';
     MatProgressSpinnerModule,
   ],
   template: `
-    <div class="flex gap-4 items-end flex-wrap">
+    <div class="filter-bar gap-4 items-end">
       @if (loading) {
         <mat-spinner diameter="24" />
       } @else {
@@ -35,12 +36,15 @@ import { environment } from '../../../environments/environment';
 
         <mat-form-field appearance="outline" class="min-w-[180px]">
           <mat-label>Nível de Sigilo</mat-label>
-          <mat-select [(ngModel)]="nivelSelecionado" name="nivelSigilo" required>
+          <mat-select #nivelModel="ngModel" [(ngModel)]="nivelSelecionado" name="nivelSigilo" required>
             <mat-option value="PUBLICO">Público</mat-option>
             <mat-option value="INTERNO">Interno</mat-option>
             <mat-option value="RESTRITO">Restrito</mat-option>
             <mat-option value="SIGILOSO">Sigiloso</mat-option>
           </mat-select>
+          @if (nivelModel.invalid && nivelModel.touched) {
+            <mat-error>{{ validation.required('Nível de sigilo') }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="min-w-[250px]">
@@ -61,7 +65,9 @@ import { environment } from '../../../environments/environment';
       }
     </div>
     @if (error) {
-      <p class="text-critical mt-1 text-sm">{{ error }}</p>
+      <div class="flex items-center gap-2 text-red-600 text-sm mt-2 p-3 bg-red-50 rounded-lg border border-red-100" role="alert">
+        <span>{{ error }}</span>
+      </div>
     }
   `,
 })
@@ -77,7 +83,10 @@ export class ClassificacaoSelectorComponent implements OnInit {
   error = '';
   loading = true;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    public readonly validation: ValidationService,
+  ) {}
 
   async ngOnInit() {
     await this.carregar();

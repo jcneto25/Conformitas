@@ -30,3 +30,147 @@ html, body {
 .sidebar .mat-mdc-list-item-icon {
   color: rgba(255,255,255,0.6);
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Tailwind CSS & Angular Material 19 (M3) Shield Overrides
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* 1. Fix: Tailwind preflight resets border style on Material components outline notch */
+.mdc-notched-outline,
+.mdc-notched-outline *,
+.mdc-notched-outline *::before,
+.mdc-notched-outline *::after {
+  border-style: solid !important;
+  box-sizing: border-box !important;
+}
+
+/* 2. Fix: Prevent Tailwind SVG reset from hiding or displacing select arrows */
+.mat-mdc-select-arrow svg {
+  display: inline-block !important;
+}
+
+/* 3. Fix: Floating labels — remove overflow:visible that causes label overlap */
+.mat-mdc-form-field-label-wrapper {
+  overflow: hidden !important;
+}
+.mdc-floating-label {
+  display: inline-block !important;
+}
+
+/* 4. Fix: Ensure outlined form field containers don't clip the notch notch label */
+.mat-mdc-text-field-wrapper.mdc-text-field--outlined .mdc-notched-outline--notched .mdc-floating-label {
+  z-index: 2;
+}
+
+/* 5. Fix: Prevent mat-form-field from collapsing in flex layouts */
+mat-form-field.mat-form-field {
+  flex-shrink: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Utility: Form layout
+   ───────────────────────────────────────────────────────────────────────── */
+@layer components {
+  .form-section {
+    @apply border-t-4 border-primary shadow-md rounded-xl overflow-hidden;
+  }
+
+  .form-section-header {
+    @apply bg-slate-50/50 px-6 py-4 border-b border-gray-100;
+  }
+
+  .form-section-content {
+    @apply p-6;
+  }
+
+  .form-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2;
+  }
+
+  .form-grid-full {
+    @apply md:col-span-2;
+  }
+
+  /* Filter bar in list views */
+  .filter-bar {
+    @apply flex flex-wrap gap-3 items-start;
+  }
+
+  /* Consistent form action footer */
+  .form-actions {
+    @apply flex justify-end gap-3 mt-6 pt-4 border-t border-gray-100;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Forms & Acessibilidade (WCAG 2.1 AA) — DESIGN_SYSTEM §5.2 / §7
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* D2: asterisco vermelho em campos obrigatórios (Epic D2) */
+.mat-mdc-form-field .mat-mdc-required-marker {
+  color: #dc2626; /* critical */
+}
+
+/* G1: foco visível consistente em elementos interativos (Epic G1).
+   Form-fields mantêm o foco via contorno do container (theme.scss); aqui
+   cobrimos botões/links/itens de menu e lista que o Material não anelam. */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+.mat-mdc-menu-item:focus-visible,
+.mat-mdc-list-item:focus-visible,
+.mat-mdc-chip:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #1a3a5c; /* primary */
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* G2: touch targets ≥ 44px em icon buttons (WCAG 2.5.5 — Epic G2) */
+.mat-mdc-icon-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   C4: Density Mode — Compact (Design_System_Master §3.3)
+   ───────────────────────────────────────────────────────────────────────── */
+.app-compact .mat-mdc-row {
+  height: 40px !important;
+}
+.app-compact .mat-mdc-header-row {
+  height: 40px !important;
+}
+.app-compact .mat-mdc-cell {
+  padding: 4px 8px !important;
+  font-size: 0.8125rem;
+}
+.app-compact .mat-mdc-header-cell {
+  padding: 4px 8px !important;
+  font-size: 0.75rem;
+}
+.app-compact .mat-mdc-card {
+  --mdc-card-gap: 12px !important;
+}
+.app-compact .mat-mdc-card-header,
+.app-compact .mat-mdc-card-content,
+.app-compact .mat-mdc-card-actions {
+  padding: 0 12px !important;
+}
+.app-compact .mat-mdc-card-title {
+  font-size: 1rem;
+}
+.app-compact .mat-mdc-card-subtitle {
+  font-size: 0.8125rem;
+}
+.app-compact main {
+  padding: 1rem !important;
+}
+.app-compact .mat-mdc-form-field {
+  font-size: 0.8125rem;
+}
+.app-compact .mat-mdc-form-field-infix {
+  min-height: 36px;
+  padding-top: 8px !important;
+  padding-bottom: 4px !important;
+}

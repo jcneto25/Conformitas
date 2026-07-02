@@ -168,12 +168,23 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: npm audit
+      - name: npm audit (API)
         working-directory: api
         run: npm audit --audit-level=high
         continue-on-error: true
 
-      - name: npm audit
+      - name: npm audit (Web)
         working-directory: web
         run: npm audit --audit-level=high
+        continue-on-error: true
+
+      - name: Gitleaks — Secrets Scanning
+        uses: gitleaks/gitleaks-action@v2
+        continue-on-error: true
+
+      - name: Semgrep — SAST
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: p/typescript
+          publishToken: ${{ secrets.SEMGREP_APP_TOKEN }}
         continue-on-error: true
