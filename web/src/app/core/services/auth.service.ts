@@ -48,11 +48,14 @@ export class AuthService {
   readonly isAuthenticated = signal(false);
   readonly userRoles = signal<string[]>([]);
 
+  /** Resolves once the initial session/profile restore attempt has settled. */
+  readonly ready: Promise<void>;
+
   constructor(
     private readonly http: HttpClient,
     private readonly router: Router,
   ) {
-    this.tryRestoreSession();
+    this.ready = this.tryRestoreSession();
   }
 
   async login(email: string, senha: string): Promise<LoginResponse> {

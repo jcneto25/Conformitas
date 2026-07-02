@@ -14,7 +14,7 @@ module.exports = {
         surface: '#ffffff',
         background: '#f4f5f7',
         'text-main': '#1a1a2e',
-        'text-sec': '#5a6a7e',
+        'text-sec': '#4a5a6e',
         border: '#d0d5dd',
         divider: '#eaecf0',
         success: '#16a34a',

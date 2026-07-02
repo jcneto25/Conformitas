@@ -9,8 +9,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
 import { environment } from '../../../environments/environment';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
+import { EmptyStateComponent } from '../../shared/components/empty-state.component';
 
 @Component({
   selector: 'app-configuracao-list',
@@ -18,14 +20,15 @@ import { PageHeaderComponent } from '../../shared/components/page-header.compone
   imports: [
     CommonModule, FormsModule,
     MatTableModule, MatButtonModule, MatCardModule,
-    MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, PageHeaderComponent,
+    MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, MatIconModule, PageHeaderComponent, EmptyStateComponent,
   ],
   template: `
     <app-page-header title="Configurações do Sistema" />
 
-    <mat-card class="mb-4">
-      <mat-card-content>
-        <p class="m-0 text-text-sec">
+    <!-- Card Informativo -->
+    <mat-card class="mb-6 border-l-4 border-primary shadow-sm rounded-r-xl overflow-hidden">
+      <mat-card-content class="p-4 bg-slate-50/30">
+        <p class="m-0 text-text-sec text-sm">
           Configurações globais do sistema. Apenas perfis P10 podem visualizar e editar.
         </p>
       </mat-card-content>
@@ -36,75 +39,79 @@ import { PageHeaderComponent } from '../../shared/components/page-header.compone
         <mat-spinner diameter="40" />
       </div>
     } @else if (error) {
-      <mat-card>
-        <mat-card-content class="text-critical text-center">{{ error }}</mat-card-content>
+      <mat-card class="border border-red-100">
+        <mat-card-content class="flex items-center gap-2 text-red-600 p-6">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ error }}</span>
+          <button mat-button color="primary" (click)="ngOnInit()" class="ml-auto">Tentar novamente</button>
+        </mat-card-content>
       </mat-card>
     } @else if (!configs.length) {
       <mat-card>
-        <mat-card-content class="text-center py-8 text-text-sec">Nenhuma configuração encontrada.</mat-card-content>
-      </mat-card>
-    } @else {
-      <mat-card>
         <mat-card-content>
-          <table mat-table [dataSource]="configs" class="mat-elevation-z0 w-full">
-
-            <ng-container matColumnDef="chave">
-              <th mat-header-cell *matHeaderCellDef>Chave</th>
-              <td mat-cell *matCellDef="let c">
-                <strong>{{ c.chave }}</strong>
-              </td>
-            </ng-container>
-
-            <ng-container matColumnDef="valor">
-              <th mat-header-cell *matHeaderCellDef>Valor</th>
-              <td mat-cell *matCellDef="let c">
-                @if (editing[c.chave]) {
-                  <mat-form-field appearance="outline" class="w-full">
-                    <mat-label>Valor</mat-label>
-                    <input matInput [(ngModel)]="editValues[c.chave]" />
-                  </mat-form-field>
-                } @else {
-                  {{ c.valor }}
-                }
-              </td>
-            </ng-container>
-
-            <ng-container matColumnDef="descricao">
-              <th mat-header-cell *matHeaderCellDef>Descrição</th>
-              <td mat-cell *matCellDef="let c">{{ c.descricao }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="acoes">
-              <th mat-header-cell *matHeaderCellDef>Ações</th>
-              <td mat-cell *matCellDef="let c">
-                @if (c.editavel) {
-                  @if (editing[c.chave]) {
-                    <button mat-stroked-button color="primary" (click)="salvar(c.chave)">
-                      Salvar
-                    </button>
-                    <button mat-button (click)="cancelar(c.chave)" class="ml-2">
-                      Cancelar
-                    </button>
-                  } @else {
-                    <button mat-stroked-button (click)="editar(c)">
-                      Editar
-                    </button>
-                  }
-                } @else {
-                  <span class="text-text-sec">Não editável</span>
-                }
-              </td>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="columns"></tr>
-            <tr mat-row *matRowDef="let row; columns: columns;"></tr>
-          </table>
-
-          @if (saveSuccess) {
-            <p class="text-success text-center mt-4">{{ saveSuccess }}</p>
-          }
+          <app-empty-state icon="settings" title="Nenhuma configuração encontrada" description="Não há configurações do sistema disponíveis no momento." />
         </mat-card-content>
       </mat-card>
+    } @else {
+      <div class="shadow-sm rounded-xl overflow-hidden border border-gray-100 bg-white">
+        <table mat-table [dataSource]="configs" class="mat-elevation-z0 w-full">
+
+          <ng-container matColumnDef="chave">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main">Chave</th>
+            <td mat-cell *matCellDef="let c" class="py-3 font-medium text-text-main">
+              <strong>{{ c.chave }}</strong>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="valor">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main">Valor</th>
+            <td mat-cell *matCellDef="let c" class="py-3 pr-4 text-gray-700">
+              @if (editing[c.chave]) {
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>Valor</mat-label>
+                  <input matInput [(ngModel)]="editValues[c.chave]" />
+                </mat-form-field>
+              } @else {
+                {{ c.valor }}
+              }
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="descricao">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main">Descrição</th>
+            <td mat-cell *matCellDef="let c" class="py-3 pr-4 max-w-md truncate text-gray-700">{{ c.descricao }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="acoes">
+            <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main w-[160px]">Ações</th>
+            <td mat-cell *matCellDef="let c" class="py-3">
+              @if (c.editavel) {
+                @if (editing[c.chave]) {
+                  <button mat-stroked-button color="primary" (click)="salvar(c.chave)">
+                    Salvar
+                  </button>
+                  <button mat-button (click)="cancelar(c.chave)" class="ml-2">
+                    Cancelar
+                  </button>
+                } @else {
+                  <button mat-stroked-button (click)="editar(c)">
+                    Editar
+                  </button>
+                }
+              } @else {
+                <span class="text-text-sec">Não editável</span>
+              }
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+        </table>
+      </div>
+
+      @if (saveSuccess) {
+        <p class="text-green-700 text-center mt-4">{{ saveSuccess }}</p>
+      }
     }
   `,
 })

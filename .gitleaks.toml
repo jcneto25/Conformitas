@@ -1,0 +1,48 @@
+# Gitleaks configuration for CONFORMITAS 3.0
+# Docs: https://github.com/gitleaks/gitleaks
+
+[allowlist]
+  description = "Known safe strings and test data"
+  paths = [
+    # Test files with mock data
+    "(?i)mocks/.*",
+    "(?i)test/.*",
+    "(?i)prisma/seed\.ts",
+    "(?i)e2e/.*",
+    # Documentation
+    "(?i)docs/.*",
+    # Build artifacts
+    "(?i)coverage/.*",
+    "(?i)dist/.*",
+    "(?i)test-results/.*",
+    # ACE sessions
+    "(?i)\.ace/.*",
+  ]
+
+  regexes = [
+    # JWT dev secrets are intentional
+    (?i)dev-jwt-secret,
+    # Test passwords in seed files
+    (?i)Admin@123456,
+    # UUIDs used as test data
+    ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$,
+  ]
+
+# Custom rules
+[[rules]]
+  id = "conformitas-api-key"
+  description = "Conformitas API Key pattern"
+  regex = '''(?i)(conformitas[-_]?(api|secret|key)|audin[-_]?(api|key))['"]?\s*[:=]\s*['"][^'"]{8,}['"]'''
+  tags = ["conformitas", "api-key"]
+
+[[rules]]
+  id = "conformitas-database-url"
+  description = "Database connection string without placeholder"
+  regex = '''postgres(ql)?://\w+:\w+@[^/]+/(?!conformitas_test|conformitas_dev|postgres)\w+'''
+  tags = ["database", "postgres"]
+
+[[rules]]
+  id = "conformitas-jwt-secret"
+  description = "JWT secret that is not the dev fallback"
+  regex = '''['"]JWT_SECRET['"]\s*[:=]\s*['"](?!dev-jwt-secret)[^'"]{10,}['"]'''
+  tags = ["jwt", "authentication"]

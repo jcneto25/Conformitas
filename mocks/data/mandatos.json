@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mand-001",
+    "numero_mandato": 1,
+    "usuario_id": "mock-user-001",
+    "ato_designacao": "Portaria GPR 118/2023",
+    "data_inicio": "2023-02-01",
+    "data_fim_prevista": "2025-02-01",
+    "data_fim": "2025-01-30",
+    "status": "CONCLUIDO"
+  },
+  {
+    "id": "mand-002",
+    "numero_mandato": 2,
+    "usuario_id": "mock-user-001",
+    "ato_designacao": "Portaria GPR 042/2025",
+    "data_inicio": "2025-02-10",
+    "data_fim_prevista": "2027-02-10",
+    "status": "ATIVO"
+  }
+]

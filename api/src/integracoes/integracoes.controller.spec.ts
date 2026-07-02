@@ -4,10 +4,16 @@ import { IntegracoesService } from './integracoes.service';
 
 describe('IntegracoesController', () => {
   let controller: IntegracoesController;
-  let service: IntegracoesService;
 
   const mockService = {
     findAll: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    remove: jest.fn(),
+    healthCheck: jest.fn(),
+    healthAll: jest.fn(),
+    logs: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -19,7 +25,6 @@ describe('IntegracoesController', () => {
     }).compile();
 
     controller = module.get<IntegracoesController>(IntegracoesController);
-    service = module.get(IntegracoesService);
   });
 
   it('should be defined', () => {
@@ -27,10 +32,26 @@ describe('IntegracoesController', () => {
   });
 
   describe('findAll', () => {
-    it('should return service.findAll() result', () => {
+    it('should call service.findAll()', () => {
       mockService.findAll.mockReturnValue([{ id: '1' }]);
       expect(controller.findAll()).toEqual([{ id: '1' }]);
       expect(mockService.findAll).toHaveBeenCalled();
+    });
+  });
+
+  describe('findOne', () => {
+    it('should call service.findOne with id', () => {
+      mockService.findOne.mockResolvedValue({ id: 'abc-123' });
+      controller.findOne('abc-123');
+      expect(mockService.findOne).toHaveBeenCalledWith('abc-123');
+    });
+  });
+
+  describe('create', () => {
+    it('should call service.create with dto', () => {
+      const dto = { nome: 'Test', sistemaExterno: 'T', tipo: 'ENTRADA', protocolo: 'REST', status: 'EM_CONFIGURACAO' };
+      controller.create(dto as any);
+      expect(mockService.create).toHaveBeenCalledWith(dto);
     });
   });
 });

@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../core/services/auth.service';
+import { ValidationService } from '../../../shared/services/validation.service';
 
 @Component({
   selector: 'app-login',
@@ -19,14 +20,15 @@ import { AuthService } from '../../../core/services/auth.service';
     MatButtonModule, MatProgressSpinnerModule, MatIconModule,
   ],
   template: `
-    <div class="flex items-center justify-center min-h-screen bg-background">
-      <mat-card class="w-full max-w-sm p-8 shadow-lg rounded-lg">
-        <mat-card-content>
-          <div class="text-center mb-6">
-            <h1 class="text-primary text-2xl font-bold m-0">CONFORMITAS 3.0</h1>
-            <p class="text-text-sec text-sm mt-1 mb-0">SGI — AUDIN/TJCE</p>
-          </div>
-
+    <div class="min-h-[80vh] flex items-center justify-center">
+      <mat-card class="w-full max-w-md border-t-4 border-primary shadow-lg rounded-xl overflow-hidden">
+        <mat-card-header class="bg-slate-50/50 px-6 py-5 border-b border-gray-100">
+          <mat-card-title class="text-xl font-semibold text-text-main flex items-center gap-2">
+            <mat-icon class="text-primary">lock</mat-icon> Conformitas
+          </mat-card-title>
+          <mat-card-subtitle class="text-xs text-text-sec">SGI — AUDIN/TJCE</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="p-6">
           <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="flex flex-col gap-4">
             <mat-form-field appearance="outline" class="w-full">
               <mat-label>Email</mat-label>
@@ -41,7 +43,7 @@ import { AuthService } from '../../../core/services/auth.service';
                 autocomplete="username"
                 placeholder="seu@email.com" />
               @if (emailModel.invalid && emailModel.touched) {
-                <mat-error>Email obrigatório</mat-error>
+                <mat-error>{{ validation.required('E-mail') }}</mat-error>
               }
             </mat-form-field>
 
@@ -56,22 +58,22 @@ import { AuthService } from '../../../core/services/auth.service';
                 #senhaModel="ngModel"
                 autocomplete="current-password" />
               @if (senhaModel.invalid && senhaModel.touched) {
-                <mat-error>Senha obrigatória</mat-error>
+                <mat-error>{{ validation.required('Senha') }}</mat-error>
               }
             </mat-form-field>
 
             @if (error) {
-              <div class="flex items-center gap-2 text-critical text-sm" role="alert">
+              <div class="flex items-center gap-2 text-red-600 text-sm p-3 bg-red-50 rounded-lg border border-red-100" role="alert">
                 <mat-icon class="text-[18px]">error_outline</mat-icon>
                 <span>{{ error }}</span>
               </div>
             }
 
             <button
-              mat-flat-button
+              mat-raised-button
               color="primary"
               type="submit"
-              class="w-full h-11"
+              class="w-full h-12"
               [disabled]="loading || loginForm.invalid">
               @if (loading) {
                 <mat-spinner diameter="20" class="inline-block mr-2" />
@@ -93,6 +95,7 @@ export class LoginComponent {
   constructor(
     private readonly router: Router,
     private readonly auth: AuthService,
+    public readonly validation: ValidationService,
   ) {}
 
   async onSubmit() {

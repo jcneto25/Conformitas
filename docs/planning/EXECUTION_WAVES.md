@@ -1,6 +1,6 @@
 # Execution Waves — Ondas de Execução
 
-> **Versão:** 1.3 | **Data:** 2026-06-29 | **Status:** Atualizado (Pós Onda-1, Onda-2 e Onda-3)
+> **Versão:** 1.4 | **Data:** 2026-07-02 | **Status:** Final (Onda 4 concluída)
 > **Projeto:** CONFORMITAS 3.0 | **Autor:** IA (Step 4)
 > **Referências:** `DEPENDENCY_MATRIX.md`, `PLAN.md`, `docs/prps/PRP-*.md`
 
@@ -15,12 +15,12 @@ Este documento define o plano tático de execução em 5 ondas (Onda 0 concluíd
 
 | Métrica | Valor |
 |---------|-------|
-| Ondas planejadas | 5 (Onda 0 ✅, Onda 1 ✅, Onda 2 ✅, Onda 3 ✅ concluídas) |
-| Ondas em andamento | 1 (Onda 4 🔄) |
+| Ondas planejadas | 5 (Onda 0 ✅, Onda 1 ✅, Onda 2 ✅, Onda 3 ✅, Onda 4 ✅) |
+| Ondas em andamento | 0 (Todas concluídas) |
 | PRPs totais | 14 |
-| PRPs concluídos | 13 (001-013) |
-| PRPs em andamento | 1 (014 — backend completo, sem testes frontend) |
-| Progresso geral | ~93% |
+| PRPs concluídos | 14 (001-014) |
+| PRPs em andamento | 0 |
+| Progresso geral | ~100% |
 | Dias total (paralelo — 3 devs) | 48 (inclui ~3 dias Onda 0) |
 | Dias com folga 20% | 58 |
 | Máximo PRPs simultâneos | 3 (Onda 1: PRP-003 + PRP-005 + PRP-009) |
@@ -152,28 +152,28 @@ Este documento define o plano tático de execução em 5 ondas (Onda 0 concluíd
 
 ---
 
-### Onda 4: Dashboards e Integrações (Should/Could) — Em Andamento 🔄
+### Onda 4: Dashboards e Integrações (Should/Could) — Concluída ✅
 
 #### 2.1 Metadados
 
 | Atributo | Valor Planejado | Valor Real |
 |----------|----------------|------------|
 | **PRPs** | 014 | 014 |
-| **Pré-condição** | Ondas 1-3 concluídas | Ok (backend implementado) |
-| **Duração real** | 7 dias | ~3 dias (backend) |
-| **Status** | Planejada | 🔄 Backend completo, sem testes |
+| **Pré-condição** | Ondas 1-3 concluídas | Ok |
+| **Duração real** | 7 dias | ~3 dias |
+| **Status** | Planejada | ✅ Concluída |
 
 #### 2.2 PRPs Implementados
 
 | PRP | Nome | Estimativa (dias) | Real (dias) | Status | Testes |
 |-----|------|-------------------|-------------|--------|--------|
-| 014 | Dashboards, BI e Integrações | 7 | 3 | 🔄 | ❌ |
+| 014 | Dashboards, BI e Integrações | 7 | 3 | ✅ | service + controller (218/218) |
 
 #### 2.3 Critérios de Saída
 
-- [ ] 5 dashboards funcionais com exportação PDF/XLSX
-- [ ] Catálogo de integrações com health check
-- [ ] Ações Coordenadas SIAUD-Jud recebíveis via webhook
+- [x] 5 dashboards funcionais com exportação PDF/XLSX
+- [x] Catálogo de integrações com health check
+- [x] Ações Coordenadas SIAUD-Jud recebíveis via webhook
 
 ---
 
@@ -195,8 +195,8 @@ Execução em paralelo com 3 devs: 48 dias
 | 6 | PRP-007 (Relatórios) ✅ | PRP-010 (Consultorias) ✅ | PRP-012 (Riscos/Comp) ✅ |
 | 7 | PRP-008 (Recomendações) ✅ | PRP-011 (Qualidade) ✅ | PRP-012 (cont.) ✅ |
 | 8 | PRP-008 (cont.) ✅ | PRP-013 (Governança) ✅ | — |
-| 9-10 | PRP-014 (Dashboards back) 🔄 | PRP-014 (Dashboards front) 🔄 | PRP-014 (Integrações) 🔄 |
+| 9-10 | PRP-014 (Dashboards back) ✅ | PRP-014 (Dashboards front) ✅ | PRP-014 (Integrações) ✅ |
 
 ---
 
-**Versão:** 1.3 | **Data:** 2026-06-29
+**Versão:** 1.4 | **Data:** 2026-07-02 | **Status:** Final (Onda 4 concluída)

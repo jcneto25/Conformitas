@@ -1,6 +1,6 @@
 # Tasks — Backlog de Desenvolvimento
 
-> **Versão:** 1.0 | **Data:** 2026-06-16 | **Status:** Planejado (Step 6)
+> **Versão:** 1.2 | **Data:** 2026-07-02 | **Status:** ~100% concluído (14/14 PRPs + finalização)
 > **Projeto:** CONFORMITAS 3.0 (SGI) | **Metodologia:** PRP-Based Development
 > **Autor:** IA (Step 6) | **Referências:** `DEPENDENCY_MATRIX.md`, `EXECUTION_WAVES.md`, `ARCHITECTURE.md`, `docs/prps/PRP-*.md`
 
@@ -11,9 +11,10 @@
 | Métrica | Valor |
 |---------|-------|
 | Total PRPs | 14 |
-| Total Tarefas | 112 |
+| Total Tarefas | 148 |
+| Tarefas concluídas | 148 |
 | Estimativa total (horas) | ~360h (~45 dias úteis com 3 devs) |
-| Ondas | 4 |
+| Ondas | 4 (4 concluídas) |
 
 ---
 
@@ -273,17 +274,17 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-124 | Criar migrations: `integracoes`, `acoes_coordenadas`, `logs_integracao` | dev | ❌ | T-007 | 2 | ⏳ |
+| T-124 | Criar migrations: `integracoes`, `acoes_coordenadas`, `logs_integracao` | dev | ❌ | T-007 | 2 | ✅ |
 | T-125 | Implementar DashboardService: queries agregadas PAA, execução, recomendações | dev | ❌ | T-064,T-045,T-092 | 5 | ✅ |
-| T-126 | Implementar export PDF/XLSX para dashboards | dev | ❌ | T-125 | 3 | ⏳ |
-| T-127 | Implementar IntegracaoService: catálogo, health check, teste conectividade | dev | ✅ | T-124 | 4 | ⏳ |
-| T-128 | Implementar webhook Ações Coordenadas SIAUD-Jud | dev | ✅ | T-124 | 4 | ⏳ |
-| T-129 | Implementar conector Ouvidoria TJCE (stub/mock inicial) | dev | ✅ | T-124 | 3 | ⏳ |
+| T-126 | Implementar export PDF/XLSX para dashboards | dev | ❌ | T-125 | 3 | ✅ |
+| T-127 | Implementar IntegracaoService: catálogo, health check, teste conectividade | dev | ✅ | T-124 | 4 | ✅ |
+| T-128 | Implementar webhook Ações Coordenadas SIAUD-Jud | dev | ✅ | T-124 | 4 | ✅ |
+| T-129 | Implementar conector Ouvidoria TJCE (stub/mock inicial) | dev | ✅ | T-124 | 3 | ✅ |
 | T-130 | Tela DashboardPAA, DashboardExecucao, DashboardRecomendacoes | dev | ❌ | T-006,T-125 | 6 | ✅ |
-| T-131 | Tela DashboardQualidade, DashboardForcaTrabalho | dev | ✅ | T-125 | 3 | ⏳ |
-| T-132 | Tela IntegracaoList + IntegracaoForm (P10) + health dashboard | dev | ❌ | T-127 | 4 | ⏳ |
-| T-133 | Tela AcaoCoordenadaList + Detail + Reporte CPA | dev | ❌ | T-128 | 3 | ⏳ |
-| T-134 | Testes: dashboards, export, integração health, webhook SIAUD | qa | ❌ | T-125,T-127,T-128 | 5 | ⏳ |
+| T-131 | Tela DashboardQualidade, DashboardForcaTrabalho | dev | ✅ | T-125 | 3 | ✅ |
+| T-132 | Tela IntegracaoList + IntegracaoForm (P10) + health dashboard | dev | ❌ | T-127 | 4 | ✅ |
+| T-133 | Tela AcaoCoordenadaList + Detail + Reporte CPA | dev | ❌ | T-128 | 3 | ✅ |
+| T-134 | Testes: dashboards, export, integração health, webhook SIAUD | qa | ❌ | T-125,T-127,T-128 | 5 | ✅ |
 
 **PRP-014 total: 42h**
 
@@ -293,10 +294,10 @@
 
 | ID | Tarefa | Agente | Paralelo | Depende | Horas | Status |
 |----|--------|--------|----------|---------|-------|--------|
-| T-135 | E2E: fluxo completo planejamento→execução→achados→relatório→recomendação | qa | ❌ | Onda 2 | 8 | ⏳ |
-| T-136 | Security scan: npm audit, SAST (Semgrep), secrets (Gitleaks) | sec | ❌ | T-004 | 4 | ⏳ |
-| T-137 | Teste de carga básico (k6): login, listagem, upload | qa | ❌ | Onda 4 | 4 | ⏳ |
-| T-138 | Documentação de deploy: README, DEPLOYMENT.md | dev | ❌ | Onda 4 | 4 | ⏳ |
+| T-135 | E2E: fluxo completo planejamento→execução→achados→relatório→recomendação | qa | ❌ | Onda 2 | 8 | ✅ |
+| T-136 | Security scan: npm audit, SAST (Semgrep), secrets (Gitleaks) | sec | ❌ | T-004 | 4 | ✅ |
+| T-137 | Teste de carga básico (k6): login, listagem, upload | qa | ❌ | Onda 4 | 4 | ✅ |
+| T-138 | Documentação de deploy: README, DEPLOYMENT.md | dev | ❌ | Onda 4 | 4 | ✅ |
 
 ---
 
@@ -304,13 +305,13 @@
 
 | Onda | PRPs | Tarefas | Horas | Dias (~8h/dia, 3 devs) | Status |
 |------|------|---------|-------|------------------------|--------|
-| 0 — Setup | Transversal | 9 | 25 | ~3 | ✅ 8/9 concluídas |
-| 1 — Fundação e Core | 001,002,003,004,005,006,009 | 83 | 255 | ~11 | ✅ 85% |
-| 2 — Relatórios e Monitoramento | 007,008,010 | 20 | 72 | ~3 | ⏳ |
+| 0 — Setup | Transversal | 9 | 25 | ~3 | ✅ Completo |
+| 1 — Fundação e Core | 001,002,003,004,005,006,009 | 83 | 255 | ~11 | ✅ Completo |
+| 2 — Relatórios e Monitoramento | 007,008,010 | 20 | 72 | ~3 | ✅ Completo |
 | 3 — Qualidade e Governança | 011,012,013 | 21 | 61 | ~3 | ✅ 100% |
-| 4 — Dashboards e Integrações | 014 | 11 | 42 | ~2 | ⏳ |
-| Finalização | Transversal | 4 | 20 | ~1 | ⏳ |
-| **TOTAL** | **14 PRPs** | **148 tarefas** | **~480h** | **~23 dias (3 devs)** | **~43% concluído** |
+| 4 — Dashboards e Integrações | 014 | 11 | 42 | ~2 | ✅ Completo |
+| Finalização | Transversal | 4 | 20 | ~1 | ✅ Completo |
+| **TOTAL** | **14 PRPs** | **148 tarefas** | **~480h** | **~23 dias (3 devs)** | **~100% concluído** |
 
 ---
 

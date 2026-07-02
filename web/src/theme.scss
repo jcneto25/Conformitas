@@ -10,63 +10,65 @@ $theme: mat.define-theme((
   ),
 ));
 
-// Generate Material component styles and default CSS vars
-// MUST be wrapped in a selector for M3 themes
 :root {
   @include mat.all-component-themes($theme);
 }
 
-// Override with design system colors — second :root block wins the cascade
 :root {
-  // Brand / Primary
-  --mat-sys-primary: #1a3a5c;
-  --mat-sys-on-primary: #ffffff;
-  --mat-sys-primary-container: #d5dbe4;
-  --mat-sys-on-primary-container: #0f2440;
-  --mat-sys-primary-fixed: #d5dbe4;
-  --mat-sys-primary-fixed-dim: #9dabc1;
-  --mat-sys-on-primary-fixed: #0f2440;
-  --mat-sys-on-primary-fixed-variant: #1a3a5c;
+  // ── Buttons ──
+  --mdc-filled-button-container-color: #1a3a5c;
+  --mdc-filled-button-label-text-color: #ffffff;
+  --mdc-filled-button-hover-container-color: #2d5a8e;
+  --mdc-outlined-button-outline-color: #1a3a5c;
+  --mdc-outlined-button-label-text-color: #1a3a5c;
+  --mdc-outlined-button-hover-outline-color: #2d5a8e;
+  --mdc-outlined-button-hover-label-text-color: #2d5a8e;
+  --mdc-text-button-label-text-color: #1a3a5c;
+  --mdc-text-button-hover-label-text-color: #2d5a8e;
 
-  // Secondary
-  --mat-sys-secondary: #5a6a7e;
-  --mat-sys-on-secondary: #ffffff;
-  --mat-sys-secondary-container: #d5dbe4;
-  --mat-sys-on-secondary-container: #0f2440;
+  // ── Form Fields (outline) ──
+  --mdc-outlined-text-field-outline-color: #d0d5dd;
+  --mdc-outlined-text-field-hover-outline-color: #2d5a8e;
+  --mdc-outlined-text-field-focus-outline-color: #1a3a5c;
+  --mdc-outlined-text-field-label-text-color: #4a5a6e;
+  --mdc-outlined-text-field-focus-label-text-color: #1a3a5c;
+  --mdc-outlined-text-field-input-text-color: #1a1a2e;
+  --mdc-outlined-text-field-disabled-label-text-color: #9dabc1;
+  --mdc-outlined-text-field-disabled-input-text-color: #9dabc1;
+  --mdc-outlined-text-field-disabled-outline-color: #eaecf0;
+  --mdc-outlined-text-field-container-color: transparent;
 
-  // Accent / Tertiary
-  --mat-sys-tertiary: #c9a84c;
-  --mat-sys-on-tertiary: #ffffff;
-  --mat-sys-tertiary-container: #fdf8ed;
-  --mat-sys-on-tertiary-container: #6a4c1a;
+  // ── Select ──
+  --mat-select-enabled-trigger-text-color: #1a1a2e;
+  --mat-select-focused-trigger-text-color: #1a1a2e;
+  --mat-select-panel-background-color: #ffffff;
 
-  // Surfaces
-  --mat-sys-surface: #ffffff;
-  --mat-sys-on-surface: #1a1a2e;
-  --mat-sys-on-surface-variant: #5a6a7e;
-  --mat-sys-background: #f4f5f7;
-  --mat-sys-on-background: #1a1a2e;
-  --mat-sys-surface-container-lowest: #ffffff;
-  --mat-sys-surface-container-low: #f4f5f7;
-  --mat-sys-surface-container: #eeeff2;
-  --mat-sys-surface-container-high: #e8e9ed;
-  --mat-sys-surface-container-highest: #e2e3e7;
-  --mat-sys-surface-tint: #1a3a5c;
-  --mat-sys-on-surface-container: #1a1a2e;
+  // ── Cards ──
+  --mdc-elevated-card-container-color: #ffffff;
+  --mdc-elevated-card-container-shape: 8px;
+  --mdc-outlined-card-container-color: #ffffff;
+  --mdc-outlined-card-outline-color: #d0d5dd;
 
-  // Outlines
-  --mat-sys-outline: #d0d5dd;
-  --mat-sys-outline-variant: #eaecf0;
+  // ── Tables ──
+  --mat-table-background-color: #ffffff;
+  --mat-table-header-headline-color: #1a1a2e;
+  --mat-table-row-item-label-text-color: #1a1a2e;
+  --mat-table-row-item-outline-color: #eaecf0;
 
-  // Semantic / Error
-  --mat-sys-error: #dc2626;
-  --mat-sys-on-error: #ffffff;
+  // ── Paginator ──
+  --mat-paginator-container-background-color: transparent;
 
-  // Component-level overrides
-  --mat-app-background-color: #f4f5f7;
-  --mat-app-text-color: #1a1a2e;
+  // ── Dialog ──
+  --mat-dialog-container-color: #ffffff;
+  --mat-dialog-container-elevation-shadow: 0 8px 24px rgba(0,0,0,0.16);
+  --mat-dialog-subhead-color: #1a1a2e;
+  --mat-dialog-supporting-text-color: #4a5a6e;
 
-  // Sidenav / Sidebar
+  // ── Snackbar ──
+  --mdc-snackbar-container-color: #1a1a2e;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+
+  // ── Sidenav (sidebar) ──
   --mat-sidenav-container-background-color: #1a3a5c;
   --mat-sidenav-container-text-color: #ffffff;
   --mat-sidenav-container-divider-color: rgba(255,255,255,0.12);
@@ -74,22 +76,20 @@ $theme: mat.define-theme((
   --mat-sidenav-content-background-color: #f4f5f7;
   --mat-sidenav-content-text-color: #1a1a2e;
 
-  // Toolbar
+  // ── Toolbar ──
   --mat-toolbar-container-background-color: #1a3a5c;
   --mat-toolbar-container-text-color: #ffffff;
 
-  // Card
-  --mdc-elevated-card-container-color: #ffffff;
-  --mdc-elevated-card-container-shape: 8px;
+  // ── Chips ──
+  --mdc-chip-label-text-color: #1a1a2e;
+  --mdc-chip-elevated-container-color: #eeeff2;
 
-  // Form fields
-  --mdc-filled-text-field-container-color: #ffffff;
-  --mdc-filled-text-field-disabled-container-color: #f4f5f7;
-  --mdc-outlined-text-field-container-color: transparent;
-  --mat-form-field-state-layer-color: #1a3a5c;
+  // ── Application background ──
+  --mat-app-background-color: #f4f5f7;
+  --mat-app-text-color: #1a1a2e;
 
-  // Menus & dialogs
-  --mat-select-panel-background-color: #ffffff;
-  --mat-menu-container-color: #ffffff;
-  --mat-dialog-container-color: #ffffff;
+  // ── Tabs (underline) ──
+  --mdc-secondary-navigation-tab-active-indicator-color: #1a3a5c;
+  --mdc-secondary-navigation-tab-active-label-text-color: #1a3a5c;
+  --mdc-secondary-navigation-tab-label-text-color: #4a5a6e;
 }

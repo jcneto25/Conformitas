@@ -8,6 +8,9 @@ import achadosData from '../../../../../mocks/data/achados_relatorios_recomendac
 import eticaData from '../../../../../mocks/data/etica_sigilo.json';
 import consultoriasData from '../../../../../mocks/data/consultorias_qualidade_riscos.json';
 import configData from '../../../../../mocks/data/perfis_configuracoes.json';
+import mandatosData from '../../../../../mocks/data/mandatos.json';
+import itensPlanoData from '../../../../../mocks/data/itens_plano.json';
+import forcaTrabalhoData from '../../../../../mocks/data/forca_trabalho.json';
 
 const API = 'http://localhost:3001/api/v1';
 const users: any[] = (usersData as any).users;
@@ -59,10 +62,15 @@ register('avaliacoes_qualidade', consultoriasData);
 register('nao_conformidades', consultoriasData);
 register('perfis', configData);
 register('configuracoes_sistema', configData);
+register('mandatos', mandatosData);
+register('itens_plano', itensPlanoData);
+register('forca_trabalho', forcaTrabalhoData);
 register('users', users);
 // Junction table for profiles
 const usuariosPerfisData: any[] = [];
 stores['usuarios_perfis'] = { data: usuariosPerfisData, idKey: 'id' };
+// Relatórios anuais (criados em runtime)
+stores['relatorios_anuais'] = { data: [], idKey: 'id' };
 
 const ENTITY_ROUTES: [string, string][] = [
   ['universo', 'universo_auditavel'],
@@ -91,6 +99,9 @@ const ENTITY_ROUTES: [string, string][] = [
   ['dashboards', 'auditorias'],
   ['usuarios', 'users'],
   ['usuarios-perfis', 'usuarios_perfis'],
+  ['mandatos', 'mandatos'],
+  ['etica', 'classificacoes_documento'],
+  ['relatorios-anuais', 'relatorios_anuais'],
 ];
 
 const ENTITY_MAP = new Map(ENTITY_ROUTES);
@@ -222,6 +233,26 @@ function handleCrud(req: HttpRequest<unknown>, segments: Array<string>): Observa
     return json({ itens, destaques });
   }
 
+  // Special: /etica/{entidadeTipo}/{entidadeId}/classificacao
+  if (entityPath === 'etica' && segments[3] === 'classificacao') {
+    const entidadeTipo = segments[1];
+    const entidadeId = segments[2];
+    const existing = store.data.find((c: any) => c.entidadeTipo === entidadeTipo && c.entidadeId === entidadeId);
+    if (req.method === 'GET') {
+      return json(existing || null);
+    }
+    if (req.method === 'PUT' || req.method === 'POST') {
+      const body = req.body as any;
+      if (existing) {
+        Object.assign(existing, { nivelSigilo: body.nivelSigilo, justificativa: body.justificativa, classificadoPor: body.classificadoPor || 'mock-user-001' });
+        return json(existing);
+      }
+      const nova = { id: `cls-mock-${Date.now()}`, entidadeTipo, entidadeId, nivelSigilo: body.nivelSigilo, justificativa: body.justificativa || '', classificadoPor: body.classificadoPor || 'mock-user-001' };
+      store.data.push(nova);
+      return json(nova, 201);
+    }
+  }
+
   // Special: GET /usuarios/:id/perfis (junction table)
   if (entityPath === 'usuarios' && id && subPath === 'perfis' && req.method === 'GET') {
     const perfisKey = ENTITY_MAP.get('perfis');
@@ -301,6 +332,23 @@ function handleCrud(req: HttpRequest<unknown>, segments: Array<string>): Observa
     return json({ message: 'Ação executada', success: true });
   }
 
+  // Sub-path PATCH: transições de status por id (ex: /mandatos/:id/concluir)
+  if (id && subPath && (req.method === 'PATCH' || req.method === 'PUT')) {
+    const item = store.data.find((r: any) => r[store.idKey] === id);
+    if (!item) return json({ message: 'Not found' }, 404);
+    if (subPath === 'concluir') {
+      item.status = 'CONCLUIDO';
+      item.dataFim = new Date().toISOString().slice(0, 10);
+      const usersStore = stores['users'];
+      return json({
+        ...item,
+        usuario: usersStore?.data.find((u: any) => u.id === item.usuarioId) || null,
+        message: 'Mandato concluído',
+      });
+    }
+    return json({ message: 'Ação executada', success: true });
+  }
+
   // Embed sub-entidades in GET single item
   if (entityPath === 'achados' && id && !subPath && req.method === 'GET') {
     const item = store.data.find((r: any) => r[store.idKey] === id);
@@ -347,6 +395,13 @@ function handleCrud(req: HttpRequest<unknown>, segments: Array<string>): Observa
         forcaTrabalho: forcaStore ? forcaStore.data.filter((f: any) => f.planoId === p.id) : [],
       }));
     }
+    if (entityPath === 'mandatos') {
+      const usersStore = stores['users'];
+      results = results.map((m: any) => ({
+        ...m,
+        usuario: usersStore?.data.find((u: any) => u.id === m.usuarioId) || null,
+      }));
+    }
     return json(results);
   }
 
@@ -364,6 +419,54 @@ function handleCrud(req: HttpRequest<unknown>, segments: Array<string>): Observa
 
   if (req.method === 'POST' && !id) {
     const body = req.body as any;
+
+    // Relatório Anual: gera conteúdo simulado com indicadores do exercício.
+    if (entityPath === 'relatorios-anuais') {
+      const ano = body.ano || new Date().getFullYear();
+      const novo = {
+        id: `ra-mock-${Date.now()}`,
+        ano,
+        status: 'GERADO',
+        conteudo: `Relatório Anual de Atividades — Exercício ${ano}\n\n` +
+          `1. AUDITORIAS REALIZADAS: 4\n` +
+          `2. RECOMENDAÇÕES EXPEDIDAS: 12\n` +
+          `3. RECOMENDAÇÕES CUMPRIDAS: 8\n` +
+          `4. CONSULTORIAS: 2\n` +
+          `5. CAPACITAÇÕES: 3\n\n` +
+          `Indicadores:\n` +
+          `- Eficácia: 75%\n` +
+          `- Eficiência: 82%\n` +
+          `- Tempestividade: 90%\n\n` +
+          `Relatório gerado em ${new Date().toLocaleDateString('pt-BR')}.`,
+        autorId: body.autorId || '',
+        dataGeracao: new Date().toISOString(),
+      };
+      store.data.push(novo);
+      return json(novo, 201);
+    }
+
+    // Mandato: deriva numeroMandato, dataFimPrevista (+2 anos), status inicial e embute o usuário.
+    if (entityPath === 'mandatos') {
+      const usersStore = stores['users'];
+      const usuario = usersStore?.data.find((u: any) => u.id === body.usuarioId) || null;
+      const inicio = body.dataInicio ? new Date(body.dataInicio) : new Date();
+      const fimPrev = new Date(inicio);
+      fimPrev.setFullYear(inicio.getFullYear() + 2);
+      const numero = store.data.length + 1;
+      const novo = {
+        id: `mand-${Date.now()}`,
+        numeroMandato: numero,
+        usuarioId: body.usuarioId,
+        atoDesignacao: body.atoDesignacao,
+        dataInicio: body.dataInicio,
+        dataFimPrevista: fimPrev.toISOString().slice(0, 10),
+        status: 'ATIVO',
+        usuario,
+      };
+      store.data.push(novo);
+      return json(novo, 201);
+    }
+
     const newItem = { ...body, id: `mock-${Date.now()}` };
     store.data.push(newItem);
     return json(newItem, 201);

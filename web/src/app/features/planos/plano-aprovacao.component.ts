@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -17,31 +18,46 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge.compo
 import { environment } from '../../../environments/environment';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { HasRoleDirective } from '../../core/directives/has-role.directive';
+import { EmptyStateComponent } from '../../shared/components/empty-state.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../shared/components/confirm-dialog.component';
 
 @Component({
   selector: 'app-plano-aprovacao',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, RouterModule, StatusBadgeComponent,
+    CommonModule, FormsModule, RouterModule, StatusBadgeComponent, MatDialogModule,
     MatCardModule, MatButtonModule,
     MatDividerModule, MatListModule, MatIconModule,
-    MatFormFieldModule, MatSelectModule, MatProgressSpinnerModule, PageHeaderComponent, HasRoleDirective,
+    MatFormFieldModule, MatSelectModule, MatProgressSpinnerModule, PageHeaderComponent, HasRoleDirective, EmptyStateComponent,
   ],
   template: `
     <app-page-header title="Aprovação de Plano (P03)" />
 
-    <mat-card class="mb-4">
-      <mat-card-content>
-        <p class="text-text-sec">
+    <mat-card class="mb-4 border-t-4 border-primary shadow-md rounded-xl overflow-hidden">
+      <mat-card-header class="bg-slate-50/50 px-6 py-4 border-b border-gray-100">
+        <mat-card-title class="text-lg font-semibold text-text-main flex items-center gap-2">
+          <mat-icon class="text-primary">gavel</mat-icon>
+          Aprovação de Plano
+        </mat-card-title>
+        <mat-card-subtitle class="text-xs text-text-sec">Perfil P03 (Presidente/Órgão Colegiado).</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="p-6">
+        <p class="text-text-sec text-sm">
           Lista de planos submetidos aguardando aprovação. Perfil P03 (Presidente/Órgão Colegiado).
         </p>
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="mb-4">
-      <mat-card-content>
-        <form class="flex gap-4 items-end" (ngSubmit)="carregarPlanos()">
-          <mat-form-field appearance="outline" class="min-w-[180px]">
+    <mat-card class="mb-4 border-t-4 border-primary shadow-md rounded-xl overflow-hidden">
+      <mat-card-header class="bg-slate-50/50 px-6 py-4 border-b border-gray-100">
+        <mat-card-title class="text-lg font-semibold text-text-main flex items-center gap-2">
+          <mat-icon class="text-primary">filter_alt</mat-icon>
+          Filtros
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="p-6">
+        <form class="filter-bar gap-4 items-end" (ngSubmit)="carregarPlanos()" #filtroForm="ngForm">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="min-w-[180px]">
             <mat-label>Tipo</mat-label>
             <mat-select [(ngModel)]="filtroTipo" name="tipo">
               <mat-option value="">Todos</mat-option>
@@ -50,7 +66,7 @@ import { HasRoleDirective } from '../../core/directives/has-role.directive';
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="min-w-[180px]">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="min-w-[180px]">
             <mat-label>Status</mat-label>
             <mat-select [(ngModel)]="filtroStatus" name="status">
               <mat-option value="SUBMETIDO">Submetido</mat-option>
@@ -59,34 +75,37 @@ import { HasRoleDirective } from '../../core/directives/has-role.directive';
             </mat-select>
           </mat-form-field>
 
-          <button mat-raised-button color="primary" type="submit">Filtrar</button>
+          <button mat-raised-button color="primary" type="submit" class="flex items-center gap-2">
+            <mat-icon>search</mat-icon> Filtrar
+          </button>
         </form>
       </mat-card-content>
     </mat-card>
 
     @if (carregando) {
-      <div class="flex justify-center p-8">
+      <div class="flex justify-center py-12">
         <mat-spinner diameter="40" />
       </div>
     }
 
     @for (plano of planos; track plano.id) {
-      <mat-card class="mb-4">
-        <mat-card-header>
-          <mat-card-title>
+      <mat-card class="mb-4 border-t-4 border-primary shadow-md rounded-xl overflow-hidden">
+        <mat-card-header class="bg-slate-50/50 px-6 py-4 border-b border-gray-100">
+          <mat-card-title class="text-lg font-semibold text-text-main flex items-center gap-2">
+            <mat-icon class="text-primary">assignment</mat-icon>
             {{ plano.tipo }} {{ plano.anoInicio }}-{{ plano.anoFim }}
             <app-status-badge [status]="plano.status" />
           </mat-card-title>
-          <mat-card-subtitle>Versão {{ plano.versao }}</mat-card-subtitle>
+          <mat-card-subtitle class="text-xs text-text-sec">Versão {{ plano.versao }}</mat-card-subtitle>
         </mat-card-header>
 
-        <mat-card-content>
-          <h4>Itens do Plano ({{ plano.itensPlano?.length || 0 }})</h4>
+        <mat-card-content class="p-6">
+          <h4 class="text-sm font-semibold text-text-main mb-2">Itens do Plano ({{ plano.itensPlano?.length || 0 }})</h4>
           @if (plano.itensPlano?.length) {
             <mat-list dense>
               @for (item of plano.itensPlano; track item.id) {
                 <mat-list-item>
-                  <mat-icon matListItemIcon>assignment</mat-icon>
+                  <mat-icon aria-hidden="true" matListItemIcon>assignment</mat-icon>
                   <span matListItemTitle>{{ item.tipoAuditoria }} — {{ item.objetivo }}</span>
                   <span matListItemLine>
                     {{ item.horasEstimadas }}h |
@@ -97,22 +116,22 @@ import { HasRoleDirective } from '../../core/directives/has-role.directive';
               }
             </mat-list>
           } @else {
-            <p class="text-text-sec">Nenhum item no plano.</p>
+            <app-empty-state icon="assignment" title="Nenhum item no plano" size="sm" />
           }
 
           @if (plano.forcaTrabalho?.length) {
-            <div class="mt-4 bg-background px-4 py-2 rounded">
+            <div class="mt-4 bg-blue-50 border border-blue-100 px-4 py-2 rounded-lg text-sm text-text-main">
               <strong>Força de Trabalho:</strong>
               <span>{{ totalHorasDisponiveis(plano) }}h disponíveis</span>
               <span class="ms-4"
-                    [class.text-success]="horasAlocadas(plano) <= totalHorasDisponiveis(plano)"
-                    [class.text-critical]="horasAlocadas(plano) > totalHorasDisponiveis(plano)">
+                    [class.text-green-700]="horasAlocadas(plano) <= totalHorasDisponiveis(plano)"
+                    [class.text-red-600]="horasAlocadas(plano) > totalHorasDisponiveis(plano)">
                 {{ horasAlocadas(plano) }}h alocadas
               </span>
             </div>
           }
 
-          <div class="mt-4 flex gap-2">
+          <div class="mt-4 flex flex-wrap gap-2 pt-4 border-t border-gray-100">
             <button mat-raised-button color="primary" (click)="aprovar(plano.id)"
                     [disabled]="plano.status !== 'SUBMETIDO'" *appHasRole="'P03'">
               Aprovar
@@ -127,9 +146,9 @@ import { HasRoleDirective } from '../../core/directives/has-role.directive';
           </div>
 
           @if (actionMsg[plano.id]) {
-            <p class="mt-2"
-               [class.text-success]="!actionError[plano.id]"
-               [class.text-critical]="actionError[plano.id]">
+            <p class="mt-2 text-sm"
+               [class.text-green-700]="!actionError[plano.id]"
+               [class.text-red-600]="actionError[plano.id]">
               {{ actionMsg[plano.id] }}
             </p>
           }
@@ -137,14 +156,12 @@ import { HasRoleDirective } from '../../core/directives/has-role.directive';
       </mat-card>
     } @empty {
       @if (!carregando) {
-        <p class="text-center text-text-sec p-8">
-          Nenhum plano encontrado com os filtros selecionados.
-        </p>
+        <app-empty-state icon="search_off" title="Nenhum plano encontrado" description="Tente alterar os filtros selecionados." size="sm" />
       }
     }
 
     @if (error && planos.length) {
-      <p class="text-critical text-center">{{ error }}</p>
+      <p class="text-red-600 text-center">{{ error }}</p>
     }
   `,
 })
@@ -157,7 +174,10 @@ export class PlanoAprovacaoComponent implements OnInit {
   actionMsg: Record<string, string> = {};
   actionError: Record<string, boolean> = {};
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly dialog: MatDialog,
+  ) {}
 
   async ngOnInit() {
     await this.carregarPlanos();
@@ -181,6 +201,11 @@ export class PlanoAprovacaoComponent implements OnInit {
   }
 
   async aprovar(id: string) {
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      data: { title: 'Aprovar Plano', message: 'Confirmar aprovação deste plano? Esta ação é irreversível.', confirmText: 'Aprovar', type: 'warning' } as ConfirmDialogData,
+    });
+    const confirmed = await firstValueFrom(ref.afterClosed());
+    if (!confirmed) return;
     this.actionMsg[id] = '';
     this.actionError[id] = false;
     try {
@@ -194,6 +219,11 @@ export class PlanoAprovacaoComponent implements OnInit {
   }
 
   async publicar(id: string) {
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      data: { title: 'Publicar Plano', message: 'Confirmar publicação deste plano? Após publicado, não poderá ser alterado.', confirmText: 'Publicar', type: 'warning' } as ConfirmDialogData,
+    });
+    const confirmed = await firstValueFrom(ref.afterClosed());
+    if (!confirmed) return;
     this.actionMsg[id] = '';
     this.actionError[id] = false;
     try {

@@ -95,6 +95,24 @@ async function main() {
     }
   }
   console.log(`✅ ${usuarios.length} usuários criados`);
+
+  // ── Integrações ────────────────────────────────
+  const existingIntegracoes = await prisma.integracao.count();
+  if (existingIntegracoes === 0) {
+    const integracoes = [
+      { nome: 'Ouvidoria TJCE', sistemaExterno: 'Ouvidoria', tipo: 'ENTRADA', protocolo: 'REST', endpoint: 'https://ouvidoria.tjce.jus.br/api/v1', metodoAutenticacao: 'API_KEY', frequencia: 'DIARIA', status: 'EM_CONFIGURACAO', healthStatus: 'NAO_TESTADO' },
+      { nome: 'Portal Transparência', sistemaExterno: 'PortalTransparencia', tipo: 'SAIDA', protocolo: 'REST', endpoint: 'https://transparencia.tjce.jus.br/api/v1', metodoAutenticacao: 'API_KEY', frequencia: 'SEMANAL', status: 'EM_CONFIGURACAO', healthStatus: 'NAO_TESTADO' },
+      { nome: 'SIAUD-Jud', sistemaExterno: 'SIAUD-Jud', tipo: 'BIDIRECIONAL', protocolo: 'REST', endpoint: 'https://siaud.cnj.jus.br/api/v1', metodoAutenticacao: 'OAUTH2', frequencia: 'TEMPO_REAL', status: 'EM_CONFIGURACAO', healthStatus: 'NAO_TESTADO' },
+    ];
+
+    for (const integracao of integracoes) {
+      await prisma.integracao.create({ data: integracao });
+    }
+    console.log(`✅ ${integracoes.length} integrações criadas`);
+  } else {
+    console.log(`⏩ Integrações já existem (${existingIntegracoes}), pulando...`);
+  }
+
   console.log('🌱 Seed concluído!');
 }
 

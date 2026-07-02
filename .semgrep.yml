@@ -1,0 +1,64 @@
+# Semgrep rules for CONFORMITAS 3.0
+# Docs: https://semgrep.dev/docs/
+
+rules:
+  - id: no-hardcoded-secrets
+    pattern-either:
+      - pattern: |
+          $SECRET = "..."
+      - pattern: |
+          const $SECRET = "..."
+    paths:
+      exclude:
+        - "*.spec.ts"
+        - "*.spec.js"
+        - "mocks/**"
+        - "prisma/seed.ts"
+        - "docs/**"
+        - "test-results/**"
+        - ".ace/**"
+        - "e2e/**"
+    message: "Possível secret hardcoded detectado"
+    severity: WARNING
+    languages: [typescript, javascript]
+
+  - id: no-console-log
+    pattern: console.log(...)
+    paths:
+      exclude:
+        - "*.spec.ts"
+        - "mocks/**"
+        - "e2e/**"
+    message: "Evite console.log em produção"
+    severity: WARNING
+    languages: [typescript, javascript]
+
+  - id: no-eval
+    patterns:
+      - pattern: eval(...)
+    message: "Uso de eval() — risco de injeção"
+    severity: ERROR
+    languages: [typescript, javascript]
+
+  - id: no-sql-injection
+    patterns:
+      - pattern: |
+          $QUERY = "...$VAR..."
+      - pattern-not: |
+          $QUERY = "..."
+    paths:
+      include:
+        - "api/src/**"
+    message: "Possível SQL injection — use Prisma parametrizado"
+    severity: ERROR
+    languages: [typescript]
+
+  - id: no-insecure-random
+    patterns:
+      - pattern: Math.random()
+      - pattern-not-inside: |
+          import * as crypto from 'crypto';
+          ...
+    message: "Use crypto.randomBytes() em vez de Math.random() para segurança"
+    severity: WARNING
+    languages: [typescript, javascript]
