@@ -63,6 +63,50 @@ export class ConsultoriasService {
     });
   }
 
+  async recusarSolicitacao(id: string) {
+    const solicitacao = await this.prisma.solicitacaoConsultoria.findUnique({
+      where: { id },
+    });
+    if (!solicitacao) throw new NotFoundException('Solicitação não encontrada');
+    if (solicitacao.status !== 'PENDENTE') {
+      throw new BadRequestException('Apenas solicitações PENDENTE podem ser recusadas');
+    }
+    return this.prisma.solicitacaoConsultoria.update({
+      where: { id },
+      data: { status: 'RECUSADA' },
+    });
+  }
+
+  async concluirSolicitacao(id: string, resultado: string) {
+    const solicitacao = await this.prisma.solicitacaoConsultoria.findUnique({
+      where: { id },
+    });
+    if (!solicitacao) throw new NotFoundException('Solicitação não encontrada');
+    if (solicitacao.status !== 'ACEITA') {
+      throw new BadRequestException('Apenas solicitações ACEITAS podem ser concluídas');
+    }
+
+    const termo = 'Esta consultoria não configura ato de gestão';
+
+    await this.prisma.solicitacaoConsultoria.update({
+      where: { id },
+      data: { status: 'CONCLUIDA' },
+    });
+
+    // Se existir consultoria vinculada, atualizar resultado com termo
+    const consultorias = await this.prisma.consultoria.findMany({
+      where: { solicitacaoId: id },
+    });
+    for (const c of consultorias) {
+      await this.prisma.consultoria.update({
+        where: { id: c.id },
+        data: { resultado: `${resultado}\n\n---\n${termo}` },
+      });
+    }
+
+    return { mensagem: 'Consultoria concluída', termo };
+  }
+
   // ── Consultorias ──────────────────────────────
 
   async registrarConsultoria(dto: RegistrarConsultoriaDto) {
