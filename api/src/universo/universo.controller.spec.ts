@@ -18,9 +18,7 @@ describe('UniversoController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UniversoController],
-      providers: [
-        { provide: UniversoService, useValue: mockService },
-      ],
+      providers: [{ provide: UniversoService, useValue: mockService }],
     }).compile();
 
     controller = module.get<UniversoController>(UniversoController);
@@ -95,7 +93,10 @@ describe('UniversoController', () => {
   describe('GET /universo-auditavel/matriz-priorizacao', () => {
     it('retorna itens + destaques', async () => {
       mockService.matrizPriorizacao.mockResolvedValue({
-        itens: [{ id: '1', indicePriorizacao: 5.0 }, { id: '2', indicePriorizacao: 3.0 }],
+        itens: [
+          { id: '1', indicePriorizacao: 5.0 },
+          { id: '2', indicePriorizacao: 3.0 },
+        ],
         destaques: ['1'],
       });
       const result = await controller.matrizPriorizacao('200');

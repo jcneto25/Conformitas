@@ -61,8 +61,21 @@ describe('AuditoriasService', () => {
         plano: { status: 'APROVADO' },
       });
       prisma.auditoria.count.mockResolvedValue(0);
-      prisma.auditoria.create.mockResolvedValue({ id: 'aud-1', numero: 'AUD-2026-0001', status: 'ABERTA', tipo: 'CONFORMIDADE', forma: 'DIRETA', unidadeAuditada: 'SECRETARIA_X', objetivo: 'Auditar finanças' });
-      prisma.auditoria.findUnique.mockResolvedValue({ id: 'aud-1', numero: 'AUD-2026-0001', unidadeAuditada: 'SECRETARIA_X', objetivo: 'Auditar finanças' });
+      prisma.auditoria.create.mockResolvedValue({
+        id: 'aud-1',
+        numero: 'AUD-2026-0001',
+        status: 'ABERTA',
+        tipo: 'CONFORMIDADE',
+        forma: 'DIRETA',
+        unidadeAuditada: 'SECRETARIA_X',
+        objetivo: 'Auditar finanças',
+      });
+      prisma.auditoria.findUnique.mockResolvedValue({
+        id: 'aud-1',
+        numero: 'AUD-2026-0001',
+        unidadeAuditada: 'SECRETARIA_X',
+        objetivo: 'Auditar finanças',
+      });
       prisma.comunicadoAuditoria.count.mockResolvedValue(0);
       prisma.comunicadoAuditoria.create.mockResolvedValue({ id: 'com-1', numero: 'COM-AUD-2026-0001-1' });
 
@@ -92,8 +105,21 @@ describe('AuditoriasService', () => {
         plano: { status: 'APROVADO' },
       });
       prisma.auditoria.count.mockResolvedValue(1);
-      prisma.auditoria.create.mockResolvedValue({ id: 'aud-2', numero: 'AUD-2026-0002', status: 'ABERTA', tipo: 'OPERACIONAL', forma: 'INTEGRADA', unidadeAuditada: 'SECRETARIA_X', objetivo: 'Auditar' });
-      prisma.auditoria.findUnique.mockResolvedValue({ id: 'aud-2', numero: 'AUD-2026-0002', unidadeAuditada: 'SECRETARIA_X', objetivo: 'Auditar' });
+      prisma.auditoria.create.mockResolvedValue({
+        id: 'aud-2',
+        numero: 'AUD-2026-0002',
+        status: 'ABERTA',
+        tipo: 'OPERACIONAL',
+        forma: 'INTEGRADA',
+        unidadeAuditada: 'SECRETARIA_X',
+        objetivo: 'Auditar',
+      });
+      prisma.auditoria.findUnique.mockResolvedValue({
+        id: 'aud-2',
+        numero: 'AUD-2026-0002',
+        unidadeAuditada: 'SECRETARIA_X',
+        objetivo: 'Auditar',
+      });
       prisma.comunicadoAuditoria.count.mockResolvedValue(0);
       prisma.comunicadoAuditoria.create.mockResolvedValue({ id: 'com-2' });
 
@@ -111,8 +137,20 @@ describe('AuditoriasService', () => {
         plano: { status: 'APROVADO' },
       });
       prisma.auditoria.count.mockResolvedValue(2);
-      prisma.auditoria.create.mockResolvedValue({ id: 'aud-3', numero: 'AUD-2026-0003', status: 'ABERTA', dataFimPrevista: new Date('2026-12-31'), unidadeAuditada: 'SECRETARIA_X', objetivo: 'Auditar' });
-      prisma.auditoria.findUnique.mockResolvedValue({ id: 'aud-3', numero: 'AUD-2026-0003', unidadeAuditada: 'SECRETARIA_X', objetivo: 'Auditar' });
+      prisma.auditoria.create.mockResolvedValue({
+        id: 'aud-3',
+        numero: 'AUD-2026-0003',
+        status: 'ABERTA',
+        dataFimPrevista: new Date('2026-12-31'),
+        unidadeAuditada: 'SECRETARIA_X',
+        objetivo: 'Auditar',
+      });
+      prisma.auditoria.findUnique.mockResolvedValue({
+        id: 'aud-3',
+        numero: 'AUD-2026-0003',
+        unidadeAuditada: 'SECRETARIA_X',
+        objetivo: 'Auditar',
+      });
       prisma.comunicadoAuditoria.count.mockResolvedValue(0);
       prisma.comunicadoAuditoria.create.mockResolvedValue({ id: 'com-3' });
 
@@ -145,7 +183,11 @@ describe('AuditoriasService', () => {
 
     it('deve suspender auditoria com motivo e notificar', async () => {
       prisma.auditoria.findUnique.mockResolvedValue({ id: 'aud-1', status: 'EM_EXECUCAO', numero: 'AUD-2026-0001' });
-      prisma.auditoria.update.mockResolvedValue({ id: 'aud-1', status: 'SUSPENSA', motivoSuspensao: 'Obstrução de acesso' });
+      prisma.auditoria.update.mockResolvedValue({
+        id: 'aud-1',
+        status: 'SUSPENSA',
+        motivoSuspensao: 'Obstrução de acesso',
+      });
       prisma.usuarioPerfil.findMany.mockResolvedValue([]);
       const result = await service.suspender('aud-1', 'Obstrução de acesso');
       expect(result.status).toBe('SUSPENSA');

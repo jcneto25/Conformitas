@@ -80,9 +80,11 @@ export class AuthService {
       });
 
       // Limpar sessões expiradas (fire-and-forget)
-      this.prisma.sessaoMfa.deleteMany({
-        where: { expiresAt: { lt: new Date() } },
-      }).catch(() => {});
+      this.prisma.sessaoMfa
+        .deleteMany({
+          where: { expiresAt: { lt: new Date() } },
+        })
+        .catch(() => {});
 
       return { mfa_required: true, session_token: sessionToken };
     }

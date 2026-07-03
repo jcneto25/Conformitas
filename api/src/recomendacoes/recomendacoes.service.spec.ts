@@ -32,9 +32,7 @@ describe('RecomendacoesService', () => {
   describe('criar (RF-008.1)', () => {
     it('deve criar recomendação PENDENTE vinculada ao relatório', async () => {
       prisma.relatorioAuditoria.findUnique.mockResolvedValue({ id: 'rel-1', tipo: 'FINAL' });
-      prisma.recomendacao.create.mockImplementation(({ data }: any) =>
-        Promise.resolve({ id: 'rec-1', ...data }),
-      );
+      prisma.recomendacao.create.mockImplementation(({ data }: any) => Promise.resolve({ id: 'rec-1', ...data }));
 
       const result = await service.criar('rel-1', {
         descricao: 'Implementar controle X',
@@ -151,9 +149,9 @@ describe('RecomendacoesService', () => {
 
     it('deve rejeitar providência em recomendação CUMPRIDA', async () => {
       prisma.recomendacao.findUnique.mockResolvedValue({ id: 'rec-1', status: 'CUMPRIDA' });
-      await expect(
-        service.criarProvidencia('rec-1', { descricao: 'X', autorId: 'u' }),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.criarProvidencia('rec-1', { descricao: 'X', autorId: 'u' })).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -162,9 +160,7 @@ describe('RecomendacoesService', () => {
   describe('validar (RF-008.3)', () => {
     it('deve validar implementação e mudar status para CUMPRIDA', async () => {
       prisma.recomendacao.findUnique.mockResolvedValue({ id: 'rec-1', status: 'EM_ANDAMENTO' });
-      prisma.recomendacao.update.mockImplementation(({ data }: any) =>
-        Promise.resolve({ id: 'rec-1', ...data }),
-      );
+      prisma.recomendacao.update.mockImplementation(({ data }: any) => Promise.resolve({ id: 'rec-1', ...data }));
 
       const result = await service.validar('rec-1');
       expect(result.status).toBe('CUMPRIDA');

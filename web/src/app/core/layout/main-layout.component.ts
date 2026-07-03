@@ -199,6 +199,7 @@ export class MainLayoutComponent {
     { label: 'Integrações', icon: 'link', route: '/integracoes', roles: ['P01', 'P10'] },
     { label: 'Ações Coordenadas', icon: 'handshake', route: '/acoes-coordenadas', roles: ['P01', 'P08'] },
     { label: 'Configurações', icon: 'settings', route: '/configuracoes', roles: ['P10'] },
+    { label: 'Qualidade/PQAUD', icon: 'verified', route: '/qualidade', roles: ['P01', 'P07'] },
     { label: 'Achados', icon: 'warning', route: '/achados' },
     { label: 'Relatórios', icon: 'picture_as_pdf', route: '/relatorios' },
     { label: 'Relatório Anual', icon: 'insights', route: '/relatorios-anuais' },

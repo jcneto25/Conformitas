@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-  ForbiddenException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { NotificacoesService } from '../notificacoes/notificacoes.service';
@@ -16,8 +10,7 @@ import { CreateManifestacaoDto } from './dto/create-manifestacao.dto';
 export const PRAZO_MANIFESTACAO_DIAS_UTEIS = 5;
 
 /** Ressalva registrada quando o prazo de manifestação expira sem resposta (RF-006.5). */
-export const RESSALVA_SEM_MANIFESTACAO =
-  'Sem manifestação da unidade auditada no prazo regulatório (5 dias úteis).';
+export const RESSALVA_SEM_MANIFESTACAO = 'Sem manifestação da unidade auditada no prazo regulatório (5 dias úteis).';
 
 @Injectable()
 export class AchadosService {

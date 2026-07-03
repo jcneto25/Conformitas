@@ -2,9 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotificacoesController } from './notificacoes.controller';
 import { NotificacoesService } from './notificacoes.service';
 
-const mockReq = (sub = 'user-1') => ({
-  user: { sub, email: 'test@test.com', roles: ['P05'] },
-}) as any;
+const mockReq = (sub = 'user-1') =>
+  ({
+    user: { sub, email: 'test@test.com', roles: ['P05'] },
+  }) as any;
 
 describe('NotificacoesController', () => {
   let controller: NotificacoesController;

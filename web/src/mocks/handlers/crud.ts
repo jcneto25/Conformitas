@@ -68,6 +68,10 @@ const ENTITY_ROUTES: { path: string; entity: string }[] = [
   { path: 'perfis', entity: 'perfis' },
   { path: 'configuracoes', entity: 'configuracoes_sistema' },
   { path: 'dashboards', entity: 'auditorias' },
+  // Rotas aninhadas de qualidade (/qualidade/avaliacoes, /qualidade/nao-conformidades, /qualidade/indicadores)
+  { path: 'qualidade/avaliacoes', entity: 'avaliacoes_qualidade' },
+  { path: 'qualidade/nao-conformidades', entity: 'nao_conformidades' },
+  { path: 'qualidade/indicadores', entity: 'avaliacoes_qualidade' },
 ];
 
 export const crudHandlers = ENTITY_ROUTES.flatMap(({ path, entity }) => {
@@ -121,3 +125,59 @@ export const crudHandlers = ENTITY_ROUTES.flatMap(({ path, entity }) => {
     }),
   ];
 });
+
+// Handlers específicos para endpoints de workflow de qualidade (não-CRUD genérico)
+const qualidadeWorkflowHandlers = [
+  // POST /qualidade/avaliacoes/:id/concluir
+  http.post(`${API}/qualidade/avaliacoes/:id/concluir`, ({ params }) => {
+    const store = stores['avaliacoes_qualidade'];
+    if (!store) return HttpResponse.json({ message: 'Store not found' }, { status: 500 });
+    const idx = store.data.findIndex((r: any) => r.id === params['id']);
+    if (idx === -1) return HttpResponse.json({ message: 'Not found' }, { status: 404 });
+    store.data[idx] = { ...store.data[idx], status: 'CONCLUIDA' };
+    return HttpResponse.json(store.data[idx]);
+  }),
+
+  // POST /qualidade/avaliacoes/:id/homologar
+  http.post(`${API}/qualidade/avaliacoes/:id/homologar`, ({ params }) => {
+    const store = stores['avaliacoes_qualidade'];
+    if (!store) return HttpResponse.json({ message: 'Store not found' }, { status: 500 });
+    const idx = store.data.findIndex((r: any) => r.id === params['id']);
+    if (idx === -1) return HttpResponse.json({ message: 'Not found' }, { status: 404 });
+    store.data[idx] = { ...store.data[idx], status: 'HOMOLOGADA' };
+    return HttpResponse.json(store.data[idx]);
+  }),
+
+  // POST /qualidade/nao-conformidades/:id/concluir
+  http.post(`${API}/qualidade/nao-conformidades/:id/concluir`, ({ params }) => {
+    const store = stores['nao_conformidades'];
+    if (!store) return HttpResponse.json({ message: 'Store not found' }, { status: 500 });
+    const idx = store.data.findIndex((r: any) => r.id === params['id']);
+    if (idx === -1) return HttpResponse.json({ message: 'Not found' }, { status: 404 });
+    store.data[idx] = { ...store.data[idx], status: 'CORRIGIDA' };
+    return HttpResponse.json(store.data[idx]);
+  }),
+
+  // POST /qualidade/avaliacoes/:avaliacaoId/nao-conformidades
+  http.post(`${API}/qualidade/avaliacoes/:avaliacaoId/nao-conformidades`, async ({ params, request }) => {
+    const store = stores['nao_conformidades'];
+    if (!store) return HttpResponse.json({ message: 'Store not found' }, { status: 500 });
+    const body = await request.json();
+    const newItem = { ...(body as any), id: `mock-${Date.now()}`, avaliacaoId: params['avaliacaoId'], status: 'ABERTA' };
+    store.data.push(newItem);
+    return HttpResponse.json(newItem, { status: 201 });
+  }),
+
+  // PUT /qualidade/nao-conformidades/:id/acao-corretiva
+  http.put(`${API}/qualidade/nao-conformidades/:id/acao-corretiva`, async ({ params, request }) => {
+    const store = stores['nao_conformidades'];
+    if (!store) return HttpResponse.json({ message: 'Store not found' }, { status: 500 });
+    const idx = store.data.findIndex((r: any) => r.id === params['id']);
+    if (idx === -1) return HttpResponse.json({ message: 'Not found' }, { status: 404 });
+    const body = await request.json();
+    store.data[idx] = { ...store.data[idx], ...(body as any), status: 'EM_CORRECAO' };
+    return HttpResponse.json(store.data[idx]);
+  }),
+];
+
+export { qualidadeWorkflowHandlers };

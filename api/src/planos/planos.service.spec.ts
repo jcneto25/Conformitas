@@ -80,18 +80,23 @@ describe('PlanosService', () => {
     it('deve copiar itens da versão anterior', async () => {
       prisma.planoAuditoria.findUnique
         .mockResolvedValueOnce({
-          id: 'p1', tipo: 'PAA', versao: 1, status: 'PUBLICADO', deletedAt: null,
-          anoInicio: 2026, anoFim: 2026, criadoPorId: 'u1',
-          itensPlano: [
-            { id: 'i1', universoAuditavelId: 'u1', tipoAuditoria: 'CONFORMIDADE' },
-          ],
+          id: 'p1',
+          tipo: 'PAA',
+          versao: 1,
+          status: 'PUBLICADO',
+          deletedAt: null,
+          anoInicio: 2026,
+          anoFim: 2026,
+          criadoPorId: 'u1',
+          itensPlano: [{ id: 'i1', universoAuditavelId: 'u1', tipoAuditoria: 'CONFORMIDADE' }],
           forcTrabalho: [],
         })
         .mockResolvedValueOnce({
-          id: 'p2', tipo: 'PAA', versao: 2, status: 'RASCUNHO',
-          itensPlano: [
-            { id: 'i2', universoAuditavelId: 'u1', tipoAuditoria: 'CONFORMIDADE' },
-          ],
+          id: 'p2',
+          tipo: 'PAA',
+          versao: 2,
+          status: 'RASCUNHO',
+          itensPlano: [{ id: 'i2', universoAuditavelId: 'u1', tipoAuditoria: 'CONFORMIDADE' }],
           forcTrabalho: [],
         });
       prisma.planoAuditoria.create.mockResolvedValue({ id: 'p2', versao: 2 });
