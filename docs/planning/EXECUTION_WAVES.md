@@ -80,8 +80,10 @@ Este documento define o plano tático de execução em 5 ondas (Onda 0 concluíd
 | 003 | Universo Auditável e Matriz | 6 | 5 | ✅ | service |
 | 004 | PALP, PAA e Força de Trabalho | 8 | 7 | ✅ | service + controller |
 | 005 | Auditorias, Evidências e Papéis | 8 | 8 | ✅ | service + controller |
-| 006 | Achados e Manifestações | 5 | 5 | ✅ | service |
+| 006 | Achados e Manifestações | 5 | 5 | ✅ | service + DTO + schedule |
 | 009 | Ética, Sigilo e Impedimentos | 4 | 3 | ✅ | service + controller |
+
+> ⚠️ **PRP-006 — hardening (2026-07-02):** reimplementado após os ✅ originais serem falsos-positivos. Ver detalhes em `TASKS.md` §4.7.
 
 #### 2.3 Critérios de Saída
 

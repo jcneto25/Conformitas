@@ -24,6 +24,9 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
       transform: true,
       transformOptions: { enableImplicitConversion: true },
+      // 422 Unprocessable Entity é o status correto para falha de validação de payload
+      // (alinhado aos contratos PRP, ex.: RF-006.2 "Criar achado sem critério → 422").
+      errorHttpStatusCode: 422,
     }),
   );
 

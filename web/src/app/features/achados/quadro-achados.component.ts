@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
-import { MatChipsModule } from '@angular/material/chips';
+import { StatusBadgeComponent } from '../../shared/components/status-badge.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -23,7 +23,7 @@ const API = environment.apiUrl;
   standalone: true,
   imports: [
     CommonModule, FormsModule, RouterModule,
-    MatCardModule, MatTableModule, MatChipsModule,
+    MatCardModule, MatTableModule, StatusBadgeComponent,
     MatButtonModule, MatIconModule, MatSelectModule,
     MatFormFieldModule, MatProgressSpinnerModule, PageHeaderComponent, EmptyStateComponent,
   ],
@@ -47,6 +47,14 @@ const API = environment.apiUrl;
               <mat-option value="PRELIMINAR">Preliminar</mat-option>
               <mat-option value="EM_MANIFESTACAO">Em Manifestação</mat-option>
               <mat-option value="CONSOLIDADO">Consolidado</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="min-w-[200px]">
+            <mat-label>Tipo</mat-label>
+            <mat-select [(ngModel)]="filtroTipo" (selectionChange)="load()">
+              <mat-option value="">Todos</mat-option>
+              <mat-option value="POSITIVO">Positivo</mat-option>
+              <mat-option value="NEGATIVO">Negativo</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -89,9 +97,7 @@ const API = environment.apiUrl;
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main w-[140px]">Status</th>
             <td mat-cell *matCellDef="let a" class="py-3">
-              <mat-chip [color]="statusChipColor(a.status)" highlighted="false" class="text-xs">
-                {{ a.status }}
-              </mat-chip>
+              <app-status-badge [status]="a.status" />
             </td>
           </ng-container>
           <ng-container matColumnDef="acoes">
@@ -113,6 +119,7 @@ export class QuadroAchadosComponent implements OnInit {
   cols = ['codigo', 'tipo', 'situacao', 'status', 'acoes'];
   achados: any[] = [];
   filtroStatus = '';
+  filtroTipo = '';
   loading = false;
   error = '';
 
@@ -128,6 +135,7 @@ export class QuadroAchadosComponent implements OnInit {
     try {
       const params: any = {};
       if (this.filtroStatus) params.status = this.filtroStatus;
+      if (this.filtroTipo) params.tipo = this.filtroTipo;
       this.achados = await firstValueFrom(
         this.http.get<any[]>(`${API}/achados`, { params }),
       );
@@ -136,9 +144,5 @@ export class QuadroAchadosComponent implements OnInit {
     } finally {
       this.loading = false;
     }
-  }
-
-  statusChipColor(s: string) {
-    return s === 'PRELIMINAR' ? 'warn' : s === 'EM_MANIFESTACAO' ? 'primary' : 'accent';
   }
 }

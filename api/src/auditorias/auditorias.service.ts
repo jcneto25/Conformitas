@@ -53,7 +53,7 @@ export class AuditoriasService {
 
     await this.gerarComunicado(auditoria.id, criadoPorId);
 
-    await this.notificarGestoresUnidade(
+    await this.notificacoes.notificarGestoresUnidade(
       auditoria.unidadeAuditada,
       'AUDITORIA_ABERTA',
       `Nova auditoria ${auditoria.numero} aberta para sua unidade.`,
@@ -134,13 +134,13 @@ export class AuditoriasService {
       data: { status: 'SUSPENSA', motivoSuspensao: motivo },
     });
 
-    await this.notificarPorPerfil(
+    await this.notificacoes.notificarPorPerfil(
       'P01',
       'AUDITORIA_SUSPENSA',
       `Auditoria ${auditoria.numero} foi suspensa. Motivo: ${motivo}`,
       auditoria.id,
     );
-    await this.notificarPorPerfil(
+    await this.notificacoes.notificarPorPerfil(
       'P03',
       'AUDITORIA_SUSPENSA',
       `Auditoria ${auditoria.numero} foi suspensa. Motivo: ${motivo}`,
@@ -246,30 +246,6 @@ export class AuditoriasService {
     });
   }
 
-  // ── Notificações ──────────────────────────────
-
-  private async notificarGestoresUnidade(unidade: string | null, tipo: string, mensagem: string, auditoriaId?: string) {
-    if (!unidade) return;
-    const perfisP05 = await this.prisma.usuarioPerfil.findMany({
-      where: {
-        perfil: { codigo: 'P05' },
-        unidadeEscopo: unidade,
-        ativo: true,
-      },
-      include: { usuario: true },
-    });
-    for (const up of perfisP05) {
-      await this.notificacoes.criar(up.usuario.id, tipo, mensagem, auditoriaId);
-    }
-  }
-
-  private async notificarPorPerfil(codigoPerfil: string, tipo: string, mensagem: string, auditoriaId?: string) {
-    const perfis = await this.prisma.usuarioPerfil.findMany({
-      where: { perfil: { codigo: codigoPerfil }, ativo: true },
-      include: { usuario: true },
-    });
-    for (const up of perfis) {
-      await this.notificacoes.criar(up.usuario.id, tipo, mensagem, auditoriaId);
-    }
-  }
+  // Notificações por perfil/unidade foram promovidas para NotificacoesService
+  // (notificarPorPerfil / notificarGestoresUnidade), reutilizadas por achados (PRP-006).
 }

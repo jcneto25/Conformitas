@@ -1,6 +1,6 @@
 # PRP-006 — Achados de Auditoria e Manifestações
 
-> **ID:** PRP-006 | **Onda:** 1 | **Estimativa:** 5 dias | **Status:** ⏳ Pending
+> **ID:** PRP-006 | **Onda:** 1 | **Estimativa:** 5 dias | **Status:** ✅ Implementado (corrigido em hardening 2026-07-02)
 > **Prioridade:** Crítico | **Complexidade:** Média | **Módulo:** MOD-ACH-001
 > **Depende de:** PRP-001, PRP-002, PRP-005 | **Criado em:** 2026-06-16 | **Versão:** 1.0
 
@@ -77,10 +77,10 @@ A DIRAUD-Jud exige que todo achado de auditoria seja estruturado nos 4 atributos
 
 ## 6. Definition of Done
 
-- [ ] CRUD de achados com validação dos 4 atributos
-- [ ] Workflow PRELIMINAR → EM_MANIFESTACAO → CONSOLIDADO
-- [ ] Manifestações com 4 tipos
-- [ ] Consolidação automática por expiração de prazo
-- [ ] Quadro de achados com filtros
-- [ ] Cobertura ≥ 80%
-- [ ] PR revisado
+- [x] CRUD de achados com validação dos 4 atributos (DTO + ValidationPipe 422 — RF-006.2)
+- [x] Workflow PRELIMINAR → EM_MANIFESTACAO → CONSOLIDADO
+- [x] Manifestações com 4 tipos (enum ESCLARECIMENTO/JUSTIFICATIVA/CONCORDANCIA/DISCORDANCIA)
+- [x] Consolidação automática por expiração de prazo (cron, 5 dias úteis, ressalva "sem manifestação")
+- [x] Quadro de achados com filtros (status + tipo)
+- [x] Cobertura ≥ 80% (achados.service.ts = 93% linhas)
+- [ ] PR revisado (pendente — branch `feat/onda-1-2-relatorios-hardening`)

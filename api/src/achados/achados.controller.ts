@@ -5,6 +5,8 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AchadosService } from './achados.service';
 import { Roles } from '../common/decorators/roles.decorator';
+import { CreateAchadoDto } from './dto/create-achado.dto';
+import { CreateManifestacaoDto } from './dto/create-manifestacao.dto';
 
 interface RequestWithUser extends Request {
   user: { sub: string; email: string; roles: string[]; unidadeEscopo?: string | null };
@@ -16,43 +18,42 @@ interface RequestWithUser extends Request {
 export class AchadosController {
   constructor(private readonly service: AchadosService) {}
 
-  @Post()
-  @ApiOperation({ summary: 'Criar achado de auditoria' })
-  create(@Body() body: any) {
-    return this.service.create(body);
-  }
-
   @Get()
-  @ApiOperation({ summary: 'Listar achados (com filtros)' })
+  @Roles('P01', 'P02', 'P05')
+  @ApiOperation({ summary: 'Quadro de achados (com filtros status/tipo)' })
   findAll(@Query() query: any, @Req() req: RequestWithUser) {
     return this.service.findAll(query, req.user?.unidadeEscopo);
   }
 
   @Get(':id')
+  @Roles('P01', 'P02', 'P05')
   @ApiOperation({ summary: 'Detalhar achado' })
-  findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+  findOne(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.service.findOne(id, req.user?.unidadeEscopo);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Atualizar achado' })
-  update(@Param('id') id: string, @Body() body: any) {
+  @Roles('P02')
+  @ApiOperation({ summary: 'Atualizar achado (apenas PRELIMINAR)' })
+  update(@Param('id') id: string, @Body() body: Partial<CreateAchadoDto>) {
     return this.service.update(id, body);
   }
 
   // ── Workflow ──────────────────────────────────
 
   @Post(':id/enviar-manifestacao')
+  @Roles('P02')
   @ApiOperation({ summary: 'Enviar achado para manifestação da unidade auditada' })
   enviarManifestacao(
     @Param('id') id: string,
-    @Body('prazoDias') prazoDias?: number,
+    @Body('prazoDiasUteis') prazoDiasUteis?: number,
   ) {
-    return this.service.enviarManifestacao(id, prazoDias);
+    return this.service.enviarManifestacao(id, prazoDiasUteis);
   }
 
   @Post(':id/consolidar')
-  @ApiOperation({ summary: 'Consolidar achado após manifestação' })
+  @Roles('P02')
+  @ApiOperation({ summary: 'Consolidar achado (manual)' })
   consolidar(@Param('id') id: string) {
     return this.service.consolidar(id);
   }
@@ -60,12 +61,18 @@ export class AchadosController {
   // ── Manifestações ─────────────────────────────
 
   @Post(':id/manifestacoes')
+  @Roles('P05')
   @ApiOperation({ summary: 'Registrar manifestação da unidade auditada' })
-  criarManifestacao(@Param('id') id: string, @Body() body: any) {
-    return this.service.criarManifestacao(id, body);
+  criarManifestacao(
+    @Param('id') id: string,
+    @Body() dto: CreateManifestacaoDto,
+    @Req() req: RequestWithUser,
+  ) {
+    return this.service.criarManifestacao(id, dto, req.user.sub, req.user?.unidadeEscopo);
   }
 
   @Get(':id/manifestacoes')
+  @Roles('P01', 'P02', 'P05')
   @ApiOperation({ summary: 'Listar manifestações de um achado' })
   listarManifestacoes(@Param('id') id: string) {
     return this.service.listarManifestacoes(id);

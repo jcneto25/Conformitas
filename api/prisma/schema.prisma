@@ -359,6 +359,7 @@ model AchadoAuditoria {
   autorId            String    @map("autor_id") @db.Uuid
   prazoManifestacao  DateTime? @map("prazo_manifestacao")
   dataConsolidacao   DateTime? @map("data_consolidacao")
+  ressalva           String?
   createdAt          DateTime  @default(now()) @map("created_at")
   updatedAt          DateTime  @updatedAt @map("updated_at")
 

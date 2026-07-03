@@ -175,6 +175,8 @@
 
 **PRP-006 total: 31h**
 
+> ⚠️ **Corrigido em hardening (2026-07-02, branch `feat/onda-1-2-relatorios-hardening`):** os ✅ acima eram falsos-positivos (gotcha do `finalize_session`). Após auditoria, PRP-006 foi reimplementado: (1) RBAC via `@Roles` P02/P05/P01 nos endpoints; (2) DTO + ValidationPipe global 422 com mensagens CNJ (RF-006.2); (3) notificações — P05 no envio, P02 na manifestação; (4) escopo de unidade + anti-IDOR no write-path (teste #6); (5) consolidação ao registrar manifestação (teste #4); (6) cron em **5 dias úteis** + ressalva "sem manifestação" (RF-006.5); (7) rotas `/auditorias/:auditoriaId/achados` (§3); (8) `ManifestacaoForm` (P05) no frontend + `rolesGuard`; (9) cobertura dos 6 cenários do PRP (274 testes backend verdes).
+
 ---
 
 ## 5. Onda 2 — Relatórios e Monitoramento (PRP-007, 008, 010)

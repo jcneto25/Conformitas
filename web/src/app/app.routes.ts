@@ -29,17 +29,34 @@ export const routes: Routes = [
         path: 'achados',
         loadComponent: () =>
           import('./features/achados/quadro-achados.component').then((m) => m.QuadroAchadosComponent),
+        canActivate: [rolesGuard(['P01', 'P02', 'P05'])],
       },
       {
         path: 'achados/novo',
         loadComponent: () =>
           import('./features/achados/achado-form.component').then((m) => m.AchadoFormComponent),
+        canActivate: [rolesGuard(['P02'])],
         canDeactivate: [confirmDeactivate],
       },
       {
         path: 'achados/:id',
         loadComponent: () =>
           import('./features/achados/achado-form.component').then((m) => m.AchadoFormComponent),
+        canActivate: [rolesGuard(['P01', 'P02', 'P05'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
+        path: 'achados/:id/manifestar',
+        loadComponent: () =>
+          import('./features/achados/manifestacao-form.component').then((m) => m.ManifestacaoFormComponent),
+        canActivate: [rolesGuard(['P05'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
+        path: 'auditorias/:auditoriaId/achados/novo',
+        loadComponent: () =>
+          import('./features/achados/achado-form.component').then((m) => m.AchadoFormComponent),
+        canActivate: [rolesGuard(['P02'])],
         canDeactivate: [confirmDeactivate],
       },
       {

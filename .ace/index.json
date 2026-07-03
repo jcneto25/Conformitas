@@ -458,6 +458,33 @@
         "paa"
       ],
       "timestamp": "2026-07-02T17:25:52.602064"
+    },
+    {
+      "session_id": "2026-07-02-006",
+      "file": "2026-07-02-006.md",
+      "status": "in_progress",
+      "llc_step": 11.0,
+      "tags": [
+        "prp-010",
+        "termo-cogestao",
+        "wave-2",
+        "hardening"
+      ],
+      "timestamp": "2026-07-02T23:23:22.149031"
+    },
+    {
+      "session_id": "2026-07-03-001",
+      "file": "2026-07-03-001.md",
+      "status": "completed",
+      "llc_step": 11.0,
+      "tags": [
+        "prp-006",
+        "wave-1",
+        "hardening",
+        "code-review"
+      ],
+      "timestamp": "2026-07-03T00:08:00.842568",
+      "completed_at": "2026-07-03T00:10:44.847569"
     }
   ]
 }
