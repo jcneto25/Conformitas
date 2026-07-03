@@ -107,6 +107,55 @@ describe('ConsultoriasService', () => {
     });
   });
 
+  describe('recusarSolicitacao', () => {
+    it('deve recusar solicitação e mudar status para RECUSADA', async () => {
+      prisma.solicitacaoConsultoria.findUnique.mockResolvedValue({
+        id: 'solic-1',
+        status: 'PENDENTE',
+      });
+      prisma.solicitacaoConsultoria.update.mockResolvedValue({
+        id: 'solic-1',
+        status: 'RECUSADA',
+      });
+
+      const result = await service.recusarSolicitacao('solic-1');
+      expect(result).toHaveProperty('status', 'RECUSADA');
+    });
+
+    it('deve rejeitar recusar se não estiver PENDENTE', async () => {
+      prisma.solicitacaoConsultoria.findUnique.mockResolvedValue({
+        id: 'solic-1',
+        status: 'ACEITA',
+      });
+
+      await expect(service.recusarSolicitacao('solic-1')).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('concluirSolicitacao', () => {
+    it('deve concluir solicitação com termo de cogestão', async () => {
+      prisma.solicitacaoConsultoria.findUnique.mockResolvedValue({
+        id: 'solic-1',
+        status: 'ACEITA',
+      });
+      prisma.consultoria.findMany.mockResolvedValue([]);
+
+      const result = await service.concluirSolicitacao('solic-1', 'Trabalho finalizado');
+
+      expect(result).toHaveProperty('mensagem');
+      expect(result.termo).toContain('não configura ato de gestão');
+    });
+
+    it('deve rejeitar concluir se não estiver ACEITA', async () => {
+      prisma.solicitacaoConsultoria.findUnique.mockResolvedValue({
+        id: 'solic-1',
+        status: 'PENDENTE',
+      });
+
+      await expect(service.concluirSolicitacao('solic-1', 'ok')).rejects.toThrow(BadRequestException);
+    });
+  });
+
   describe('registrarConsultoria', () => {
     it('deve registrar consultoria com termo de cogestão', async () => {
       prisma.planoAuditoria.findUnique.mockResolvedValue({
