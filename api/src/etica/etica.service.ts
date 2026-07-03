@@ -60,6 +60,7 @@ export class EticaService {
     const dozeMesesAtras = new Date();
     dozeMesesAtras.setMonth(dozeMesesAtras.getMonth() - 12);
 
+    // Impedimentos ACEITOS nos últimos 12 meses
     const impedimentos = await this.prisma.impedimento.findMany({
       where: {
         usuarioId,
@@ -67,6 +68,20 @@ export class EticaService {
         createdAt: { gte: dozeMesesAtras },
       },
     });
+
+    // Filtrar impedimentos cuja auditoria é na unidade auditada
+    let impedimentosNaUnidade = impedimentos;
+    if (impedimentos.length > 0 && unidadeAuditada) {
+      const auditorias = await this.prisma.auditoria.findMany({
+        where: {
+          id: { in: impedimentos.map((i) => i.auditoriaId) },
+          unidadeAuditada,
+        },
+        select: { id: true },
+      });
+      const idsAuditoriasNaUnidade = new Set(auditorias.map((a) => a.id));
+      impedimentosNaUnidade = impedimentos.filter((i) => idsAuditoriasNaUnidade.has(i.auditoriaId));
+    }
 
     const declaracoes = await this.prisma.declaracaoIndependencia.findMany({
       where: {
@@ -76,14 +91,14 @@ export class EticaService {
     });
 
     return {
-      temConflito: impedimentos.length > 0 || declaracoes.length === 0,
-      impedimentos,
+      temConflito: impedimentosNaUnidade.length > 0 || declaracoes.length === 0,
+      impedimentos: impedimentosNaUnidade,
       declaracaoPendente: declaracoes.length === 0,
       mensagem:
         declaracoes.length === 0
           ? 'Conflito: Usuário não possui declaração de independência no período'
-          : impedimentos.length > 0
-            ? `Conflito: Usuário possui ${impedimentos.length} impedimento(s) registrado(s)`
+          : impedimentosNaUnidade.length > 0
+            ? `Conflito: Usuário possui ${impedimentosNaUnidade.length} impedimento(s) na unidade ${unidadeAuditada}`
             : 'Nenhum conflito identificado',
     };
   }
@@ -140,7 +155,7 @@ export class EticaService {
         include: { perfil: true },
       });
       const codigos = perfis.map((up) => up.perfil.codigo);
-      if (codigos.includes('P01') || codigos.includes('P10') || codigos.includes('P03')) return true;
+      if (codigos.includes('P01') || codigos.includes('P02') || codigos.includes('P03') || codigos.includes('P10')) return true;
       return false;
     }
 
