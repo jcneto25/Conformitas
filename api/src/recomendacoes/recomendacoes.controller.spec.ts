@@ -1,8 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  RecomendacoesController,
-  RecomendacoesRelatorioController,
-} from './recomendacoes.controller';
+import { RecomendacoesController, RecomendacoesRelatorioController } from './recomendacoes.controller';
 import { RecomendacoesService } from './recomendacoes.service';
 
 type MockService = { [K in keyof RecomendacoesService]: jest.Mock };

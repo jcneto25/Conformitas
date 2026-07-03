@@ -119,4 +119,58 @@ export class ApiService {
   removerUniversoItem(id: string) {
     return firstValueFrom(this.http.delete(`${API}/universo-auditavel/${id}`));
   }
+
+  // ── Qualidade / PQAUD (PRP-011) ───────────────
+  getAvaliacoesQualidade(params?: { tipo?: string; status?: string }) {
+    return firstValueFrom(this.http.get<any[]>(`${API}/qualidade/avaliacoes`, { params }));
+  }
+
+  getAvaliacaoQualidade(id: string) {
+    return firstValueFrom(this.http.get<any>(`${API}/qualidade/avaliacoes/${id}`));
+  }
+
+  criarAvaliacaoQualidade(data: any) {
+    return firstValueFrom(this.http.post<any>(`${API}/qualidade/avaliacoes`, data));
+  }
+
+  atualizarAvaliacaoQualidade(id: string, data: any) {
+    return firstValueFrom(this.http.put<any>(`${API}/qualidade/avaliacoes/${id}`, data));
+  }
+
+  concluirAvaliacaoQualidade(id: string) {
+    return firstValueFrom(this.http.post<any>(`${API}/qualidade/avaliacoes/${id}/concluir`, {}));
+  }
+
+  homologarAvaliacaoQualidade(id: string) {
+    return firstValueFrom(this.http.post<any>(`${API}/qualidade/avaliacoes/${id}/homologar`, {}));
+  }
+
+  getNaoConformidades(avaliacaoId?: string) {
+    const params = avaliacaoId ? { avaliacaoId } : undefined;
+    return firstValueFrom(this.http.get<any[]>(`${API}/qualidade/nao-conformidades`, { params }));
+  }
+
+  criarNaoConformidade(avaliacaoId: string, data: any) {
+    return firstValueFrom(this.http.post<any>(`${API}/qualidade/avaliacoes/${avaliacaoId}/nao-conformidades`, data));
+  }
+
+  registrarAcaoCorretiva(id: string, data: any) {
+    return firstValueFrom(this.http.put<any>(`${API}/qualidade/nao-conformidades/${id}/acao-corretiva`, data));
+  }
+
+  concluirNaoConformidade(id: string) {
+    return firstValueFrom(this.http.post<any>(`${API}/qualidade/nao-conformidades/${id}/concluir`, {}));
+  }
+
+  getIndicadoresQualidade() {
+    return firstValueFrom(this.http.get<any[]>(`${API}/qualidade/indicadores`));
+  }
+
+  criarIndicadorQualidade(data: any) {
+    return firstValueFrom(this.http.post<any>(`${API}/qualidade/indicadores`, data));
+  }
+
+  atualizarIndicadorQualidade(id: string, data: any) {
+    return firstValueFrom(this.http.put<any>(`${API}/qualidade/indicadores/${id}`, data));
+  }
 }

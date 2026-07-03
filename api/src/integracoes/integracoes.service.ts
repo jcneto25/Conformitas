@@ -98,9 +98,7 @@ export class IntegracoesService {
 
   async healthAll() {
     const integracoes = await this.findAll();
-    const results = await Promise.allSettled(
-      integracoes.map((i) => this.healthCheck(i.id)),
-    );
+    const results = await Promise.allSettled(integracoes.map((i) => this.healthCheck(i.id)));
 
     return integracoes.map((integracao, index) => {
       const result = results[index];

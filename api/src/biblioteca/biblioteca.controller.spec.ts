@@ -13,9 +13,7 @@ describe('BibliotecaController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [BibliotecaController],
-      providers: [
-        { provide: BibliotecaService, useValue: mockService },
-      ],
+      providers: [{ provide: BibliotecaService, useValue: mockService }],
     }).compile();
 
     controller = module.get<BibliotecaController>(BibliotecaController);

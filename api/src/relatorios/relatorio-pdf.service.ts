@@ -12,9 +12,7 @@ export class RelatorioPdfService {
   // Compila os campos de apresentação do PDF a partir do relatório (pure, testável).
   buildConteudo(relatorio: any): ConteudoPdf {
     const auditoria = relatorio?.auditoria || {};
-    const subtitulo = [auditoria.numero, auditoria.unidadeAuditada]
-      .filter(Boolean)
-      .join(' — ');
+    const subtitulo = [auditoria.numero, auditoria.unidadeAuditada].filter(Boolean).join(' — ');
     return {
       titulo: `Relatório ${relatorio?.tipo || ''}`.trim(),
       subtitulo,
@@ -29,9 +27,7 @@ export class RelatorioPdfService {
     const chunks: Buffer[] = [];
 
     doc.on('data', (chunk: Buffer) => chunks.push(chunk));
-    const done = new Promise<Buffer>((resolve) =>
-      doc.on('end', () => resolve(Buffer.concat(chunks))),
-    );
+    const done = new Promise<Buffer>((resolve) => doc.on('end', () => resolve(Buffer.concat(chunks))));
 
     doc.fontSize(20).text(titulo, { align: 'center' });
     if (subtitulo) {

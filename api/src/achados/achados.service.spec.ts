@@ -1,9 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  BadRequestException,
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { AchadosService } from './achados.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificacoesService } from '../notificacoes/notificacoes.service';
@@ -193,7 +189,11 @@ describe('AchadosService', () => {
 
     it('EM_MANIFESTACAO → CONSOLIDADO (manual)', async () => {
       prisma.achadoAuditoria.findUnique.mockResolvedValue(achadoManifestacao);
-      prisma.achadoAuditoria.update.mockResolvedValue({ ...achadoManifestacao, status: 'CONSOLIDADO', dataConsolidacao: new Date() });
+      prisma.achadoAuditoria.update.mockResolvedValue({
+        ...achadoManifestacao,
+        status: 'CONSOLIDADO',
+        dataConsolidacao: new Date(),
+      });
       const result = await service.consolidar('ach-1');
       expect(result.status).toBe('CONSOLIDADO');
     });
@@ -237,7 +237,12 @@ describe('AchadosService', () => {
       );
       prisma.achadoAuditoria.update.mockResolvedValue({});
 
-      const result = await service.criarManifestacao('ach-1', { conteudo: 'Aceitamos', tipo: TipoManifestacao.CONCORDANCIA }, 'user-p05', 'SEC_X');
+      const result = await service.criarManifestacao(
+        'ach-1',
+        { conteudo: 'Aceitamos', tipo: TipoManifestacao.CONCORDANCIA },
+        'user-p05',
+        'SEC_X',
+      );
 
       expect(result.tipo).toBe('CONCORDANCIA');
       expect(prisma.manifestacao.create).toHaveBeenCalledWith(
@@ -248,7 +253,12 @@ describe('AchadosService', () => {
         expect.objectContaining({ data: expect.objectContaining({ status: 'CONSOLIDADO' }) }),
       );
       // notifica o autor (P02)
-      expect(notificacoes.criar).toHaveBeenCalledWith('user-p02', 'MANIFESTACAO_REGISTRADA', expect.any(String), 'aud-1');
+      expect(notificacoes.criar).toHaveBeenCalledWith(
+        'user-p02',
+        'MANIFESTACAO_REGISTRADA',
+        expect.any(String),
+        'aud-1',
+      );
       // retorno reflete o status consolidado (corrige o snapshot pré-consolidação do include)
       expect(result.achado.status).toBe('CONSOLIDADO');
     });
@@ -264,7 +274,12 @@ describe('AchadosService', () => {
     it('deve bloquear P05 de manifestar sobre achado de outra unidade (IDOR)', async () => {
       prisma.achadoAuditoria.findUnique.mockResolvedValue(achadoEmManifestacao);
       await expect(
-        service.criarManifestacao('ach-1', { conteudo: 'X', tipo: TipoManifestacao.CONCORDANCIA }, 'user-p05', 'SEC_OUTRA'),
+        service.criarManifestacao(
+          'ach-1',
+          { conteudo: 'X', tipo: TipoManifestacao.CONCORDANCIA },
+          'user-p05',
+          'SEC_OUTRA',
+        ),
       ).rejects.toThrow(ForbiddenException);
       expect(prisma.manifestacao.create).not.toHaveBeenCalled();
     });

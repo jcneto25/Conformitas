@@ -23,11 +23,7 @@ export class AuditoriaAchadosController {
   @Post()
   @Roles('P02')
   @ApiOperation({ summary: 'Criar achado de auditoria (4 atributos CNJ obrigatórios)' })
-  criar(
-    @Param('auditoriaId') auditoriaId: string,
-    @Body() dto: CreateAchadoDto,
-    @Req() req: RequestWithUser,
-  ) {
+  criar(@Param('auditoriaId') auditoriaId: string, @Body() dto: CreateAchadoDto, @Req() req: RequestWithUser) {
     return this.service.create(auditoriaId, dto, req.user.sub);
   }
 

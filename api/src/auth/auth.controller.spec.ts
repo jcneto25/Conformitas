@@ -98,7 +98,10 @@ describe('AuthController', () => {
       const mockReq = { user: { sub: 'user-uuid', email: 'test@test.com', roles: ['P10'] } };
       authService.changePassword.mockResolvedValue({ mensagem: 'Senha alterada com sucesso' });
 
-      const result = await controller.changePassword(mockReq as any, { senha_atual: 'Old@123', nova_senha: 'New@123456' });
+      const result = await controller.changePassword(mockReq as any, {
+        senha_atual: 'Old@123',
+        nova_senha: 'New@123456',
+      });
 
       expect(authService.changePassword).toHaveBeenCalledWith('user-uuid', 'Old@123', 'New@123456');
       expect(result).toHaveProperty('mensagem');

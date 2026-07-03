@@ -111,9 +111,7 @@ export class ConsultoriasService {
 
   async registrarConsultoria(dto: RegistrarConsultoriaDto) {
     if (!TIPOS_VALIDOS.includes(dto.tipo)) {
-      throw new BadRequestException(
-        `Tipo inválido. Válidos: ${TIPOS_VALIDOS.join(', ')}`,
-      );
+      throw new BadRequestException(`Tipo inválido. Válidos: ${TIPOS_VALIDOS.join(', ')}`);
     }
 
     // Validar horas PAA se vinculado a um plano
@@ -130,19 +128,13 @@ export class ConsultoriasService {
       const forcaTrabalho = await this.prisma.forcaTrabalho.findMany({
         where: { planoId: dto.planoId },
       });
-      const horasDisponiveis = forcaTrabalho.reduce(
-        (s, f) => s + f.horasDisponiveisAno,
-        0,
-      );
+      const horasDisponiveis = forcaTrabalho.reduce((s, f) => s + f.horasDisponiveisAno, 0);
 
       // Horas já alocadas em consultorias existentes
       const consultoriasExistentes = await this.prisma.consultoria.findMany({
         where: { planoId: dto.planoId },
       });
-      const horasAlocadas = consultoriasExistentes.reduce(
-        (s, c) => s + (c.horasUtilizadas || 0),
-        0,
-      );
+      const horasAlocadas = consultoriasExistentes.reduce((s, c) => s + (c.horasUtilizadas || 0), 0);
 
       if (horasAlocadas + dto.horasUtilizadas > horasDisponiveis) {
         throw new BadRequestException(

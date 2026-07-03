@@ -103,9 +103,7 @@ describe('MandatosService', () => {
     });
 
     it('deve rejeitar 7º mandato (limite vitalício de 6)', async () => {
-      const mandatos = Array.from({ length: 6 }, (_, i) =>
-        makeMandato({ numeroMandato: i + 1, status: 'CONCLUIDO' }),
-      );
+      const mandatos = Array.from({ length: 6 }, (_, i) => makeMandato({ numeroMandato: i + 1, status: 'CONCLUIDO' }));
       prisma.mandatoAuditorChefe.findMany.mockResolvedValue(mandatos);
 
       await expect(

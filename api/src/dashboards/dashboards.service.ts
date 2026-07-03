@@ -17,9 +17,13 @@ export class DashboardsService {
     const totalPlanos = planos.length;
     const planosAprovados = planos.filter((p) => p.status === 'APROVADO' || p.status === 'PUBLICADO').length;
     const totalHorasDisponiveis = planos.reduce(
-      (acc, p) => acc + p.forcTrabalho.reduce((s, f) => s + f.horasDisponiveisAno, 0), 0);
+      (acc, p) => acc + p.forcTrabalho.reduce((s, f) => s + f.horasDisponiveisAno, 0),
+      0,
+    );
     const totalHorasAlocadas = planos.reduce(
-      (acc, p) => acc + p.forcTrabalho.reduce((s, f) => s + f.horasAlocadasAuditoria, 0), 0);
+      (acc, p) => acc + p.forcTrabalho.reduce((s, f) => s + f.horasAlocadasAuditoria, 0),
+      0,
+    );
 
     // Auditorias executadas no período
     const filtroAuditoria: any = { deletedAt: null };
@@ -42,9 +46,8 @@ export class DashboardsService {
       totalHorasDisponiveis,
       totalHorasAlocadas,
       auditoriasConcluidas,
-      planejamentoPercentual: totalHorasDisponiveis > 0
-        ? Math.round((totalHorasAlocadas / totalHorasDisponiveis) * 100)
-        : 0,
+      planejamentoPercentual:
+        totalHorasDisponiveis > 0 ? Math.round((totalHorasAlocadas / totalHorasDisponiveis) * 100) : 0,
     };
   }
 
@@ -123,17 +126,22 @@ export class DashboardsService {
 
     const totalAvaliacoes = avaliacoes.length;
     const avaliacoesConcluidas = avaliacoes.filter((a) => a.status === 'CONCLUIDA').length;
-    const mediaNota = avaliacoesConcluidas > 0
-      ? Math.round(
-          (avaliacoes.filter((a) => a.status === 'CONCLUIDA' && a.nota != null)
-            .reduce((acc, a) => acc + (a.nota ?? 0), 0) /
-          avaliacoesConcluidas) * 100
-        ) / 100
-      : null;
+    const mediaNota =
+      avaliacoesConcluidas > 0
+        ? Math.round(
+            (avaliacoes
+              .filter((a) => a.status === 'CONCLUIDA' && a.nota != null)
+              .reduce((acc, a) => acc + (a.nota ?? 0), 0) /
+              avaliacoesConcluidas) *
+              100,
+          ) / 100
+        : null;
 
     const totalNc = avaliacoes.reduce((acc, a) => acc + a.naoConformidades.length, 0);
     const ncAbertas = avaliacoes.reduce(
-      (acc, a) => acc + a.naoConformidades.filter((nc) => nc.status !== 'CORRIGIDA').length, 0);
+      (acc, a) => acc + a.naoConformidades.filter((nc) => nc.status !== 'CORRIGIDA').length,
+      0,
+    );
 
     const indicadores = await this.prisma.indicadorQualidade.findMany();
 

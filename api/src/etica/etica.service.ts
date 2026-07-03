@@ -155,7 +155,8 @@ export class EticaService {
         include: { perfil: true },
       });
       const codigos = perfis.map((up) => up.perfil.codigo);
-      if (codigos.includes('P01') || codigos.includes('P02') || codigos.includes('P03') || codigos.includes('P10')) return true;
+      if (codigos.includes('P01') || codigos.includes('P02') || codigos.includes('P03') || codigos.includes('P10'))
+        return true;
       return false;
     }
 

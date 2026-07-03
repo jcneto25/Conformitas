@@ -6,9 +6,10 @@ type MockPlanosService = {
   [K in keyof PlanosService]: jest.Mock;
 };
 
-const mockReq = (roles: string[] = ['P01'], sub = 'user-1') => ({
-  user: { sub, email: 'test@test.com', roles },
-}) as any;
+const mockReq = (roles: string[] = ['P01'], sub = 'user-1') =>
+  ({
+    user: { sub, email: 'test@test.com', roles },
+  }) as any;
 
 describe('PlanosController', () => {
   let controller: PlanosController;
@@ -80,7 +81,10 @@ describe('PlanosController', () => {
   describe('POST /planos/:id/revisao', () => {
     it('deve criar nova revisão de plano publicada', async () => {
       service.criarRevisao.mockResolvedValue({
-        id: 'p2', tipo: 'PAA', versao: 2, status: 'RASCUNHO',
+        id: 'p2',
+        tipo: 'PAA',
+        versao: 2,
+        status: 'RASCUNHO',
       });
 
       const result = await controller.criarRevisao(mockReq(), 'p1');
@@ -95,20 +99,27 @@ describe('PlanosController', () => {
   describe('POST /forca-trabalho', () => {
     it('deve adicionar força de trabalho', async () => {
       service.adicionarForcaTrabalho.mockResolvedValue({
-        id: 'ft-1', planoId: 'p1', usuarioId: 'u1',
-        horasDisponiveisAno: 2000, ano: 2026,
+        id: 'ft-1',
+        planoId: 'p1',
+        usuarioId: 'u1',
+        horasDisponiveisAno: 2000,
+        ano: 2026,
         usuario: { id: 'u1', nome: 'Auditor X', email: 'aud@test.com' },
       });
 
       const result = await controller.adicionarForcaTrabalho({
-        planoId: 'p1', usuarioId: 'u1',
-        horasDisponiveisAno: 2000, ano: 2026,
+        planoId: 'p1',
+        usuarioId: 'u1',
+        horasDisponiveisAno: 2000,
+        ano: 2026,
       });
 
       expect(result).toHaveProperty('horasDisponiveisAno', 2000);
       expect(result).toHaveProperty('usuario.nome');
       expect(service.adicionarForcaTrabalho).toHaveBeenCalledWith('p1', {
-        usuarioId: 'u1', horasDisponiveisAno: 2000, ano: 2026,
+        usuarioId: 'u1',
+        horasDisponiveisAno: 2000,
+        ano: 2026,
       });
     });
   });
@@ -139,11 +150,18 @@ describe('PlanosController', () => {
   describe('POST /planos', () => {
     it('deve criar plano PALP', async () => {
       service.create.mockResolvedValue({
-        id: 'p1', tipo: 'PALP', anoInicio: 2025, anoFim: 2028, status: 'RASCUNHO', versao: 1,
+        id: 'p1',
+        tipo: 'PALP',
+        anoInicio: 2025,
+        anoFim: 2028,
+        status: 'RASCUNHO',
+        versao: 1,
       });
 
       const result = await controller.create(mockReq(), {
-        tipo: 'PALP', anoInicio: 2025, anoFim: 2028,
+        tipo: 'PALP',
+        anoInicio: 2025,
+        anoFim: 2028,
       });
 
       expect(result).toHaveProperty('tipo', 'PALP');
@@ -154,7 +172,11 @@ describe('PlanosController', () => {
   describe('PATCH /planos/:id', () => {
     it('deve atualizar plano em RASCUNHO', async () => {
       service.update.mockResolvedValue({
-        id: 'p1', tipo: 'PAA', anoInicio: 2026, anoFim: 2027, status: 'RASCUNHO',
+        id: 'p1',
+        tipo: 'PAA',
+        anoInicio: 2026,
+        anoFim: 2027,
+        status: 'RASCUNHO',
       });
 
       const result = await controller.update('p1', { tipo: 'PAA', anoInicio: 2026, anoFim: 2027 });
@@ -187,13 +209,20 @@ describe('PlanosController', () => {
   describe('POST /planos/:id/itens', () => {
     it('deve adicionar item ao plano', async () => {
       service.adicionarItem.mockResolvedValue({
-        id: 'item-1', planoId: 'p1', horasEstimadas: 200, tipoAuditoria: 'CONFORMIDADE',
+        id: 'item-1',
+        planoId: 'p1',
+        horasEstimadas: 200,
+        tipoAuditoria: 'CONFORMIDADE',
       });
 
       const result = await controller.adicionarItem('p1', {
-        universoAuditavelId: 'u1', tipoAuditoria: 'CONFORMIDADE',
-        formaExecucao: 'PRESENCIAL', horasEstimadas: 200,
-        escopo: 'Escopo X', objetivo: 'Objetivo Y', prioridade: 'ALTA',
+        universoAuditavelId: 'u1',
+        tipoAuditoria: 'CONFORMIDADE',
+        formaExecucao: 'PRESENCIAL',
+        horasEstimadas: 200,
+        escopo: 'Escopo X',
+        objetivo: 'Objetivo Y',
+        prioridade: 'ALTA',
       });
 
       expect(result).toHaveProperty('horasEstimadas', 200);

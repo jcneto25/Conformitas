@@ -7,5 +7,4 @@ export interface ClassificacaoMetadata {
   entidadeIdParam: string;
 }
 
-export const ExigeClassificacao = (meta: ClassificacaoMetadata) =>
-  SetMetadata(CLASSIFICACAO_KEY, meta);
+export const ExigeClassificacao = (meta: ClassificacaoMetadata) => SetMetadata(CLASSIFICACAO_KEY, meta);
