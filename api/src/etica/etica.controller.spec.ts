@@ -6,9 +6,10 @@ type MockEticaService = {
   [K in keyof EticaService]: jest.Mock;
 };
 
-const mockReq = (roles: string[] = ['P01'], sub = 'user-1') => ({
-  user: { sub, email: 'test@test.com', roles },
-}) as any;
+const mockReq = (roles: string[] = ['P01'], sub = 'user-1') =>
+  ({
+    user: { sub, email: 'test@test.com', roles },
+  }) as any;
 
 describe('EticaController', () => {
   let controller: EticaController;
@@ -40,7 +41,10 @@ describe('EticaController', () => {
   describe('POST /declaracoes-independencia', () => {
     it('deve registrar declaração de independência', async () => {
       service.criarDeclaracao.mockResolvedValue({
-        id: 'decl-1', usuarioId: 'user-1', vigenciaInicio: '2026-01-01', vigenciaFim: '2027-01-01',
+        id: 'decl-1',
+        usuarioId: 'user-1',
+        vigenciaInicio: '2026-01-01',
+        vigenciaFim: '2027-01-01',
       });
 
       const result = await controller.criarDeclaracao(mockReq(), {
@@ -65,8 +69,11 @@ describe('EticaController', () => {
   describe('POST /impedimentos', () => {
     it('deve registrar impedimento com verificação de conflito', async () => {
       service.criarImpedimento.mockResolvedValue({
-        id: 'imp-1', usuarioId: 'user-1', auditoriaId: 'aud-1',
-        motivo: 'Parentesco com gestor', status: 'PENDENTE',
+        id: 'imp-1',
+        usuarioId: 'user-1',
+        auditoriaId: 'aud-1',
+        motivo: 'Parentesco com gestor',
+        status: 'PENDENTE',
       });
 
       const result = await controller.criarImpedimento(mockReq(), {
@@ -90,7 +97,8 @@ describe('EticaController', () => {
   describe('PATCH /impedimentos/:id/aceitar', () => {
     it('deve aceitar impedimento', async () => {
       service.aceitarImpedimento.mockResolvedValue({
-        id: 'imp-1', status: 'ACEITO',
+        id: 'imp-1',
+        status: 'ACEITO',
       });
 
       const result = await controller.aceitarImpedimento('imp-1');
@@ -113,28 +121,32 @@ describe('EticaController', () => {
   describe('PUT /:entidadeTipo/:id/classificacao', () => {
     it('deve classificar documento com nível de sigilo', async () => {
       service.classificarDocumento.mockResolvedValue({
-        id: 'class-1', entidadeTipo: 'auditorias', entidadeId: 'aud-1',
-        nivelSigilo: 'RESTRITO', justificativa: 'Dados sensíveis',
+        id: 'class-1',
+        entidadeTipo: 'auditorias',
+        entidadeId: 'aud-1',
+        nivelSigilo: 'RESTRITO',
+        justificativa: 'Dados sensíveis',
       });
 
-      const result = await controller.classificarDocumento(
-        mockReq(), 'auditorias', 'aud-1',
-        { nivelSigilo: 'RESTRITO', justificativa: 'Dados sensíveis' },
-      );
+      const result = await controller.classificarDocumento(mockReq(), 'auditorias', 'aud-1', {
+        nivelSigilo: 'RESTRITO',
+        justificativa: 'Dados sensíveis',
+      });
 
       expect(result).toHaveProperty('nivelSigilo', 'RESTRITO');
     });
 
     it('deve classificar como SIGILOSO', async () => {
       service.classificarDocumento.mockResolvedValue({
-        id: 'class-2', entidadeTipo: 'auditorias', entidadeId: 'aud-2',
+        id: 'class-2',
+        entidadeTipo: 'auditorias',
+        entidadeId: 'aud-2',
         nivelSigilo: 'SIGILOSO',
       });
 
-      const result = await controller.classificarDocumento(
-        mockReq(), 'auditorias', 'aud-2',
-        { nivelSigilo: 'SIGILOSO' },
-      );
+      const result = await controller.classificarDocumento(mockReq(), 'auditorias', 'aud-2', {
+        nivelSigilo: 'SIGILOSO',
+      });
 
       expect(result).toHaveProperty('nivelSigilo', 'SIGILOSO');
     });
@@ -143,7 +155,9 @@ describe('EticaController', () => {
   describe('GET /:entidadeTipo/:id/classificacao', () => {
     it('deve obter classificação de sigilo de documento', async () => {
       service.obterClassificacao.mockResolvedValue({
-        id: 'class-1', entidadeTipo: 'evidencias', entidadeId: 'ev-1',
+        id: 'class-1',
+        entidadeTipo: 'evidencias',
+        entidadeId: 'ev-1',
         nivelSigilo: 'INTERNO',
       });
 
@@ -156,8 +170,11 @@ describe('EticaController', () => {
     it('deve listar trilha de acesso a documentos sigilosos', async () => {
       service.listarTrilhaAcesso.mockResolvedValue([
         {
-          id: 'log-1', usuarioId: 'user-2', entidadeTipo: 'auditorias',
-          entidadeId: 'aud-1', acao: 'VISUALIZAR',
+          id: 'log-1',
+          usuarioId: 'user-2',
+          entidadeTipo: 'auditorias',
+          entidadeId: 'aud-1',
+          acao: 'VISUALIZAR',
           dataAcesso: new Date().toISOString(),
           usuario: { nome: 'Auditor X' },
         },

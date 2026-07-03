@@ -20,9 +20,9 @@ export class KeycloakStrategy extends PassportStrategy(Strategy, 'keycloak') {
 
     // Se não configurado, registra como stub (não será usado se AUTH_PROVIDER=local)
     if (!keycloakUrl) {
-      super({ 
-        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), 
-        secretOrKey: 'stub' 
+      super({
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        secretOrKey: 'stub',
       });
       Logger.warn('KEYCLOAK_URL não configurada — KeycloakStrategy registrada como stub', 'KeycloakStrategy');
       return;

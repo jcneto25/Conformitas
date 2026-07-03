@@ -66,13 +66,18 @@ describe('RelatoriosController', () => {
 
   describe('GET /relatorios', () => {
     it('deve repassar filtros da query com unidadeEscopo do usuário', async () => {
-      const mockReq = { user: { sub: 'user-p05', email: 'p05@test.com', roles: ['P05'], unidadeEscopo: 'SECRETARIA-X' } };
+      const mockReq = {
+        user: { sub: 'user-p05', email: 'p05@test.com', roles: ['P05'], unidadeEscopo: 'SECRETARIA-X' },
+      };
       service.findAll.mockResolvedValue([{ id: 'rel-1' }]);
       await controller.findAll({ auditoriaId: 'aud-1', status: 'ASSINADO' }, mockReq as any);
-      expect(service.findAll).toHaveBeenCalledWith({
-        auditoriaId: 'aud-1',
-        status: 'ASSINADO',
-      }, 'SECRETARIA-X');
+      expect(service.findAll).toHaveBeenCalledWith(
+        {
+          auditoriaId: 'aud-1',
+          status: 'ASSINADO',
+        },
+        'SECRETARIA-X',
+      );
     });
 
     it('deve lidar com usuário sem escopo (P01)', async () => {

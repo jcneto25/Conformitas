@@ -37,14 +37,18 @@ describe('AuditoriasController', () => {
   });
 
   describe('POST /auditorias', () => {
-    const mockReq = (sub = 'user-1') => ({
-      user: { sub, email: 'test@test.com', roles: ['P01'] },
-    }) as any;
+    const mockReq = (sub = 'user-1') =>
+      ({
+        user: { sub, email: 'test@test.com', roles: ['P01'] },
+      }) as any;
 
     it('deve abrir auditoria a partir de item do PAA', async () => {
       service.create.mockResolvedValue({
-        id: 'aud-1', codigo: 'AUD-2026-0001', status: 'ABERTA',
-        itemPlanoId: 'item-1', sigilosa: false,
+        id: 'aud-1',
+        codigo: 'AUD-2026-0001',
+        status: 'ABERTA',
+        itemPlanoId: 'item-1',
+        sigilosa: false,
       });
 
       const result = await controller.create(mockReq(), {
@@ -62,8 +66,11 @@ describe('AuditoriasController', () => {
 
     it('deve abrir auditoria sigilosa', async () => {
       service.create.mockResolvedValue({
-        id: 'aud-2', codigo: 'AUD-2026-0002', status: 'ABERTA',
-        itemPlanoId: 'item-2', sigilosa: true,
+        id: 'aud-2',
+        codigo: 'AUD-2026-0002',
+        status: 'ABERTA',
+        itemPlanoId: 'item-2',
+        sigilosa: true,
       });
 
       const result = await controller.create(mockReq(), {
@@ -79,11 +86,18 @@ describe('AuditoriasController', () => {
     it('deve listar auditorias com filtro opcional', async () => {
       service.findAll.mockResolvedValue([{ id: '1', codigo: 'AUD-001', status: 'EM_EXECUCAO' }]);
 
-      const result = await controller.findAll('EM_EXECUCAO', undefined, undefined, { user: { sub: 'user-uuid', email: 'test@test.com', roles: ['P01'] } } as any);
+      const result = await controller.findAll('EM_EXECUCAO', undefined, undefined, {
+        user: { sub: 'user-uuid', email: 'test@test.com', roles: ['P01'] },
+      } as any);
       expect(result).toHaveLength(1);
-      expect(service.findAll).toHaveBeenCalledWith({
-        status: 'EM_EXECUCAO', unidade: undefined, search: undefined,
-      }, undefined);
+      expect(service.findAll).toHaveBeenCalledWith(
+        {
+          status: 'EM_EXECUCAO',
+          unidade: undefined,
+          search: undefined,
+        },
+        undefined,
+      );
     });
   });
 
@@ -117,7 +131,9 @@ describe('AuditoriasController', () => {
   describe('POST /auditorias/:id/suspender', () => {
     it('deve suspender auditoria com motivo', async () => {
       service.suspender.mockResolvedValue({
-        id: '1', status: 'SUSPENSA', motivoSuspensao: 'Falta de pessoal',
+        id: '1',
+        status: 'SUSPENSA',
+        motivoSuspensao: 'Falta de pessoal',
       });
 
       const result = await controller.suspender('1', 'Falta de pessoal');
@@ -130,7 +146,9 @@ describe('AuditoriasController', () => {
     it('deve gerar comunicado de auditoria', async () => {
       const mockReq = { user: { sub: 'user-1', email: 'test@test.com', roles: ['P01'] } };
       service.gerarComunicado.mockResolvedValue({
-        id: 'com-1', numero: 'COM-2026-0001', conteudo: '...',
+        id: 'com-1',
+        numero: 'COM-2026-0001',
+        conteudo: '...',
       });
 
       const result = await controller.gerarComunicado(mockReq as any, 'aud-1');
@@ -142,7 +160,9 @@ describe('AuditoriasController', () => {
   describe('POST /auditorias/:id/evidencias', () => {
     it('deve adicionar evidência com arquivo à auditoria', async () => {
       service.criarEvidencia.mockResolvedValue({
-        id: 'ev-1', tipo: 'DOCUMENTO', descricao: 'Relatório X',
+        id: 'ev-1',
+        tipo: 'DOCUMENTO',
+        descricao: 'Relatório X',
         arquivoPath: '/uploads/file.pdf',
       });
 
@@ -169,17 +189,23 @@ describe('AuditoriasController', () => {
     it('deve criar papel de trabalho vinculado a evidências', async () => {
       const mockReq = { user: { sub: 'user-2', email: 'auditor@test.com', roles: ['P02'] } };
       service.criarPapelTrabalho.mockResolvedValue({
-        id: 'pt-1', codigo: 'PT-001', descricao: 'Análise X',
+        id: 'pt-1',
+        codigo: 'PT-001',
+        descricao: 'Análise X',
         evidenciaIds: ['ev-1', 'ev-2'],
       });
 
       const result = await controller.criarPapelTrabalho(mockReq as any, 'aud-1', {
-        codigo: 'PT-001', descricao: 'Análise X', evidenciaIds: ['ev-1', 'ev-2'],
+        codigo: 'PT-001',
+        descricao: 'Análise X',
+        evidenciaIds: ['ev-1', 'ev-2'],
       });
 
       expect(result).toHaveProperty('codigo', 'PT-001');
       expect(service.criarPapelTrabalho).toHaveBeenCalledWith(
-        'aud-1', { codigo: 'PT-001', descricao: 'Análise X', evidenciaIds: ['ev-1', 'ev-2'] }, 'user-2',
+        'aud-1',
+        { codigo: 'PT-001', descricao: 'Análise X', evidenciaIds: ['ev-1', 'ev-2'] },
+        'user-2',
       );
     });
   });
@@ -196,11 +222,14 @@ describe('AuditoriasController', () => {
   describe('POST /auditorias/:id/requisicoes', () => {
     it('deve emitir requisição à unidade auditada', async () => {
       service.criarRequisicao.mockResolvedValue({
-        id: 'req-1', descricao: 'Solicitação X', prazoDias: 5,
+        id: 'req-1',
+        descricao: 'Solicitação X',
+        prazoDias: 5,
       });
 
       const result = await controller.criarRequisicao('aud-1', {
-        descricao: 'Solicitação X', prazoDias: 5,
+        descricao: 'Solicitação X',
+        prazoDias: 5,
       });
 
       expect(result).toHaveProperty('prazoDias', 5);

@@ -129,6 +129,19 @@ export const routes: Routes = [
         canDeactivate: [confirmDeactivate],
       },
       {
+        path: 'qualidade',
+        loadComponent: () =>
+          import('./features/qualidade/qualidade-avaliacao-list.component').then((m) => m.QualidadeAvaliacaoListComponent),
+        canActivate: [rolesGuard(['P01', 'P07'])],
+      },
+      {
+        path: 'qualidade/novo',
+        loadComponent: () =>
+          import('./features/qualidade/qualidade-avaliacao-form.component').then((m) => m.QualidadeAvaliacaoFormComponent),
+        canActivate: [rolesGuard(['P01', 'P07'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
         path: 'auditorias',
         loadComponent: () =>
           import('./features/auditorias/auditoria-list.component').then((m) => m.AuditoriaListComponent),

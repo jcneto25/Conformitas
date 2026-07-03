@@ -13,9 +13,7 @@ describe('GovernancaController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [GovernancaController],
-      providers: [
-        { provide: GovernancaService, useValue: mockService },
-      ],
+      providers: [{ provide: GovernancaService, useValue: mockService }],
     }).compile();
 
     controller = module.get<GovernancaController>(GovernancaController);

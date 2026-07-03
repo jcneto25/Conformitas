@@ -1,6 +1,4 @@
-import {
-  Controller, Get, Post, Patch, Param, Body, Query, Req,
-} from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, Query, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AchadosService } from './achados.service';
@@ -44,10 +42,7 @@ export class AchadosController {
   @Post(':id/enviar-manifestacao')
   @Roles('P02')
   @ApiOperation({ summary: 'Enviar achado para manifestação da unidade auditada' })
-  enviarManifestacao(
-    @Param('id') id: string,
-    @Body('prazoDiasUteis') prazoDiasUteis?: number,
-  ) {
+  enviarManifestacao(@Param('id') id: string, @Body('prazoDiasUteis') prazoDiasUteis?: number) {
     return this.service.enviarManifestacao(id, prazoDiasUteis);
   }
 
@@ -63,11 +58,7 @@ export class AchadosController {
   @Post(':id/manifestacoes')
   @Roles('P05')
   @ApiOperation({ summary: 'Registrar manifestação da unidade auditada' })
-  criarManifestacao(
-    @Param('id') id: string,
-    @Body() dto: CreateManifestacaoDto,
-    @Req() req: RequestWithUser,
-  ) {
+  criarManifestacao(@Param('id') id: string, @Body() dto: CreateManifestacaoDto, @Req() req: RequestWithUser) {
     return this.service.criarManifestacao(id, dto, req.user.sub, req.user?.unidadeEscopo);
   }
 

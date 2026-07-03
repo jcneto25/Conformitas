@@ -69,7 +69,9 @@ export class RecomendacoesService {
       orderBy: { createdAt: 'desc' },
       include: {
         providencias: { orderBy: { data: 'asc' } },
-        relatorio: { select: { id: true, tipo: true, auditoria: { select: { id: true, numero: true, unidadeAuditada: true } } } },
+        relatorio: {
+          select: { id: true, tipo: true, auditoria: { select: { id: true, numero: true, unidadeAuditada: true } } },
+        },
       },
     });
   }

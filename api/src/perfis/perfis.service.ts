@@ -53,9 +53,7 @@ export class PerfisService {
         (up) => up.perfil.codigo === outroCodigo && up.unidadeEscopo === unidadeEscopo,
       );
       if (conflito) {
-        throw new Error(
-          `SOD_VIOLATION: Usuário não pode ter P02 e P05 na mesma unidade (${unidadeEscopo})`,
-        );
+        throw new Error(`SOD_VIOLATION: Usuário não pode ter P02 e P05 na mesma unidade (${unidadeEscopo})`);
       }
     }
 

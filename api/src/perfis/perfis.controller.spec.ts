@@ -55,9 +55,7 @@ describe('PerfisController', () => {
 
     it('deve propagar ConflictException em violação SOD', async () => {
       service.atribuirPerfil.mockRejectedValue(new Error('SOD_VIOLATION: P01 não pode acumular outro perfil'));
-      await expect(
-        controller.atribuirPerfil('user-1', { perfil_id: 'perfil-2' }),
-      ).rejects.toThrow(ConflictException);
+      await expect(controller.atribuirPerfil('user-1', { perfil_id: 'perfil-2' })).rejects.toThrow(ConflictException);
     });
   });
 

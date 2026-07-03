@@ -17,9 +17,7 @@ describe('DashboardsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [DashboardsController],
-      providers: [
-        { provide: DashboardsService, useValue: mockService },
-      ],
+      providers: [{ provide: DashboardsService, useValue: mockService }],
     }).compile();
 
     controller = module.get<DashboardsController>(DashboardsController);

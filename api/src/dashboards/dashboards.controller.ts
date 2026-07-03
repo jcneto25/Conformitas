@@ -6,7 +6,14 @@ import { DashboardsService } from './dashboards.service';
 import { DashboardFilterDto } from './dto/dashboard-filter.dto';
 import { ExportFormato } from './dto/export-dashboard.dto';
 
-const PDF_KIT_AVAILABLE = (() => { try { require.resolve('pdfkit'); return true; } catch { return false; }})();
+const PDF_KIT_AVAILABLE = (() => {
+  try {
+    require.resolve('pdfkit');
+    return true;
+  } catch {
+    return false;
+  }
+})();
 
 @ApiTags('dashboards')
 @Controller('dashboards')

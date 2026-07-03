@@ -64,9 +64,7 @@ describe('ConsultoriasService', () => {
 
   describe('listarSolicitacoes', () => {
     it('deve listar solicitações com filtro opcional de status', async () => {
-      prisma.solicitacaoConsultoria.findMany.mockResolvedValue([
-        { id: '1', tema: 'Tema 1', status: 'PENDENTE' },
-      ]);
+      prisma.solicitacaoConsultoria.findMany.mockResolvedValue([{ id: '1', tema: 'Tema 1', status: 'PENDENTE' }]);
 
       const result = await service.listarSolicitacoes('PENDENTE');
       expect(result).toHaveLength(1);
@@ -101,9 +99,7 @@ describe('ConsultoriasService', () => {
         status: 'CONCLUIDA',
       });
 
-      await expect(
-        service.aceitarSolicitacao('solic-1'),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.aceitarSolicitacao('solic-1')).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -163,9 +159,7 @@ describe('ConsultoriasService', () => {
         tipo: 'PAA',
         status: 'APROVADO',
       });
-      prisma.forcaTrabalho.findMany.mockResolvedValue([
-        { horasDisponiveisAno: 2000, usuarioId: 'user-2' },
-      ]);
+      prisma.forcaTrabalho.findMany.mockResolvedValue([{ horasDisponiveisAno: 2000, usuarioId: 'user-2' }]);
       prisma.consultoria.findMany.mockResolvedValue([]);
       prisma.consultoria.create.mockResolvedValue({
         id: 'cons-1',
@@ -195,12 +189,12 @@ describe('ConsultoriasService', () => {
         tipo: 'PAA',
         status: 'APROVADO',
       });
-      prisma.forcaTrabalho.findMany.mockResolvedValue([
-        { horasDisponiveisAno: 2000, usuarioId: 'user-1' },
-      ]);
+      prisma.forcaTrabalho.findMany.mockResolvedValue([{ horasDisponiveisAno: 2000, usuarioId: 'user-1' }]);
       // Simula 1990h já alocadas → só restam 10h
       prisma.consultoria.findMany.mockResolvedValue(
-        Array(19).fill({ horasUtilizadas: 100 }).concat([{ horasUtilizadas: 90 }]),
+        Array(19)
+          .fill({ horasUtilizadas: 100 })
+          .concat([{ horasUtilizadas: 90 }]),
       );
 
       await expect(
@@ -219,9 +213,7 @@ describe('ConsultoriasService', () => {
         tipo: 'PAA',
         status: 'APROVADO',
       });
-      prisma.forcaTrabalho.findMany.mockResolvedValue([
-        { horasDisponiveisAno: 2000, usuarioId: 'user-1' },
-      ]);
+      prisma.forcaTrabalho.findMany.mockResolvedValue([{ horasDisponiveisAno: 2000, usuarioId: 'user-1' }]);
       prisma.consultoria.findMany.mockResolvedValue([]);
       prisma.consultoria.create.mockResolvedValue({
         id: 'cons-2',
@@ -245,9 +237,7 @@ describe('ConsultoriasService', () => {
 
   describe('listarConsultorias', () => {
     it('deve listar consultorias com filtro opcional', async () => {
-      prisma.consultoria.findMany.mockResolvedValue([
-        { id: '1', tipo: 'ASSESSORAMENTO' },
-      ]);
+      prisma.consultoria.findMany.mockResolvedValue([{ id: '1', tipo: 'ASSESSORAMENTO' }]);
 
       const result = await service.listarConsultorias('ASSESSORAMENTO');
       expect(result).toHaveLength(1);

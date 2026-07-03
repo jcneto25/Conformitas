@@ -13,9 +13,7 @@ export class RecomendacoesSchedule {
   async verificarVencidas() {
     const result = await this.service.verificarVencidas();
     if (result.vencidas > 0) {
-      this.logger.warn(
-        `${result.vencidas} recomendação(ões) vencida(s). Notificar: ${result.notificados.join(', ')}`,
-      );
+      this.logger.warn(`${result.vencidas} recomendação(ões) vencida(s). Notificar: ${result.notificados.join(', ')}`);
     }
   }
 
