@@ -26,6 +26,8 @@ const mockNotificacoesService = () => ({
   listar: jest.fn(),
   listarNaoLidas: jest.fn(),
   marcarLida: jest.fn(),
+  notificarPorPerfil: jest.fn(),
+  notificarGestoresUnidade: jest.fn(),
 });
 
 describe('AuditoriasService', () => {

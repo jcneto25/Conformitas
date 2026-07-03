@@ -345,6 +345,49 @@ function handleCrud(req: HttpRequest<unknown>, segments: Array<string>): Observa
       subStore.data.push(novo);
       return json(novo, 201);
     }
+    // PRP-006: POST /achados/:id/manifestacoes — registra manifestação da unidade (P05).
+    if (entityPath === 'achados' && subPath === 'manifestacoes' && req.body) {
+      const body = req.body as any;
+      const manStore = stores['manifestacoes'];
+      const nova = {
+        id: `mock-${Date.now()}`,
+        achadoId: id,
+        conteudo: body.conteudo,
+        tipo: body.tipo,
+        autorId: body.autorId || '',
+        dataManifestacao: new Date().toISOString(),
+      };
+      if (manStore) manStore.data.push(nova);
+      // Espelha o backend: registrar manifestação consolida o achado (teste #4 do PRP).
+      const parent = store.data.find((r: any) => r[store.idKey] === id);
+      if (parent) {
+        parent.status = 'CONSOLIDADO';
+        parent.dataConsolidacao = new Date().toISOString();
+      }
+      return json(nova, 201);
+    }
+    // PRP-006: POST /auditorias/:auditoriaId/achados — cria achado vinculado à auditoria (P02).
+    if (entityPath === 'auditorias' && subPath === 'achados' && req.body) {
+      const body = req.body as any;
+      const achStore = stores['achados_auditoria'];
+      const count = achStore ? achStore.data.filter((a: any) => a.auditoriaId === id).length + 1 : 1;
+      const novo = {
+        id: `mock-${Date.now()}`,
+        auditoriaId: id,
+        codigo: `ACH-${count}`,
+        tipo: body.tipo,
+        situacaoEncontrada: body.situacaoEncontrada,
+        criterio: body.criterio,
+        causa: body.causa,
+        efeito: body.efeito,
+        status: 'PRELIMINAR',
+        evidenciaIds: body.evidenciaIds || [],
+        autorId: body.autorId || '',
+        createdAt: new Date().toISOString(),
+      };
+      if (achStore) achStore.data.push(novo);
+      return json({ ...novo, manifestacoes: [] }, 201);
+    }
     return json({ message: 'Ação executada', success: true });
   }
 
