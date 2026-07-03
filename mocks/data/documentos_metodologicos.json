@@ -1,0 +1,8 @@
+{
+  "documentos_metodologicos": [
+    { "id": "doc-001", "titulo": "Manual de Auditoria Interna", "descricao": "Manual completo de procedimentos de auditoria interna governamental", "categoria": "MANUAL", "versao": "2.3", "autor_id": "mock-user-001", "arquivo_path": "/documentos/manual_auditoria_v2.3.pdf", "status": "PUBLICADO", "created_at": "2026-01-15T00:00:00Z", "updated_at": "2026-03-10T00:00:00Z" },
+    { "id": "doc-002", "titulo": "Programa de Auditoria — Folha de Pagamento", "descricao": "Programa padronizado para auditoria de folha de pagamento", "categoria": "PROGRAMA", "versao": "1.0", "autor_id": "mock-user-002", "arquivo_path": "/documentos/programa_folha_v1.0.pdf", "status": "PUBLICADO", "created_at": "2026-02-20T00:00:00Z", "updated_at": "2026-02-20T00:00:00Z" },
+    { "id": "doc-003", "titulo": "Guia de Elaboração de Achados", "descricao": "Guia prático para redação de achados de auditoria com os 4 atributos", "categoria": "GUIA", "versao": "1.0", "autor_id": "mock-user-001", "arquivo_path": "/documentos/guia_achados_v1.0.pdf", "status": "RASCUNHO", "created_at": "2026-03-05T00:00:00Z", "updated_at": "2026-03-05T00:00:00Z" },
+    { "id": "doc-004", "titulo": "Política de Gestão de Riscos AUDIN", "descricao": "Política institucional de gestão de riscos da AUDIN/TJCE", "categoria": "POLITICA", "versao": "1.0", "autor_id": "mock-user-003", "arquivo_path": "/documentos/politica_riscos_v1.0.pdf", "status": "PUBLICADO", "created_at": "2026-04-01T00:00:00Z", "updated_at": "2026-04-01T00:00:00Z" }
+  ]
+}

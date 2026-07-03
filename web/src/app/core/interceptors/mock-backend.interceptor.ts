@@ -13,6 +13,8 @@ import itensPlanoData from '../../../../../mocks/data/itens_plano.json';
 import forcaTrabalhoData from '../../../../../mocks/data/forca_trabalho.json';
 import acoesCoordenadasData from '../../../../../mocks/data/acoes_coordenadas.json';
 import integracoesData from '../../../../../mocks/data/integracoes.json';
+import competenciasData from '../../../../../mocks/data/competencias.json';
+import documentosMetodologicosData from '../../../../../mocks/data/documentos_metodologicos.json';
 
 const API = 'http://localhost:3001/api/v1';
 const users: any[] = (usersData as any).users;
@@ -69,6 +71,8 @@ register('itens_plano', itensPlanoData);
 register('forca_trabalho', forcaTrabalhoData);
 register('acoes_coordenadas', acoesCoordenadasData);
 register('integracoes', integracoesData);
+register('competencias', competenciasData);
+register('documentos_metodologicos', documentosMetodologicosData);
 register('users', users);
 // Junction table for profiles
 const usuariosPerfisData: any[] = [];
@@ -108,6 +112,8 @@ const ENTITY_ROUTES: [string, string][] = [
   ['integracoes', 'integracoes'],
   ['etica', 'classificacoes_documento'],
   ['relatorios-anuais', 'relatorios_anuais'],
+  ['competencias', 'competencias'],
+  ['documentos-metodologicos', 'documentos_metodologicos'],
 ];
 
 const ENTITY_MAP = new Map(ENTITY_ROUTES);
@@ -237,6 +243,37 @@ function handleCrud(req: HttpRequest<unknown>, segments: Array<string>): Observa
       }
     }
     return json({ itens, destaques });
+  }
+
+  // PRP-012: GET /riscos/matriz — matriz de riscos agrupada por nível
+  if (entityPath === 'riscos' && segments[1] === 'matriz' && req.method === 'GET') {
+    const levels = ['BAIXO', 'MEDIO', 'ALTO', 'CRITICO', 'EXTREMO'];
+    const matriz = levels.map((nivel) => {
+      const riscos = store.data.filter((r: any) => r.nivel === nivel);
+      const scores = riscos.map((r: any) => (r.probabilidade || 1) * (r.impacto || 1));
+      const scoreMedio = scores.length ? Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length) : 0;
+      return {
+        nivel,
+        quantidade: riscos.length,
+        scoreMedio,
+        riscos: riscos.map((r: any) => ({ id: r.id, codigo: r.codigo, descricao: r.descricao })),
+      };
+    });
+    return json(matriz.filter((m) => m.quantidade > 0));
+  }
+
+  // PRP-012: GET /capacitacoes/totalizacao — total de horas por participante/ano
+  if (entityPath === 'capacitacoes' && segments[1] === 'totalizacao' && req.method === 'GET') {
+    const totalHoras = store.data.reduce((sum: number, c: any) => sum + (c.cargaHoraria || 0), 0);
+    return json({ totalHoras });
+  }
+
+  // PRP-012: GET /capacitacoes/alerta-meta — alerta de meta 40h
+  if (entityPath === 'capacitacoes' && segments[1] === 'alerta-meta' && req.method === 'GET') {
+    const totalHoras = store.data.reduce((sum: number, c: any) => sum + (c.cargaHoraria || 0), 0);
+    const meta = 40;
+    const faltam = Math.max(0, meta - totalHoras);
+    return json({ totalHoras, meta, faltam, dentroDaMeta: faltam <= 0 });
   }
 
   // Special: /etica/{entidadeTipo}/{entidadeId}/classificacao

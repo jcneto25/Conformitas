@@ -462,7 +462,7 @@
     {
       "session_id": "2026-07-02-006",
       "file": "2026-07-02-006.md",
-      "status": "in_progress",
+      "status": "completed",
       "llc_step": 11.0,
       "tags": [
         "prp-010",
@@ -470,7 +470,8 @@
         "wave-2",
         "hardening"
       ],
-      "timestamp": "2026-07-02T23:23:22.149031"
+      "timestamp": "2026-07-02T23:23:22.149031",
+      "completed_at": "2026-07-03T11:28:09.299678"
     },
     {
       "session_id": "2026-07-03-001",
