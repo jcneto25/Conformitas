@@ -20,6 +20,7 @@ import { ConsultoriasModule } from './consultorias/consultorias.module';
 import { QualidadeModule } from './qualidade/qualidade.module';
 import { RiscosModule } from './riscos/riscos.module';
 import { CapacitacoesModule } from './capacitacoes/capacitacoes.module';
+import { CompetenciasModule } from './competencias/competencias.module';
 import { EticaModule } from './etica/etica.module';
 import { GovernancaModule } from './governanca/governanca.module';
 import { BibliotecaModule } from './biblioteca/biblioteca.module';
@@ -56,6 +57,7 @@ import appConfig from './config/app.config';
     QualidadeModule,
     RiscosModule,
     CapacitacoesModule,
+    CompetenciasModule,
     EticaModule,
     GovernancaModule,
     BibliotecaModule,
