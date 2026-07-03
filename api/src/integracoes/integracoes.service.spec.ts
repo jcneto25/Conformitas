@@ -43,13 +43,44 @@ describe('IntegracoesService', () => {
   });
 
   describe('create', () => {
-    it('should create integracao', async () => {
+    it('should create integracao with healthStatus NAO_TESTADO', async () => {
       mockPrisma.integracao.findFirst.mockResolvedValue(null);
-      mockPrisma.integracao.create.mockResolvedValue({ id: 'new-id' });
+      mockPrisma.integracao.create.mockResolvedValue({ id: 'new-id', healthStatus: 'NAO_TESTADO' });
 
       const dto = { nome: 'Test', sistemaExterno: 'T', tipo: 'ENTRADA', protocolo: 'REST', status: 'EM_CONFIGURACAO' };
       const result = await service.create(dto as any);
       expect(result.id).toBe('new-id');
+    });
+
+    it('should throw ConflictException if nome exists', async () => {
+      mockPrisma.integracao.findFirst.mockResolvedValue({ id: '1' });
+      const dto = { nome: 'Exists', sistemaExterno: 'T', tipo: 'ENTRADA', protocolo: 'REST', status: 'EM_CONFIGURACAO' };
+      await expect(service.create(dto as any)).rejects.toThrow();
+    });
+  });
+
+  describe('findOne', () => {
+    it('should throw NotFoundException if integracao not found', async () => {
+      mockPrisma.integracao.findUnique.mockResolvedValue(null);
+      await expect(service.findOne('x')).rejects.toThrow();
+    });
+  });
+
+  describe('remove', () => {
+    it('should delete integracao', async () => {
+      mockPrisma.integracao.findUnique.mockResolvedValue({ id: '1' });
+      mockPrisma.integracao.delete.mockResolvedValue({ id: '1' });
+      const result = await service.remove('1');
+      expect(result).toEqual({ id: '1' });
+    });
+  });
+
+  describe('logs', () => {
+    it('should return last 50 logs for an integracao', async () => {
+      mockPrisma.integracao.findUnique.mockResolvedValue({ id: '1' });
+      mockPrisma.logIntegracao.findMany.mockResolvedValue([{ id: 'log-1' }, { id: 'log-2' }]);
+      const result = await service.logs('1');
+      expect(result).toHaveLength(2);
     });
   });
 });

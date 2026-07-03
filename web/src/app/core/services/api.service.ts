@@ -173,4 +173,41 @@ export class ApiService {
   atualizarIndicadorQualidade(id: string, data: any) {
     return firstValueFrom(this.http.put<any>(`${API}/qualidade/indicadores/${id}`, data));
   }
+
+  // ── Governança e Fraudes (PRP-013) ────────────
+  getDeterminacoesExternas(params?: { orgao?: string; status?: string }) {
+    return firstValueFrom(this.http.get<any[]>(`${API}/determinacoes-externas`, { params }));
+  }
+
+  getDeterminacaoExterna(id: string) {
+    return firstValueFrom(this.http.get<any>(`${API}/determinacoes-externas/${id}`));
+  }
+
+  criarDeterminacaoExterna(data: any) {
+    return firstValueFrom(this.http.post<any>(`${API}/determinacoes-externas`, data));
+  }
+
+  atualizarDeterminacaoExterna(id: string, data: any) {
+    return firstValueFrom(this.http.put<any>(`${API}/determinacoes-externas/${id}`, data));
+  }
+
+  concluirDeterminacaoExterna(id: string) {
+    return firstValueFrom(this.http.post<any>(`${API}/determinacoes-externas/${id}/concluir`, {}));
+  }
+
+  getRegistrosFraude(params?: { classificacao?: string }) {
+    return firstValueFrom(this.http.get<any[]>(`${API}/registros-fraude`, { params }));
+  }
+
+  getRegistroFraude(id: string) {
+    return firstValueFrom(this.http.get<any>(`${API}/registros-fraude/${id}`));
+  }
+
+  criarRegistroFraude(data: any) {
+    return firstValueFrom(this.http.post<any>(`${API}/registros-fraude`, data));
+  }
+
+  comunicarFraude(id: string, tipo: string) {
+    return firstValueFrom(this.http.post<any>(`${API}/registros-fraude/${id}/comunicar`, { tipo }));
+  }
 }

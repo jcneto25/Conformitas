@@ -6,6 +6,7 @@ import achadosData from '../../../../mocks/data/achados_relatorios_recomendacoes
 import eticaData from '../../../../mocks/data/etica_sigilo.json';
 import consultoriasData from '../../../../mocks/data/consultorias_qualidade_riscos.json';
 import configData from '../../../../mocks/data/perfis_configuracoes.json';
+import govData from '../../../../mocks/data/governanca_fraudes.json';
 
 const API = 'http://localhost:3001/api/v1';
 
@@ -45,6 +46,8 @@ register('avaliacoes_qualidade', consultoriasData);
 register('nao_conformidades', consultoriasData);
 register('perfis', configData);
 register('configuracoes_sistema', configData);
+register('determinacoes_externas', govData);
+register('registros_fraude', govData);
 
 const ENTITY_ROUTES: { path: string; entity: string }[] = [
   { path: 'universo', entity: 'universo_auditavel' },
@@ -72,6 +75,9 @@ const ENTITY_ROUTES: { path: string; entity: string }[] = [
   { path: 'qualidade/avaliacoes', entity: 'avaliacoes_qualidade' },
   { path: 'qualidade/nao-conformidades', entity: 'nao_conformidades' },
   { path: 'qualidade/indicadores', entity: 'avaliacoes_qualidade' },
+  // Rotas de governança (/determinacoes-externas, /registros-fraude)
+  { path: 'determinacoes-externas', entity: 'determinacoes_externas' },
+  { path: 'registros-fraude', entity: 'registros_fraude' },
 ];
 
 export const crudHandlers = ENTITY_ROUTES.flatMap(({ path, entity }) => {
@@ -110,6 +116,14 @@ export const crudHandlers = ENTITY_ROUTES.flatMap(({ path, entity }) => {
     }),
 
     http.patch(`${API}/${path}/:id`, async ({ params, request }) => {
+      const idx = store.data.findIndex((r: any) => r[store.idKey] === params['id']);
+      if (idx === -1) return HttpResponse.json({ message: 'Not found' }, { status: 404 });
+      const body = await request.json();
+      store.data[idx] = { ...store.data[idx], ...(body as any) };
+      return HttpResponse.json(store.data[idx]);
+    }),
+
+    http.put(`${API}/${path}/:id`, async ({ params, request }) => {
       const idx = store.data.findIndex((r: any) => r[store.idKey] === params['id']);
       if (idx === -1) return HttpResponse.json({ message: 'Not found' }, { status: 404 });
       const body = await request.json();
@@ -180,4 +194,37 @@ const qualidadeWorkflowHandlers = [
   }),
 ];
 
-export { qualidadeWorkflowHandlers };
+// Handlers específicos para endpoints de workflow de governança
+const governancaWorkflowHandlers = [
+  // POST /determinacoes-externas/:id/concluir
+  http.post(`${API}/determinacoes-externas/:id/concluir`, ({ params }) => {
+    const store = stores['determinacoes_externas'];
+    if (!store) return HttpResponse.json({ message: 'Store not found' }, { status: 500 });
+    const idx = store.data.findIndex((r: any) => r.id === params['id']);
+    if (idx === -1) return HttpResponse.json({ message: 'Not found' }, { status: 404 });
+    store.data[idx] = { ...store.data[idx], status: 'CONCLUIDA' };
+    return HttpResponse.json(store.data[idx]);
+  }),
+
+  // POST /registros-fraude/:id/comunicar
+  http.post(`${API}/registros-fraude/:id/comunicar`, async ({ params, request }) => {
+    const store = stores['registros_fraude'];
+    if (!store) return HttpResponse.json({ message: 'Store not found' }, { status: 500 });
+    const idx = store.data.findIndex((r: any) => r.id === params['id']);
+    if (idx === -1) return HttpResponse.json({ message: 'Not found' }, { status: 404 });
+    const body: any = await request.json();
+    const now = new Date().toISOString();
+    if (body.tipo === 'SUPERIOR') {
+      store.data[idx] = { ...store.data[idx], dataComunicacaoSuperior: now };
+    } else if (body.tipo === 'TCE') {
+      store.data[idx] = { ...store.data[idx], dataComunicacaoTce: now };
+    }
+    return HttpResponse.json(store.data[idx]);
+  }),
+
+  // PUT /determinacoes-externas/:id (genérico já trata, mas PUT precisa de handler explícito)
+  // O CRUD genérico já captura PUT via http.put — verificar se funciona
+  // Se o CRUD genérico não tem PUT, adicionar um handler para determinacoes-externas/:id
+];
+
+export { qualidadeWorkflowHandlers, governancaWorkflowHandlers };

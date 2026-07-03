@@ -264,6 +264,7 @@ model Auditoria {
   relatorios     RelatorioAuditoria[]
 
   notificacoes   Notificacao[]
+  registrosFraude RegistroFraude[]
 
   @@map("auditorias")
 }
@@ -656,6 +657,8 @@ model RegistroFraude {
   dataComunicacaoSuperior DateTime? @map("data_comunicacao_superior")
   dataComunicacaoTce      DateTime? @map("data_comunicacao_tce")
   createdAt               DateTime  @default(now()) @map("created_at")
+
+  auditoria Auditoria? @relation(fields: [auditoriaId], references: [id])
 
   @@map("registros_fraude")
 }

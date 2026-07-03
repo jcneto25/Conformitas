@@ -98,6 +98,19 @@ export const routes: Routes = [
         canActivate: [rolesGuard(['P01', 'P03', 'P04'])],
       },
       {
+        path: 'governanca',
+        loadComponent: () =>
+          import('./features/governanca/determinacao-list.component').then((m) => m.DeterminacaoListComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+      },
+      {
+        path: 'governanca/novo',
+        loadComponent: () =>
+          import('./features/governanca/determinacao-form.component').then((m) => m.DeterminacaoFormComponent),
+        canActivate: [rolesGuard(['P01'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
         path: 'configuracoes',
         loadComponent: () =>
           import('./features/config/configuracao-list.component').then((m) => m.ConfiguracaoListComponent),

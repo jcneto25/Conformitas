@@ -4,7 +4,6 @@ import { DashboardsService } from './dashboards.service';
 
 describe('DashboardsController', () => {
   let controller: DashboardsController;
-  let service: DashboardsService;
 
   const mockService = {
     dashboardPaa: jest.fn(),
@@ -21,7 +20,7 @@ describe('DashboardsController', () => {
     }).compile();
 
     controller = module.get<DashboardsController>(DashboardsController);
-    service = module.get(DashboardsService);
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -59,6 +58,29 @@ describe('DashboardsController', () => {
       mockService.dashboardQualidade.mockResolvedValue({ totalAvaliacoes: 3 });
       const result = await controller.dashboardQualidade({});
       expect(result.totalAvaliacoes).toBe(3);
+    });
+  });
+
+  describe('health', () => {
+    it('should return ok status with pdf and xlsx availability', () => {
+      const result = controller.health();
+      expect(result).toHaveProperty('status', 'ok');
+      expect(result).toHaveProperty('pdfDisponivel');
+      expect(result).toHaveProperty('xlsxDisponivel');
+      expect(result).toHaveProperty('timestamp');
+    });
+  });
+
+  describe('export', () => {
+    it('should call exportSummary with correct tipo and formato', async () => {
+      const mockRes = { setHeader: jest.fn(), send: jest.fn(), json: jest.fn() };
+      mockService.exportSummary.mockResolvedValue({
+        tipo: 'paa', formato: 'PDF', dados: { totalPlanos: 5 },
+        geradoEm: '2026-01-01', filtros: {},
+      });
+
+      await controller.export('paa', 'PDF' as any, {} as any, mockRes as any);
+      expect(mockService.exportSummary).toHaveBeenCalledWith('paa', 'PDF', {});
     });
   });
 });
