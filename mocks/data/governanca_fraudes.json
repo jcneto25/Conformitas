@@ -1,0 +1,40 @@
+{
+  "determinacoes_externas": [
+    {
+      "id": "det-001",
+      "orgao": "TCE",
+      "numero": "045/2026",
+      "descricao": "Determinação para implementar controle interno sobre folha de pagamento de inativos",
+      "data_recebimento": "2026-03-15T10:00:00Z",
+      "prazo_resposta": "2026-08-15",
+      "status": "PENDENTE"
+    },
+    {
+      "id": "det-002",
+      "orgao": "CNJ",
+      "numero": "127/2025",
+      "descricao": "Recomendação para adoção de plano de integridade na gestão de contratos",
+      "data_recebimento": "2025-11-01T08:00:00Z",
+      "prazo_resposta": "2026-04-01",
+      "status": "CONCLUIDA"
+    }
+  ],
+  "registros_fraude": [
+    {
+      "id": "fra-001",
+      "auditoria_id": null,
+      "descricao": "Denúncia anônima de possível superfaturamento em contrato de limpeza",
+      "classificacao": "SUSPEITA",
+      "data_comunicacao_superior": null,
+      "data_comunicacao_tce": null
+    },
+    {
+      "id": "fra-002",
+      "auditoria_id": "mock-aud-001",
+      "descricao": "Indício de conflito de interesses em processo de dispensa de licitação",
+      "classificacao": "SUSPEITA",
+      "data_comunicacao_superior": "2026-05-01T14:00:00Z",
+      "data_comunicacao_tce": null
+    }
+  ]
+}

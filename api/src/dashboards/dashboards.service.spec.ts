@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { BadRequestException } from '@nestjs/common';
 import { DashboardsService } from './dashboards.service';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -35,6 +36,15 @@ describe('DashboardsService', () => {
       expect(result).toHaveProperty('totalPlanos');
       expect(result).toHaveProperty('planejamentoPercentual');
     });
+
+    it('should filter auditorias by periodoInicio e periodoFim', async () => {
+      mockPrisma.planoAuditoria.findMany.mockResolvedValue([]);
+      mockPrisma.auditoria.findMany.mockResolvedValue([]);
+
+      await service.dashboardPaa({ periodoInicio: '2026-01-01', periodoFim: '2026-12-31' });
+      const callArgs = mockPrisma.auditoria.findMany.mock.calls[0][0];
+      expect(callArgs.where.dataFimReal).toBeDefined();
+    });
   });
 
   describe('dashboardExecucao', () => {
@@ -49,6 +59,13 @@ describe('DashboardsService', () => {
       expect(result.porStatus).toHaveProperty('EM_EXECUCAO');
       expect(result.porStatus).toHaveProperty('CONCLUIDA');
     });
+
+    it('should filter by unidade', async () => {
+      mockPrisma.auditoria.findMany.mockResolvedValue([]);
+      await service.dashboardExecucao({ unidade: 'U1' });
+      const callArgs = mockPrisma.auditoria.findMany.mock.calls[0][0];
+      expect(callArgs.where.unidadeAuditada).toBe('U1');
+    });
   });
 
   describe('dashboardRecomendacoes', () => {
@@ -62,6 +79,15 @@ describe('DashboardsService', () => {
       expect(result.total).toBe(2);
       expect(result.vencidas).toBe(1);
     });
+
+    it('should count vencidas only when not CUMPRIDA and prazo passed', async () => {
+      mockPrisma.recomendacao.findMany.mockResolvedValue([
+        { status: 'CUMPRIDA', criticidade: 'ALTA', prazo: new Date(Date.now() - 86400000) },
+      ]);
+
+      const result = await service.dashboardRecomendacoes({});
+      expect(result.vencidas).toBe(0);
+    });
   });
 
   describe('dashboardQualidade', () => {
@@ -72,6 +98,33 @@ describe('DashboardsService', () => {
       const result = await service.dashboardQualidade({});
       expect(result).toHaveProperty('totalAvaliacoes');
       expect(result).toHaveProperty('indicadores');
+    });
+
+    it('should calculate mediaNota from concluded avaliacoes', async () => {
+      mockPrisma.avaliacaoQualidade.findMany.mockResolvedValue([
+        { status: 'CONCLUIDA', nota: 8, naoConformidades: [] },
+        { status: 'CONCLUIDA', nota: 6, naoConformidades: [] },
+      ]);
+      mockPrisma.indicadorQualidade.findMany.mockResolvedValue([]);
+
+      const result = await service.dashboardQualidade({});
+      expect(result.mediaNota).toBe(7);
+    });
+  });
+
+  describe('exportSummary', () => {
+    it('should return structured data for paa', async () => {
+      mockPrisma.planoAuditoria.findMany.mockResolvedValue([]);
+      mockPrisma.auditoria.findMany.mockResolvedValue([]);
+
+      const result = await service.exportSummary('paa', 'XLSX', { ano: 2026 });
+      expect(result).toHaveProperty('tipo', 'paa');
+      expect(result).toHaveProperty('formato', 'XLSX');
+      expect(result).toHaveProperty('dados');
+    });
+
+    it('should throw BadRequestException for invalid tipo', async () => {
+      await expect(service.exportSummary('invalido', 'PDF', {})).rejects.toThrow(BadRequestException);
     });
   });
 });

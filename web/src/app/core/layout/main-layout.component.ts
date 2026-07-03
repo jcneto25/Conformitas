@@ -196,6 +196,7 @@ export class MainLayoutComponent {
     { label: 'Matriz Priorização', icon: 'priority_high', route: '/matriz-priorizacao' },
     { label: 'Perfis', icon: 'admin_panel_settings', route: '/perfis', roles: ['P10'] },
     { label: 'Mandatos', icon: 'gavel', route: '/mandatos', roles: ['P01', 'P03', 'P04'] },
+    { label: 'Governança/PQAUD', icon: 'account_balance', route: '/governanca', roles: ['P01', 'P02'] },
     { label: 'Integrações', icon: 'link', route: '/integracoes', roles: ['P01', 'P10'] },
     { label: 'Ações Coordenadas', icon: 'handshake', route: '/acoes-coordenadas', roles: ['P01', 'P08'] },
     { label: 'Configurações', icon: 'settings', route: '/configuracoes', roles: ['P10'] },

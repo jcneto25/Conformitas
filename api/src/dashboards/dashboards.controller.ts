@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Query, Res, ParseUUIDPipe, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Param, Query, Res, HttpCode } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { Response } from 'express';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -14,6 +14,28 @@ const PDF_KIT_AVAILABLE = (() => {
     return false;
   }
 })();
+
+const XLSX_AVAILABLE = (() => {
+  try {
+    require.resolve('xlsx');
+    return true;
+  } catch {
+    return false;
+  }
+})();
+
+function flattenForXlsx(obj: any, prefix = ''): Record<string, any> {
+  const result: Record<string, any> = {};
+  for (const [key, val] of Object.entries(obj)) {
+    const fullKey = prefix ? `${prefix}.${key}` : key;
+    if (val !== null && typeof val === 'object' && !Array.isArray(val)) {
+      Object.assign(result, flattenForXlsx(val, fullKey));
+    } else {
+      result[fullKey] = Array.isArray(val) ? JSON.stringify(val) : val;
+    }
+  }
+  return result;
+}
 
 @ApiTags('dashboards')
 @Controller('dashboards')
@@ -80,8 +102,19 @@ export class DashboardsController {
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="dashboard-${tipo}.pdf"`);
       res.send(pdf);
+    } else if (formato === 'XLSX' && XLSX_AVAILABLE) {
+      const XLSX = require('xlsx');
+      const flatData = flattenForXlsx(summary.dados);
+      const rows = [Object.keys(flatData), Object.values(flatData).map((v) => v ?? '')];
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [{ wch: 30 }, { wch: 50 }];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, `Dashboard ${tipo.toUpperCase()}`);
+      const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="dashboard-${tipo}.xlsx"`);
+      res.send(buf);
     } else {
-      // Sem PDFKit — retorna JSON formatado para fallback
       res.setHeader('Content-Type', 'application/json');
       res.setHeader('Content-Disposition', `attachment; filename="dashboard-${tipo}.json"`);
       res.json(summary);
@@ -95,6 +128,7 @@ export class DashboardsController {
     return {
       status: 'ok',
       pdfDisponivel: PDF_KIT_AVAILABLE,
+      xlsxDisponivel: XLSX_AVAILABLE,
       timestamp: new Date().toISOString(),
     };
   }
