@@ -47,18 +47,20 @@ describe('RecomendacoesController', () => {
   });
 
   describe('GET /recomendacoes', () => {
-    it('deve repassar filtros', async () => {
+    it('deve repassar filtros com unidadeEscopo', async () => {
+      const mockReq = { user: { sub: 'user-p05', roles: ['P05'], unidadeEscopo: 'SECRETARIA-X' } };
       service.findAll.mockResolvedValue([{ id: 'rec-1' }]);
-      await controller.findAll({ status: 'VENCIDA' });
-      expect(service.findAll).toHaveBeenCalledWith({ status: 'VENCIDA' });
+      await controller.findAll({ status: 'VENCIDA' }, mockReq as any);
+      expect(service.findAll).toHaveBeenCalledWith({ status: 'VENCIDA' }, 'SECRETARIA-X');
     });
   });
 
   describe('GET /recomendacoes/:id', () => {
-    it('deve delegar findOne', async () => {
+    it('deve delegar findOne com escopo', async () => {
+      const mockReq = { user: { sub: 'user-p05', roles: ['P05'], unidadeEscopo: 'SECRETARIA-X' } };
       service.findOne.mockResolvedValue({ id: 'rec-1' });
-      await controller.findOne('rec-1');
-      expect(service.findOne).toHaveBeenCalledWith('rec-1');
+      await controller.findOne('rec-1', mockReq as any);
+      expect(service.findOne).toHaveBeenCalledWith('rec-1', 'SECRETARIA-X');
     });
   });
 

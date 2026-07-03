@@ -55,31 +55,39 @@ export class RecomendacoesService {
 
   // ── Consultas ──────────────────────────────────
 
-  async findAll(params?: FindRecomendacoesParams) {
+  async findAll(params?: FindRecomendacoesParams, unidadeEscopo?: string | null) {
     const where: any = {};
     if (params?.status) where.status = params.status;
     if (params?.criticidade) where.criticidade = params.criticidade;
     if (params?.auditoriaId) where.relatorio = { auditoriaId: params.auditoriaId };
+    if (unidadeEscopo) {
+      where.relatorio = { ...where.relatorio, auditoria: { unidadeAuditada: unidadeEscopo } };
+    }
 
     return this.prisma.recomendacao.findMany({
       where,
       orderBy: { createdAt: 'desc' },
       include: {
         providencias: { orderBy: { data: 'asc' } },
-        relatorio: { select: { id: true, tipo: true, auditoria: { select: { id: true, numero: true } } } },
+        relatorio: { select: { id: true, tipo: true, auditoria: { select: { id: true, numero: true, unidadeAuditada: true } } } },
       },
     });
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, unidadeEscopo?: string | null) {
     const rec = await this.prisma.recomendacao.findUnique({
       where: { id },
       include: {
         providencias: { orderBy: { data: 'asc' } },
-        relatorio: { select: { id: true, tipo: true } },
+        relatorio: { select: { id: true, tipo: true, auditoria: { select: { unidadeAuditada: true } } } },
       },
     });
     if (!rec) throw new NotFoundException('Recomendação não encontrada');
+
+    if (unidadeEscopo && rec.relatorio?.auditoria?.unidadeAuditada !== unidadeEscopo) {
+      throw new NotFoundException('Recomendação não encontrada');
+    }
+
     return rec;
   }
 

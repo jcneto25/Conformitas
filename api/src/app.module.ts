@@ -7,6 +7,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthGuard } from './common/guards/auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
+import { ClassificacaoGuard } from './common/guards/classificacao.guard';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { PerfisModule } from './perfis/perfis.module';
 import { UniversoModule } from './universo/universo.module';
@@ -71,6 +72,7 @@ import appConfig from './config/app.config';
     { provide: APP_GUARD, useClass: ThrottlerGuard },
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
+    { provide: APP_GUARD, useClass: ClassificacaoGuard },
   ],
 })
 export class AppModule {}

@@ -10,6 +10,7 @@ import { CriarEvidenciaDto } from './dto/criar-evidencia.dto';
 import { CriarPapelTrabalhoDto } from './dto/criar-papel-trabalho.dto';
 import { CriarRequisicaoDto } from './dto/criar-requisicao.dto';
 import { Roles } from '../common/decorators/roles.decorator';
+import { ExigeClassificacao } from '../common/decorators/classificacao.decorator';
 
 interface RequestWithUser extends Request {
   user: { sub: string; email: string; roles: string[]; unidadeEscopo?: string | null };
@@ -42,6 +43,7 @@ export class AuditoriasController {
 
   @Get('auditorias/:id')
   @Roles('P01', 'P02', 'P10')
+  @ExigeClassificacao({ entidadeTipo: 'auditoria', entidadeIdParam: 'id' })
   @ApiOperation({ summary: 'Obter auditoria por ID' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.service.findOne(id);
@@ -123,6 +125,7 @@ export class AuditoriasController {
 
   @Get('auditorias/:id/evidencias')
   @Roles('P01', 'P02', 'P10')
+  @ExigeClassificacao({ entidadeTipo: 'auditoria', entidadeIdParam: 'id' })
   @ApiOperation({ summary: 'Listar evidências da auditoria' })
   listarEvidencias(@Param('id', ParseUUIDPipe) id: string) {
     return this.service.listarEvidencias(id);
