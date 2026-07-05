@@ -30,7 +30,7 @@ import { ToastService } from '../../core/services/toast.service';
   ],
   template: `
     <app-page-header title="Planos de Auditoria">
-      <a mat-raised-button color="primary" routerLink="/planos/novo" *appHasRole="'P01'">
+      <a mat-raised-button color="primary" routerLink="/planos/novo" *appHasRole="'P01'" actions>
         <mat-icon>add</mat-icon> Novo Plano
       </a>
     </app-page-header>

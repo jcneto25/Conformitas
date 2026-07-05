@@ -35,13 +35,87 @@ html, body {
    Tailwind CSS & Angular Material 19 (M3) Shield Overrides
    ───────────────────────────────────────────────────────────────────────── */
 
-/* 1. Fix: Tailwind preflight resets border style on Material components outline notch */
+/* 1. Fix: Tailwind preflight resets border on Material components outline */
 .mdc-notched-outline,
 .mdc-notched-outline *,
 .mdc-notched-outline *::before,
 .mdc-notched-outline *::after {
   border-style: solid !important;
   box-sizing: border-box !important;
+}
+
+/* 1a. Fix: Material outlined form-field borders stripped by Tailwind preflight.
+ * MDC renders the outline via three sibling divs (leading/notch/trailing).
+ * Tailwind's *{border-width:0} nullifies these. We restore them explicitly. */
+.mdc-notched-outline__leading {
+  border-top-width: var(--mdc-outlined-text-field-outline-width, 1px) !important;
+  border-bottom-width: var(--mdc-outlined-text-field-outline-width, 1px) !important;
+  border-left-width: var(--mdc-outlined-text-field-outline-width, 1px) !important;
+  border-right-width: 0 !important;
+  border-style: solid !important;
+  border-right-style: none !important;
+}
+.mdc-notched-outline__notch {
+  border-bottom-width: var(--mdc-outlined-text-field-outline-width, 1px) !important;
+  border-left-width: 0 !important;
+  border-right-width: 0 !important;
+  border-style: solid !important;
+  border-left-style: none !important;
+  border-right-style: none !important;
+}
+.mdc-notched-outline__trailing {
+  border-top-width: var(--mdc-outlined-text-field-outline-width, 1px) !important;
+  border-bottom-width: var(--mdc-outlined-text-field-outline-width, 1px) !important;
+  border-right-width: var(--mdc-outlined-text-field-outline-width, 1px) !important;
+  border-left-width: 0 !important;
+  border-style: solid !important;
+  border-left-style: none !important;
+}
+
+/* Focus state: thicker border */
+.mdc-text-field--focused {
+  .mdc-notched-outline__leading {
+    border-top-width: var(--mdc-outlined-text-field-focus-outline-width, 2px) !important;
+    border-bottom-width: var(--mdc-outlined-text-field-focus-outline-width, 2px) !important;
+    border-left-width: var(--mdc-outlined-text-field-focus-outline-width, 2px) !important;
+  }
+  .mdc-notched-outline__notch {
+    border-bottom-width: var(--mdc-outlined-text-field-focus-outline-width, 2px) !important;
+  }
+  .mdc-notched-outline__trailing {
+    border-top-width: var(--mdc-outlined-text-field-focus-outline-width, 2px) !important;
+    border-bottom-width: var(--mdc-outlined-text-field-focus-outline-width, 2px) !important;
+    border-right-width: var(--mdc-outlined-text-field-focus-outline-width, 2px) !important;
+  }
+}
+
+/* Border colors via CSS custom properties */
+.mdc-notched-outline__leading,
+.mdc-notched-outline__notch,
+.mdc-notched-outline__trailing {
+  border-top-color: var(--mdc-outlined-text-field-outline-color, #c4c6d0);
+  border-bottom-color: var(--mdc-outlined-text-field-outline-color, #c4c6d0);
+}
+.mdc-notched-outline__leading {
+  border-left-color: var(--mdc-outlined-text-field-outline-color, #c4c6d0);
+}
+.mdc-notched-outline__trailing {
+  border-right-color: var(--mdc-outlined-text-field-outline-color, #c4c6d0);
+}
+
+.mdc-text-field--focused {
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-top-color: var(--mdc-outlined-text-field-focus-outline-color, #1a3a5c);
+    border-bottom-color: var(--mdc-outlined-text-field-focus-outline-color, #1a3a5c);
+  }
+  .mdc-notched-outline__leading {
+    border-left-color: var(--mdc-outlined-text-field-focus-outline-color, #1a3a5c);
+  }
+  .mdc-notched-outline__trailing {
+    border-right-color: var(--mdc-outlined-text-field-focus-outline-color, #1a3a5c);
+  }
 }
 
 /* 2. Fix: Prevent Tailwind SVG reset from hiding or displacing select arrows */
@@ -57,7 +131,7 @@ html, body {
   display: inline-block !important;
 }
 
-/* 4. Fix: Ensure outlined form field containers don't clip the notch notch label */
+/* 4. Fix: Ensure outlined form field containers don't clip the notch label */
 .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mdc-notched-outline--notched .mdc-floating-label {
   z-index: 2;
 }
@@ -65,6 +139,11 @@ html, body {
 /* 5. Fix: Prevent mat-form-field from collapsing in flex layouts */
 mat-form-field.mat-form-field {
   flex-shrink: 0;
+}
+
+/* 5a. Fix: Minimum height on select trigger so it doesn't collapse */
+.mat-mdc-select-trigger {
+  min-height: 1.5rem;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────

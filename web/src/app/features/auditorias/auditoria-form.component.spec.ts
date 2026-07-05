@@ -1,0 +1,32 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs';
+import { AuditoriaFormComponent } from './auditoria-form.component';
+
+describe('AuditoriaFormComponent', () => {
+  let fixture: ComponentFixture<AuditoriaFormComponent>;
+  let httpSpy: jasmine.SpyObj<HttpClient>;
+
+  beforeEach(async () => {
+    httpSpy = jasmine.createSpyObj('HttpClient', ['get', 'post']);
+    httpSpy.get.and.returnValue(of([]));
+
+    await TestBed.configureTestingModule({
+      imports: [AuditoriaFormComponent, FormsModule, NoopAnimationsModule],
+      providers: [
+        provideHttpClient(),
+        provideRouter([]),
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(AuditoriaFormComponent);
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(fixture.componentInstance).toBeTruthy();
+  });
+});

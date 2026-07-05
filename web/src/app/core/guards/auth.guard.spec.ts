@@ -11,11 +11,12 @@ describe('authGuard', () => {
   let routerSpy: jasmine.SpyObj<Router>;
 
   beforeEach(() => {
-    authSpy = jasmine.createSpyObj('AuthService', ['loadProfile'], {
-      isAuthenticated: jasmine.createSpy(),
-    });
+    authSpy = jasmine.createSpyObj<AuthService>(
+      'AuthService',
+      ['isAuthenticated'],
+      { ready: Promise.resolve() },
+    );
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-    localStorage.clear();
 
     TestBed.configureTestingModule({
       providers: [
@@ -25,28 +26,58 @@ describe('authGuard', () => {
     });
   });
 
-  it('should allow when authenticated', () => {
-    (authSpy.isAuthenticated as jasmine.Spy).and.returnValue(true);
-    TestBed.runInInjectionContext(() => {
-      expect(authGuard(mockRoute, mockState)).toBeTrue();
-    });
+  it('should allow when authenticated', async () => {
+    authSpy.isAuthenticated.and.returnValue(true);
+
+    const result = await TestBed.runInInjectionContext(() =>
+      authGuard(mockRoute, mockState),
+    );
+
+    expect(result).toBeTrue();
+    expect(routerSpy.navigate).not.toHaveBeenCalled();
   });
 
-  it('should allow when token exists but not yet loaded', () => {
-    (authSpy.isAuthenticated as jasmine.Spy).and.returnValue(false);
-    localStorage.setItem('access_token', 'some-token');
-    TestBed.runInInjectionContext(() => {
-      expect(authGuard(mockRoute, mockState)).toBeTrue();
-    });
-    expect(authSpy.loadProfile).toHaveBeenCalled();
-  });
+  it('should redirect to /login when not authenticated', async () => {
+    authSpy.isAuthenticated.and.returnValue(false);
 
-  it('should redirect to login when not authenticated and no token', () => {
-    (authSpy.isAuthenticated as jasmine.Spy).and.returnValue(false);
-    TestBed.runInInjectionContext(() => {
-      expect(authGuard(mockRoute, mockState)).toBeFalse();
-    });
+    const result = await TestBed.runInInjectionContext(() =>
+      authGuard(mockRoute, mockState),
+    );
+
+    expect(result).toBeFalse();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
+  });
+
+  it('should await ready before checking authentication', async () => {
+    let readyResolved = false;
+    authSpy = jasmine.createSpyObj<AuthService>(
+      'AuthService',
+      ['isAuthenticated'],
+      {
+        ready: new Promise<void>((resolve) => {
+          setTimeout(() => {
+            readyResolved = true;
+            resolve();
+          }, 10);
+        }),
+      },
+    );
+    authSpy.isAuthenticated.and.returnValue(true);
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: AuthService, useValue: authSpy },
+        { provide: Router, useValue: routerSpy },
+      ],
+    });
+
+    const result = await TestBed.runInInjectionContext(() =>
+      authGuard(mockRoute, mockState),
+    );
+
+    expect(readyResolved).toBeTrue();
+    expect(result).toBeTrue();
   });
 });
 
@@ -55,9 +86,11 @@ describe('rolesGuard', () => {
   let routerSpy: jasmine.SpyObj<Router>;
 
   beforeEach(() => {
-    authSpy = jasmine.createSpyObj('AuthService', ['hasAnyRole'], {
-      isAuthenticated: jasmine.createSpy(),
-    });
+    authSpy = jasmine.createSpyObj<AuthService>(
+      'AuthService',
+      ['isAuthenticated', 'hasAnyRole'],
+      { ready: Promise.resolve() },
+    );
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     TestBed.configureTestingModule({
@@ -68,35 +101,53 @@ describe('rolesGuard', () => {
     });
   });
 
-  it('should allow when authenticated and has required role', () => {
-    (authSpy.isAuthenticated as jasmine.Spy).and.returnValue(true);
-    (authSpy.hasAnyRole as jasmine.Spy).and.returnValue(true);
+  it('should allow when authenticated and has required role', async () => {
+    authSpy.isAuthenticated.and.returnValue(true);
+    authSpy.hasAnyRole.and.returnValue(true);
 
     const guard = rolesGuard(['P10']);
-    TestBed.runInInjectionContext(() => {
-      expect(guard(mockRoute, mockState)).toBeTrue();
-    });
+    const result = await TestBed.runInInjectionContext(() =>
+      guard(mockRoute, mockState),
+    );
+
+    expect(result).toBeTrue();
     expect(authSpy.hasAnyRole).toHaveBeenCalledWith(['P10']);
   });
 
-  it('should redirect to / when authenticated but lacks role', () => {
-    (authSpy.isAuthenticated as jasmine.Spy).and.returnValue(true);
-    (authSpy.hasAnyRole as jasmine.Spy).and.returnValue(false);
+  it('should redirect to / when authenticated but lacks role', async () => {
+    authSpy.isAuthenticated.and.returnValue(true);
+    authSpy.hasAnyRole.and.returnValue(false);
 
     const guard = rolesGuard(['P10']);
-    TestBed.runInInjectionContext(() => {
-      expect(guard(mockRoute, mockState)).toBeFalse();
-    });
+    const result = await TestBed.runInInjectionContext(() =>
+      guard(mockRoute, mockState),
+    );
+
+    expect(result).toBeFalse();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/']);
   });
 
-  it('should redirect to login when not authenticated', () => {
-    (authSpy.isAuthenticated as jasmine.Spy).and.returnValue(false);
+  it('should redirect to /login when not authenticated', async () => {
+    authSpy.isAuthenticated.and.returnValue(false);
 
     const guard = rolesGuard(['P10']);
-    TestBed.runInInjectionContext(() => {
-      expect(guard(mockRoute, mockState)).toBeFalse();
-    });
+    const result = await TestBed.runInInjectionContext(() =>
+      guard(mockRoute, mockState),
+    );
+
+    expect(result).toBeFalse();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
+  });
+
+  it('should await ready before checking roles', async () => {
+    authSpy.isAuthenticated.and.returnValue(true);
+    authSpy.hasAnyRole.and.returnValue(true);
+
+    const guard = rolesGuard(['P10']);
+    const result = await TestBed.runInInjectionContext(() =>
+      guard(mockRoute, mockState),
+    );
+
+    expect(result).toBeTrue();
   });
 });

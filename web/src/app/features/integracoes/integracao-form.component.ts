@@ -22,7 +22,7 @@ import { ValidationService } from '../../shared/services/validation.service';
   ],
   template: `
     <app-page-header [title]="editando ? 'Editar Integração' : 'Nova Integração'">
-      <button mat-stroked-button routerLink="/integracoes">
+      <button mat-stroked-button routerLink="/integracoes" actions>
         <mat-icon>arrow_back</mat-icon> Voltar
       </button>
     </app-page-header>

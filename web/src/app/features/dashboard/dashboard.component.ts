@@ -4,29 +4,31 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
 import { ApiService } from '../../core/services/api.service';
-import { PageHeaderComponent } from '../../shared/components/page-header.component';
-import { KpiCardComponent } from '../../shared/components/kpi-card.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     MatCardModule, MatProgressSpinnerModule, MatIconModule,
-    MatFormFieldModule, MatSelectModule, FormsModule,
-    BaseChartDirective, PageHeaderComponent, KpiCardComponent,
+    MatFormFieldModule, MatSelectModule, MatButtonModule,
+    FormsModule, RouterModule, BaseChartDirective,
   ],
   template: `
-    <app-page-header title="Dashboard" />
-
-    <div class="filter-bar gap-4 mb-6">
-      <mat-form-field appearance="outline" class="w-32">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+      <div>
+        <h2 class="text-[32px] leading-[40px] font-semibold text-text-main tracking-tight">Dashboard</h2>
+        <p class="text-sm text-text-sec mt-1">Vis&atilde;o geral do sistema de integridade</p>
+      </div>
+      <mat-form-field appearance="outline" class="w-full md:w-44">
         <mat-label>Ano</mat-label>
         <mat-select [(ngModel)]="ano" (selectionChange)="carregar()">
-          @for (a of [2024, 2025, 2026, 2027]; track a) {
+          @for (a of anos; track a) {
             <mat-option [value]="a">{{ a }}</mat-option>
           }
         </mat-select>
@@ -34,37 +36,132 @@ import { KpiCardComponent } from '../../shared/components/kpi-card.component';
     </div>
 
     @if (loading) {
-      <div class="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         @for (i of [1,2,3,4]; track i) {
-          <app-kpi-card label="..." value="" [loading]="true" />
+          <mat-card class="shadow-sm rounded-xl">
+            <mat-card-content class="p-6">
+              <div class="animate-pulse flex justify-between items-start">
+                <div class="space-y-3 flex-1">
+                  <div class="h-12 w-16 bg-gray-200 rounded"></div>
+                  <div class="h-4 w-3/4 bg-gray-200 rounded"></div>
+                </div>
+                <div class="h-10 w-10 bg-gray-200 rounded-lg"></div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        @for (i of [1,2]; track i) {
+          <mat-card class="shadow-sm rounded-xl">
+            <mat-card-content class="p-6">
+              <div class="animate-pulse">
+                <div class="h-6 w-48 bg-gray-200 rounded mb-6"></div>
+                <div class="h-72 bg-gray-200 rounded"></div>
+              </div>
+            </mat-card-content>
+          </mat-card>
         }
       </div>
     } @else {
-      <div class="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
-        <app-kpi-card label="Auditorias em Andamento (de {{ totalAuditorias }})" [value]="auditoriasEmExecucao" icon="fact_check" accent="primary" />
-        <app-kpi-card label="Achados Pendentes (de {{ totalAchados }})" [value]="achadosPendentes" icon="flag" accent="warning" />
-        <app-kpi-card label="Recomendações em Monitoramento (de {{ totalRecomendacoes }})" [value]="recomendacoesMonitoradas" icon="assignment_late" accent="info" />
-        <app-kpi-card label="PAA Vigente (de {{ totalPlanos }} planos)" [value]="planosPublicados" icon="description" accent="success" />
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <mat-card class="shadow-[0_2px_4px_rgba(0,0,0,0.04)] rounded-xl border border-divider hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)] transition-all duration-200 group">
+          <mat-card-content class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-[48px] leading-[56px] font-bold text-primary group-hover:scale-105 transition-transform duration-300">{{ auditoriasEmExecucao }}</span>
+              <div class="bg-primary/10 p-2 rounded-lg">
+                <mat-icon class="text-primary">assignment_turned_in</mat-icon>
+              </div>
+            </div>
+            <p class="text-xs font-semibold text-text-sec uppercase tracking-wider">Auditorias em Andamento (de {{ totalAuditorias }})</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="shadow-[0_2px_4px_rgba(0,0,0,0.04)] rounded-xl border border-divider hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)] transition-all duration-200 group">
+          <mat-card-content class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-[48px] leading-[56px] font-bold text-info group-hover:scale-105 transition-transform duration-300">{{ auditoriasConcluidas }}</span>
+              <div class="bg-green-100 p-2 rounded-lg">
+                <mat-icon class="text-success">check_circle</mat-icon>
+              </div>
+            </div>
+            <p class="text-xs font-semibold text-text-sec uppercase tracking-wider">Auditorias Conclu&iacute;das</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="shadow-[0_2px_4px_rgba(0,0,0,0.04)] rounded-xl border border-divider hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)] transition-all duration-200 group">
+          <mat-card-content class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-[48px] leading-[56px] font-bold text-blue-700 group-hover:scale-105 transition-transform duration-300">{{ recomendacoesMonitoradas }}</span>
+              <div class="bg-blue-100 p-2 rounded-lg">
+                <mat-icon class="text-blue-700">info</mat-icon>
+              </div>
+            </div>
+            <p class="text-xs font-semibold text-text-sec uppercase tracking-wider">Recomenda&ccedil;&otilde;es em Monitor. (de {{ totalRecomendacoes }})</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="shadow-[0_2px_4px_rgba(0,0,0,0.04)] rounded-xl border border-divider hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)] transition-all duration-200 group">
+          <mat-card-content class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-[48px] leading-[56px] font-bold text-critical group-hover:scale-105 transition-transform duration-300">{{ recomendacoesVencidas }}</span>
+              <div class="bg-critical-bg p-2 rounded-lg">
+                <mat-icon class="text-critical">report</mat-icon>
+              </div>
+            </div>
+            <p class="text-xs font-semibold text-text-sec uppercase tracking-wider">Recomenda&ccedil;&otilde;es Vencidas</p>
+          </mat-card-content>
+        </mat-card>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <mat-card class="shadow-sm rounded-xl">
-          <mat-card-header><mat-card-title>Auditorias por Status</mat-card-title></mat-card-header>
-          <mat-card-content class="p-4">
-            <div class="chart-container" style="position: relative; height: 250px;">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <mat-card class="shadow-[0_2px_4px_rgba(0,0,0,0.04)] rounded-xl border border-divider">
+          <div class="flex items-center justify-between px-6 pt-6">
+            <h3 class="text-xl font-medium text-text-main">Auditorias por Status</h3>
+            <button mat-icon-button class="!text-text-sec">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </div>
+          <mat-card-content class="p-6 pt-2">
+            <div class="chart-container" style="position: relative; height: 300px;">
               <canvas baseChart [data]="auditoriasBarData" [options]="barOptions" type="bar"></canvas>
             </div>
           </mat-card-content>
         </mat-card>
 
-        <mat-card class="shadow-sm rounded-xl">
-          <mat-card-header><mat-card-title>Recomendações por Status</mat-card-title></mat-card-header>
-          <mat-card-content class="p-4">
-            <div class="chart-container" style="position: relative; height: 250px;">
+        <mat-card class="shadow-[0_2px_4px_rgba(0,0,0,0.04)] rounded-xl border border-divider">
+          <div class="flex items-center justify-between px-6 pt-6">
+            <h3 class="text-xl font-medium text-text-main">Recomenda&ccedil;&otilde;es por Status</h3>
+            <button mat-icon-button class="!text-text-sec">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </div>
+          <mat-card-content class="p-6 pt-2">
+            <div class="chart-container" style="position: relative; height: 300px;">
               <canvas baseChart [data]="recomendacoesDoughnutData" [options]="doughnutOptions" type="doughnut"></canvas>
             </div>
           </mat-card-content>
         </mat-card>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-8 mt-6 border-t border-divider">
+        <button mat-stroked-button routerLink="/dashboard/execucao" class="!rounded-full !px-6">
+          <mat-icon class="!text-primary mr-1">play_circle</mat-icon>
+          Dashboard Execu&ccedil;&atilde;o
+        </button>
+        <button mat-stroked-button routerLink="/dashboard/recomendacoes" class="!rounded-full !px-6">
+          <mat-icon class="!text-primary mr-1">assignment_late</mat-icon>
+          Dashboard Recomenda&ccedil;&otilde;es
+        </button>
+        <button mat-stroked-button routerLink="/dashboard/paa" class="!rounded-full !px-6">
+          <mat-icon class="!text-primary mr-1">bar_chart</mat-icon>
+          Dashboard PAA
+        </button>
+        <button mat-stroked-button routerLink="/dashboard/qualidade" class="!rounded-full !px-6">
+          <mat-icon class="!text-primary mr-1">verified_user</mat-icon>
+          Dashboard Qualidade
+        </button>
       </div>
     }
   `,
@@ -72,14 +169,13 @@ import { KpiCardComponent } from '../../shared/components/kpi-card.component';
 export class DashboardComponent implements OnInit {
   loading = true;
   ano = 2026;
+  anos = [2024, 2025, 2026, 2027];
   auditoriasEmExecucao = 0;
+  auditoriasConcluidas = 0;
   totalAuditorias = 0;
-  achadosPendentes = 0;
-  totalAchados = 0;
   recomendacoesMonitoradas = 0;
+  recomendacoesVencidas = 0;
   totalRecomendacoes = 0;
-  planosPublicados = 0;
-  totalPlanos = 0;
 
   auditoriasBarData: ChartData<'bar'> = { labels: [], datasets: [] };
   recomendacoesDoughnutData: ChartData<'doughnut'> = { labels: [], datasets: [] };
@@ -88,13 +184,33 @@ export class DashboardComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
-    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: { stepSize: 1 },
+        grid: { color: '#eaecf0' },
+      },
+      x: {
+        grid: { display: false },
+      },
+    },
   };
 
   readonly doughnutOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { position: 'bottom' } },
+    cutout: '65%',
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          usePointStyle: true,
+          pointStyleWidth: 10,
+          padding: 16,
+          font: { size: 11 },
+        },
+      },
+    },
   };
 
   constructor(private readonly api: ApiService) {}
@@ -104,45 +220,40 @@ export class DashboardComponent implements OnInit {
   async carregar() {
     this.loading = true;
     try {
-      const [auditorias, achados, recomendacoes, planos] = await Promise.all([
-        this.api.getAuditorias().catch(() => [] as any[]),
-        this.api.getAchados().catch(() => [] as any[]),
-        this.api.getRecomendacoes().catch(() => [] as any[]),
-        this.api.getPlanos(),
+      const [execucao, recomendacoes] = await Promise.all([
+        this.api.getDashboardExecucao({}).catch(() => ({ total: 0, porStatus: {}, porTipo: {}, porUnidade: {} })),
+        this.api.getDashboardRecomendacoes({}).catch(() => ({ total: 0, porStatus: {}, porCriticidade: {}, vencidas: 0, noPrazo: 0 })),
       ]);
 
-      this.totalAuditorias = auditorias.length;
-      this.auditoriasEmExecucao = auditorias.filter((a) => a.status === 'EM_EXECUCAO').length;
+      this.totalAuditorias = execucao.total ?? 0;
+      this.auditoriasEmExecucao = execucao.porStatus?.EM_EXECUCAO ?? 0;
+      this.auditoriasConcluidas = execucao.porStatus?.CONCLUIDA ?? 0;
 
-      this.totalAchados = achados.length;
-      this.achadosPendentes = achados.filter(
-        (a) => a.status === 'PRELIMINAR' || a.status === 'EM_MANIFESTACAO',
-      ).length;
-
-      this.totalRecomendacoes = recomendacoes.length;
-      this.recomendacoesMonitoradas = recomendacoes.filter(
-        (r) => r.status === 'PENDENTE' || r.status === 'EM_ANDAMENTO',
-      ).length;
-
-      this.totalPlanos = planos.length;
-      this.planosPublicados = planos.filter((p) => p.status === 'PUBLICADO' || p.status === 'APROVADO').length;
-
-      const audStatusCount = this.countBy(auditorias, 'status');
+      const audStatusKeys = Object.keys(execucao.porStatus ?? {});
+      const audStatusValues = Object.values(execucao.porStatus ?? {}) as number[];
       this.auditoriasBarData = {
-        labels: Object.keys(audStatusCount),
+        labels: audStatusKeys,
         datasets: [{
-          data: Object.values(audStatusCount),
-          backgroundColor: ['#2563eb', '#16a34a', '#d97706', '#dc2626'],
-          borderRadius: 4,
+          data: audStatusValues,
+          backgroundColor: ['#316bf3', '#16a34a', '#d97706', '#dc2626'],
+          borderRadius: 6,
+          maxBarThickness: 120,
         }],
       };
 
-      const recStatusCount = this.countBy(recomendacoes, 'status');
+      this.totalRecomendacoes = recomendacoes.total ?? 0;
+      this.recomendacoesMonitoradas = (recomendacoes.porStatus?.PENDENTE ?? 0) + (recomendacoes.porStatus?.EM_ANDAMENTO ?? 0);
+      this.recomendacoesVencidas = recomendacoes.vencidas ?? 0;
+
+      const recStatusKeys = Object.keys(recomendacoes.porStatus ?? {});
+      const recStatusValues = Object.values(recomendacoes.porStatus ?? {}) as number[];
       this.recomendacoesDoughnutData = {
-        labels: Object.keys(recStatusCount),
+        labels: recStatusKeys,
         datasets: [{
-          data: Object.values(recStatusCount),
-          backgroundColor: ['#2563eb', '#16a34a', '#d97706', '#dc2626', '#c9a84c'],
+          data: recStatusValues,
+          backgroundColor: ['#2563eb', '#16a34a', '#d97706', '#dc2626', '#8b5cf6'],
+          borderWidth: 2,
+          borderColor: '#ffffff',
         }],
       };
     } catch {
@@ -150,13 +261,5 @@ export class DashboardComponent implements OnInit {
     } finally {
       this.loading = false;
     }
-  }
-
-  private countBy(arr: any[], key: string): Record<string, number> {
-    return arr.reduce((acc: Record<string, number>, item: any) => {
-      const k = item[key] ?? 'DESCONHECIDO';
-      acc[k] = (acc[k] ?? 0) + 1;
-      return acc;
-    }, {});
   }
 }
