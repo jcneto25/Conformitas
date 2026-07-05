@@ -15,8 +15,8 @@ export interface ManifestacaoOuvidoria {
 @Injectable()
 export class OuvidoriaConnector {
   // Configuração de acesso – em produção viria de variáveis de ambiente
-  private readonly baseUrl = process.env.OUVIDORIA_API_URL || 'https://ouvidoria.tjce.jus.br/api/v1';
-  private readonly apiKey = process.env.OUVIDORIA_API_KEY || '';
+  private readonly baseUrl = process.env['OUVIDORIA_API_URL'] || 'https://ouvidoria.tjce.jus.br/api/v1';
+  private readonly apiKey = process.env['OUVIDORIA_API_KEY'] || '';
 
   async buscarManifestacoes(filtros?: {
     dataInicio?: string;

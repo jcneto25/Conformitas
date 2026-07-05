@@ -26,7 +26,7 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../shared/componen
   ],
   template: `
     <app-page-header title="Ação Coordenada">
-      <button mat-stroked-button routerLink="/acoes-coordenadas">
+      <button mat-stroked-button routerLink="/acoes-coordenadas" actions>
         <mat-icon>arrow_back</mat-icon> Voltar
       </button>
     </app-page-header>

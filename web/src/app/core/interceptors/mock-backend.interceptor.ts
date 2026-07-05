@@ -13,6 +13,7 @@ import itensPlanoData from '../../../../../mocks/data/itens_plano.json';
 import forcaTrabalhoData from '../../../../../mocks/data/forca_trabalho.json';
 import acoesCoordenadasData from '../../../../../mocks/data/acoes_coordenadas.json';
 import integracoesData from '../../../../../mocks/data/integracoes.json';
+import governancaFraudesData from '../../../../../mocks/data/governanca_fraudes.json';
 
 const API = 'http://localhost:3001/api/v1';
 const users: any[] = (usersData as any).users;
@@ -69,12 +70,22 @@ register('itens_plano', itensPlanoData);
 register('forca_trabalho', forcaTrabalhoData);
 register('acoes_coordenadas', acoesCoordenadasData);
 register('integracoes', integracoesData);
+register('determinacoes_externas', governancaFraudesData);
+register('registros_fraude', governancaFraudesData);
 register('users', users);
+// Fix: configurações uses 'chave' as PK, not 'id'
+if (stores['configuracoes']) stores['configuracoes'].idKey = 'chave';
 // Junction table for profiles
 const usuariosPerfisData: any[] = [];
 stores['usuarios_perfis'] = { data: usuariosPerfisData, idKey: 'id' };
-// Relatórios anuais (criados em runtime)
-stores['relatorios_anuais'] = { data: [], idKey: 'id' };
+// Relatórios anuais — seeded with initial mock data
+stores['relatorios_anuais'] = {
+  data: [
+    { id: 'ra-001', ano: 2025, status: 'GERADO', conteudo: 'Relatório Anual de Atividades — Exercício 2025\n\nAuditorias: 3\nRecomendações: 8\nConsultorias: 1', autorId: 'mock-user-001', dataGeracao: '2026-01-15T10:00:00Z' },
+    { id: 'ra-002', ano: 2026, status: 'RASCUNHO', conteudo: '', autorId: 'mock-user-001', dataGeracao: null },
+  ],
+  idKey: 'id',
+};
 
 const ENTITY_ROUTES: [string, string][] = [
   ['universo', 'universo_auditavel'],
@@ -99,8 +110,10 @@ const ENTITY_ROUTES: [string, string][] = [
   ['itens-plano', 'itens_plano'],
   ['forca-trabalho', 'forca_trabalho'],
   ['perfis', 'perfis'],
-  ['configuracoes', 'configuracoes_sistema'],
+  ['configuracoes', 'configuracoes'],
   ['dashboards', 'auditorias'],
+  ['determinacoes-externas', 'determinacoes_externas'],
+  ['registros-fraude', 'registros_fraude'],
   ['usuarios', 'users'],
   ['usuarios-perfis', 'usuarios_perfis'],
   ['mandatos', 'mandatos'],
@@ -126,6 +139,8 @@ export const mockBackendInterceptor: HttpInterceptorFn = (
   const segments = path.split('/').filter(Boolean);
 
   if (url.includes('/auth/')) return handleAuth(req, segments);
+  const entityPath = segments[0];
+  if (entityPath === 'dashboards') return handleDashboards(req, segments);
   return handleCrud(req, segments);
 };
 
@@ -197,6 +212,107 @@ function handleAuth(req: HttpRequest<unknown>, segments: string[]): Observable<H
   }
 
   return json({ message: 'Not found' }, 404);
+}
+
+function handleDashboards(req: HttpRequest<unknown>, segments: string[]): Observable<HttpResponse<unknown>> {
+  const tipo = segments[1]; // 'paa', 'execucao', 'recomendacoes', 'qualidade', 'export', 'health'
+  const metodo = req.method;
+
+  const planosStore = stores['planos_auditoria'];
+  const auditoriasStore = stores['auditorias'];
+  const recomendacoesStore = stores['recomendacoes'];
+  const qualidadeStore = stores['avaliacoes_qualidade'];
+  const ncStore = stores['nao_conformidades'];
+
+  // Health
+  if (tipo === 'health' && metodo === 'GET') {
+    return json({ status: 'ok', pdfDisponivel: true, xlsxDisponivel: true, timestamp: new Date().toISOString() });
+  }
+
+  // Export: /dashboards/export/:tipo
+  if (tipo === 'export' && metodo === 'POST') {
+    const exportTipo = segments[2] || 'paa';
+    const dados = aggregateDashboard(exportTipo);
+    return json({ tipo: exportTipo, formato: 'PDF', geradoEm: new Date().toISOString(), dados });
+  }
+
+  if (metodo !== 'GET') return json({ message: 'Method not allowed' }, 405);
+
+  const data = aggregateDashboard(tipo);
+  return json(data);
+
+  function aggregateDashboard(t: string): any {
+    switch (t) {
+      case 'paa': {
+        const planos = planosStore?.data || [];
+        const planosAprovados = planos.filter((p: any) => p.status === 'APROVADO' || p.status === 'PUBLICADO').length;
+        const horasDisp = planos.reduce((s: number, p: any) => s + ((p.forcaTrabalho || []).reduce((a: number, f: any) => a + (f.horasDisponiveisAno || 0), 0)), 0);
+        const horasAloc = planos.reduce((s: number, p: any) => s + ((p.forcaTrabalho || []).reduce((a: number, f: any) => a + (f.horasAlocadasAuditoria || 0), 0)), 0);
+        const auditorias = auditoriasStore?.data || [];
+        const auditoriasConcluidas = auditorias.filter((a: any) => a.status === 'CONCLUIDA').length;
+        return {
+          totalPlanos: planos.length,
+          planosAprovados,
+          totalHorasDisponiveis: horasDisp,
+          totalHorasAlocadas: horasAloc,
+          auditoriasConcluidas,
+          planejamentoPercentual: horasDisp > 0 ? Math.round((horasAloc / horasDisp) * 100) : 0,
+        };
+      }
+      case 'execucao': {
+        const auditorias = auditoriasStore?.data || [];
+        const total = auditorias.length;
+        const porStatus: Record<string, number> = {};
+        const porTipo: Record<string, number> = {};
+        const porUnidade: Record<string, number> = {};
+        for (const a of auditorias) {
+          porStatus[a.status] = (porStatus[a.status] ?? 0) + 1;
+          porTipo[a.tipo] = (porTipo[a.tipo] ?? 0) + 1;
+          if (a.unidadeAuditada) porUnidade[a.unidadeAuditada] = (porUnidade[a.unidadeAuditada] ?? 0) + 1;
+        }
+        return { total, porStatus, porTipo, porUnidade };
+      }
+      case 'recomendacoes': {
+        const recs = recomendacoesStore?.data || [];
+        const total = recs.length;
+        const porStatus: Record<string, number> = {};
+        const porCriticidade: Record<string, number> = {};
+        let vencidas = 0;
+        const agora = new Date();
+        for (const r of recs) {
+          porStatus[r.status] = (porStatus[r.status] ?? 0) + 1;
+          porCriticidade[r.criticidade] = (porCriticidade[r.criticidade] ?? 0) + 1;
+          if (r.status !== 'CUMPRIDA' && r.prazo && new Date(r.prazo) < agora) vencidas++;
+        }
+        return { total, porStatus, porCriticidade, vencidas, noPrazo: total - vencidas };
+      }
+      case 'qualidade': {
+        const avals = qualidadeStore?.data || [];
+        const ncs = ncStore?.data || [];
+        const concluidas = avals.filter((a: any) => a.status === 'CONCLUIDA');
+        const notasValidas = concluidas.filter((a: any) => a.nota != null);
+        const mediaNota = notasValidas.length > 0
+          ? Math.round((notasValidas.reduce((acc: number, a: any) => acc + a.nota, 0) / notasValidas.length) * 100) / 100
+          : null;
+        const totalNc = avals.reduce((acc: number, a: any) => acc + (a.naoConformidades?.length || 0), 0);
+        const ncAbertas = ncs.filter((nc: any) => nc.status !== 'CORRIGIDA').length;
+        return {
+          totalAvaliacoes: avals.length,
+          avaliacoesConcluidas: concluidas.length,
+          mediaNota,
+          totalNaoConformidades: Math.max(totalNc, ncAbertas),
+          naoConformidadesAbertas: ncAbertas,
+          indicadores: [
+            { id: 'ind-001', nome: 'Eficácia das Recomendações', valor: '75%', meta: '80%' },
+            { id: 'ind-002', nome: 'Tempestividade das Auditorias', valor: '85%', meta: '90%' },
+            { id: 'ind-003', nome: 'Cobertura do PAA', valor: '92%', meta: '90%' },
+          ],
+        };
+      }
+      default:
+        return { total: 0 };
+    }
+  }
 }
 
 function handleCrud(req: HttpRequest<unknown>, segments: Array<string>): Observable<HttpResponse<unknown>> {

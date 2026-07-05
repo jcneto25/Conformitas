@@ -26,6 +26,16 @@ export const routes: Routes = [
           import('./features/dashboard/dashboard-recomendacoes.component').then((m) => m.DashboardRecomendacoesComponent),
       },
       {
+        path: 'dashboard/execucao',
+        loadComponent: () =>
+          import('./features/dashboard/dashboard-execucao.component').then((m) => m.DashboardExecucaoComponent),
+      },
+      {
+        path: 'dashboard/qualidade',
+        loadComponent: () =>
+          import('./features/dashboard/dashboard-qualidade.component').then((m) => m.DashboardQualidadeComponent),
+      },
+      {
         path: 'achados',
         loadComponent: () =>
           import('./features/achados/quadro-achados.component').then((m) => m.QuadroAchadosComponent),

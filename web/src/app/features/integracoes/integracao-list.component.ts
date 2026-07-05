@@ -59,7 +59,7 @@ const HEALTH_COLOR: Record<string, string> = {
         <mat-card class="shadow-sm rounded-xl">
           <mat-card-content>
             <app-empty-state icon="link_off" title="Nenhuma integração cadastrada" description="Cadastre integrações para conectar o sistema a outras plataformas.">
-              <button mat-raised-button color="primary" routerLink="/integracoes/novo">
+      <button mat-raised-button color="primary" routerLink="/integracoes/novo" actions>
                 Cadastrar Primeira Integração
               </button>
             </app-empty-state>

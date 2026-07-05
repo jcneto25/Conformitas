@@ -27,6 +27,8 @@ $theme: mat.define-theme((
   --mdc-text-button-hover-label-text-color: #2d5a8e;
 
   // ── Form Fields (outline) ──
+  --mdc-outlined-text-field-outline-width: 1px;
+  --mdc-outlined-text-field-focus-outline-width: 2px;
   --mdc-outlined-text-field-outline-color: #d0d5dd;
   --mdc-outlined-text-field-hover-outline-color: #2d5a8e;
   --mdc-outlined-text-field-focus-outline-color: #1a3a5c;

@@ -12,12 +12,12 @@
     { "id": "perfil-p10", "codigo": "P10", "nome": "Administrador do Sistema", "descricao": "Gestão técnica da plataforma, sem acesso a dados de auditoria", "permissoes": ["usuarios:*", "perfis:*", "configuracoes:*", "logs:*", "integracoes:*"], "nivelAcesso": "TECNICO" }
   ],
   "configuracoes": [
-    { "chave": "prazo_manifestacao_dias_uteis", "valor": "5", "descricao": "Prazo mínimo para manifestação da unidade auditada (CNJ 309 art. 54 §3º)" },
-    { "chave": "meta_horas_capacitacao_ano", "valor": "40", "descricao": "Meta anual de horas de capacitação por auditor (CNJ 309 art. 72)" },
-    { "chave": "periodo_palp_anos", "valor": "4", "descricao": "Período do PALP em anos" },
-    { "chave": "prazo_publicacao_dias_uteis", "valor": "15", "descricao": "Prazo para publicação de planos após aprovação" },
-    { "chave": "prazo_sessao_inatividade_min", "valor": "30", "descricao": "Minutos para expiração de sessão por inatividade" },
-    { "chave": "prazo_comunicacao_fraude_tce_dias", "valor": "60", "descricao": "Dias sem resposta para comunicação ao TCE" },
-    { "chave": "retencao_papeis_trabalho_anos", "valor": "10", "descricao": "Anos de retenção de papéis de trabalho" }
+    { "chave": "prazo_manifestacao_dias_uteis", "valor": "5", "descricao": "Prazo mínimo para manifestação da unidade auditada (CNJ 309 art. 54 §3º)", "editavel": true },
+    { "chave": "meta_horas_capacitacao_ano", "valor": "40", "descricao": "Meta anual de horas de capacitação por auditor (CNJ 309 art. 72)", "editavel": true },
+    { "chave": "periodo_palp_anos", "valor": "4", "descricao": "Período do PALP em anos", "editavel": true },
+    { "chave": "prazo_publicacao_dias_uteis", "valor": "15", "descricao": "Prazo para publicação de planos após aprovação", "editavel": true },
+    { "chave": "prazo_sessao_inatividade_min", "valor": "30", "descricao": "Minutos para expiração de sessão por inatividade", "editavel": true },
+    { "chave": "prazo_comunicacao_fraude_tce_dias", "valor": "60", "descricao": "Dias sem resposta para comunicação ao TCE", "editavel": true },
+    { "chave": "retencao_papeis_trabalho_anos", "valor": "10", "descricao": "Anos de retenção de papéis de trabalho", "editavel": false }
   ]
 }
