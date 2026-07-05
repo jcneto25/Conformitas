@@ -206,6 +206,10 @@ export class MainLayoutComponent {
     { label: 'Achados', icon: 'warning', route: '/achados', roles: ['P01', 'P02', 'P05'] },
     { label: 'Relatórios', icon: 'picture_as_pdf', route: '/relatorios', roles: ['P01', 'P02', 'P03', 'P06'] },
     { label: 'Relatório Anual', icon: 'insights', route: '/relatorios-anuais', roles: ['P01', 'P04'] },
+    { label: 'Riscos', icon: 'gpp_maybe', route: '/riscos', roles: ['P01', 'P02'] },
+    { label: 'Capacitações', icon: 'school', route: '/capacitacoes', roles: ['P01', 'P02'] },
+    { label: 'Biblioteca', icon: 'description', route: '/biblioteca', roles: ['P01', 'P02'] },
+    { label: 'Competências', icon: 'psychology', route: '/competencias', roles: ['P01', 'P02'] },
     { label: 'Usuários', icon: 'people', route: '/usuarios', roles: ['P10'] },
   ];
 

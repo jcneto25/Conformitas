@@ -265,6 +265,86 @@ export const routes: Routes = [
           import('./features/acoes-coordenadas/acao-coordenada-detail.component').then((m) => m.AcaoCoordenadaDetailComponent),
         canActivate: [rolesGuard(['P01', 'P08'])],
       },
+      {
+        path: 'riscos',
+        loadComponent: () =>
+          import('./features/riscos/risco-list.component').then((m) => m.RiscoListComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+      },
+      {
+        path: 'riscos/novo',
+        loadComponent: () =>
+          import('./features/riscos/risco-form.component').then((m) => m.RiscoFormComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
+        path: 'riscos/:id',
+        loadComponent: () =>
+          import('./features/riscos/risco-form.component').then((m) => m.RiscoFormComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
+        path: 'capacitacoes',
+        loadComponent: () =>
+          import('./features/capacitacoes/capacitacao-list.component').then((m) => m.CapacitacaoListComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+      },
+      {
+        path: 'capacitacoes/novo',
+        loadComponent: () =>
+          import('./features/capacitacoes/capacitacao-form.component').then((m) => m.CapacitacaoFormComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
+        path: 'capacitacoes/:id',
+        loadComponent: () =>
+          import('./features/capacitacoes/capacitacao-form.component').then((m) => m.CapacitacaoFormComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
+        path: 'biblioteca',
+        loadComponent: () =>
+          import('./features/biblioteca/biblioteca-list.component').then((m) => m.BibliotecaListComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+      },
+      {
+        path: 'biblioteca/novo',
+        loadComponent: () =>
+          import('./features/biblioteca/biblioteca-form.component').then((m) => m.BibliotecaFormComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
+        path: 'biblioteca/:id',
+        loadComponent: () =>
+          import('./features/biblioteca/biblioteca-form.component').then((m) => m.BibliotecaFormComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
+        path: 'competencias',
+        loadComponent: () =>
+          import('./features/competencias/competencia-list.component').then((m) => m.CompetenciaListComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+      },
+      {
+        path: 'competencias/novo',
+        loadComponent: () =>
+          import('./features/competencias/competencia-form.component').then((m) => m.CompetenciaFormComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+        canDeactivate: [confirmDeactivate],
+      },
+      {
+        path: 'competencias/:id',
+        loadComponent: () =>
+          import('./features/competencias/competencia-form.component').then((m) => m.CompetenciaFormComponent),
+        canActivate: [rolesGuard(['P01', 'P02'])],
+        canDeactivate: [confirmDeactivate],
+      },
     ],
   },
   { path: 'login', loadComponent: () => import('./features/auth/login/login.component').then((m) => m.LoginComponent) },
