@@ -14,6 +14,8 @@ import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { DataTableComponent } from '../../shared/components/data-table.component';
+import { EmptyStateComponent } from '../../shared/components/empty-state.component';
+import { AuthService } from '../../core/services/auth.service';
 
 const API = environment.apiUrl;
 
@@ -24,7 +26,7 @@ const API = environment.apiUrl;
     CommonModule, FormsModule, RouterModule,
     MatCardModule, MatButtonModule, MatIconModule, MatSelectModule,
     MatFormFieldModule, MatProgressSpinnerModule, FormsModule, RouterModule,
-    PageHeaderComponent, StatusBadgeComponent, DataTableComponent,
+    PageHeaderComponent, StatusBadgeComponent, DataTableComponent, EmptyStateComponent,
   ],
   template: `
     <app-page-header title="Quadro de Achados">

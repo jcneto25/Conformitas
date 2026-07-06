@@ -4,12 +4,32 @@ import { AchadosService } from './achados.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ACHADO_REPOSITORY, MANIFESTACAO_REPOSITORY } from './repositories/achado.repository';
 
-const mockRepo = () => ({
-  create: jest.fn(),
-  findMany: jest.fn(),
-  findUnique: jest.fn(),
-  update: jest.fn(),
-  count: jest.fn(),
+const mockPrisma = () => ({
+  achadoAuditoria: {
+    count: jest.fn(),
+    create: jest.fn(),
+    findMany: jest.fn(),
+    findUnique: jest.fn(),
+    update: jest.fn(),
+    updateMany: jest.fn(),
+  },
+  manifestacao: {
+    create: jest.fn(),
+    findMany: jest.fn(),
+  },
+  auditoria: {
+    findUnique: jest.fn(),
+  },
+  evidencia: {
+    findMany: jest.fn(),
+  },
+  $transaction: jest.fn(),
+});
+
+const mockNotificacoes = () => ({
+  criar: jest.fn().mockResolvedValue(undefined),
+  notificarPorPerfil: jest.fn().mockResolvedValue(undefined),
+  notificarGestoresUnidade: jest.fn().mockResolvedValue(undefined),
 });
 const mockManifRepo = () => ({ create: jest.fn(), findMany: jest.fn() });
 
@@ -48,6 +68,49 @@ describe('AchadosService', () => {
       };
       const r = await service.create('aud-1', dto as any, 'user-1');
       expect(r.codigo).toBe('ACH-1');
+    });
+
+    it('deve aceitar evidenciaIds que pertencem à mesma auditoria (R-ACH-001)', async () => {
+      prisma.auditoria.findUnique.mockResolvedValue({ id: 'aud-1', status: 'EM_EXECUCAO' });
+      prisma.evidencia.findMany.mockResolvedValue([
+        { id: 'evd-1', auditoriaId: 'aud-1' },
+        { id: 'evd-2', auditoriaId: 'aud-1' },
+      ]);
+      prisma.achadoAuditoria.count.mockResolvedValue(0);
+      prisma.achadoAuditoria.create.mockImplementation((args: any) =>
+        Promise.resolve({ id: 'ach-1', ...args.data } as any),
+      );
+
+      const result = await service.create('aud-1', { ...dto, evidenciaIds: ['evd-1', 'evd-2'] }, 'user-1');
+
+      expect(prisma.evidencia.findMany).toHaveBeenCalledWith({
+        where: { id: { in: ['evd-1', 'evd-2'] }, auditoriaId: 'aud-1' },
+        select: { id: true },
+      });
+      expect(result.evidenciaIds).toEqual(['evd-1', 'evd-2']);
+    });
+
+    it('deve rejeitar criação se evidenciaIds não pertencerem à auditoria (R-ACH-001)', async () => {
+      prisma.auditoria.findUnique.mockResolvedValue({ id: 'aud-1', status: 'EM_EXECUCAO' });
+      // Apenas 1 das 2 evidências passadas existe para aud-1
+      prisma.evidencia.findMany.mockResolvedValue([{ id: 'evd-1', auditoriaId: 'aud-1' }]);
+
+      await expect(
+        service.create('aud-1', { ...dto, evidenciaIds: ['evd-1', 'evd-NAO_EXISTE'] }, 'user-1'),
+      ).rejects.toThrow(BadRequestException);
+      expect(prisma.achadoAuditoria.create).not.toHaveBeenCalled();
+    });
+
+    it('não deve validar evidências quando evidenciaIds for vazio', async () => {
+      prisma.auditoria.findUnique.mockResolvedValue({ id: 'aud-1', status: 'EM_EXECUCAO' });
+      prisma.achadoAuditoria.count.mockResolvedValue(0);
+      prisma.achadoAuditoria.create.mockImplementation((args: any) =>
+        Promise.resolve({ id: 'ach-1', ...args.data } as any),
+      );
+
+      await service.create('aud-1', { ...dto, evidenciaIds: [] }, 'user-1');
+
+      expect(prisma.evidencia.findMany).not.toHaveBeenCalled();
     });
   });
 
