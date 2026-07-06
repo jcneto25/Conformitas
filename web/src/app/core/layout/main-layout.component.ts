@@ -120,6 +120,7 @@ interface Crumb {
             [matTooltip]="notifTooltip()"
             (click)="goToNotifications()">
             <mat-icon aria-hidden="true"
+              class="text-white/70"
               [matBadge]="notifCount()"
               [matBadgeHidden]="!notifCount()"
               matBadgeColor="warn"
@@ -140,7 +141,7 @@ interface Crumb {
           @if (auth.user(); as user) {
             <span class="text-xs text-white/70 hidden md:inline ml-1 truncate max-w-[160px]">{{ user.nome }}</span>
             <button mat-icon-button [matMenuTriggerFor]="menu" class="text-white" aria-label="Menu do usuário">
-              <mat-icon aria-hidden="true">account_circle</mat-icon>
+              <mat-icon aria-hidden="true" class="text-white/70">account_circle</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
               <div class="px-4 py-2 text-xs text-text-sec" disabled>
