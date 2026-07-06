@@ -95,3 +95,10 @@ $theme: mat.define-theme((
   --mdc-secondary-navigation-tab-active-label-text-color: #1a3a5c;
   --mdc-secondary-navigation-tab-label-text-color: #4a5a6e;
 }
+
+.snack-warn {
+  --mdc-snackbar-container-color: #b00020;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snackbar-button-color: #ffffff;
+  font-weight: 500;
+}

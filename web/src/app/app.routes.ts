@@ -45,7 +45,7 @@ export const routes: Routes = [
         path: 'achados/novo',
         loadComponent: () =>
           import('./features/achados/achado-form.component').then((m) => m.AchadoFormComponent),
-        canActivate: [rolesGuard(['P02'])],
+        canActivate: [rolesGuard(['P01', 'P02'])],
         canDeactivate: [confirmDeactivate],
       },
       {
@@ -66,7 +66,7 @@ export const routes: Routes = [
         path: 'auditorias/:auditoriaId/achados/novo',
         loadComponent: () =>
           import('./features/achados/achado-form.component').then((m) => m.AchadoFormComponent),
-        canActivate: [rolesGuard(['P02'])],
+        canActivate: [rolesGuard(['P01', 'P02'])],
         canDeactivate: [confirmDeactivate],
       },
       {

@@ -36,6 +36,24 @@ export class AchadosService {
       throw new BadRequestException('Achados só podem ser criados em auditorias EM_EXECUCAO');
     }
 
+    // ── R-ACH-001: integridade referencial do vínculo com evidências.
+    // Evidências passadas em dto.evidenciaIds devem existir e pertencer à
+    // mesma auditoria. Caso contrário, rejeita com 400 — evita "achado órfão"
+    // respaldado em evidências de outra auditoria (ou inexistentes).
+    if (dto.evidenciaIds && dto.evidenciaIds.length > 0) {
+      const encontradas = await this.prisma.evidencia.findMany({
+        where: { id: { in: dto.evidenciaIds }, auditoriaId },
+        select: { id: true },
+      });
+      const idsValidos = new Set(encontradas.map((e) => e.id));
+      const invalidos = dto.evidenciaIds.filter((id) => !idsValidos.has(id));
+      if (invalidos.length > 0) {
+        throw new BadRequestException(
+          `Evidências não pertencem a esta auditoria: ${invalidos.join(', ')}`,
+        );
+      }
+    }
+
     // Código sequencial por auditoria (ACH-1, ACH-2, ...)
     const count = await this.prisma.achadoAuditoria.count({
       where: { auditoriaId },
