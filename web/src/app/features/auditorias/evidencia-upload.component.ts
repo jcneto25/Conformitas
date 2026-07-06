@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { environment } from '../../../environments/environment';
 import { ValidationService } from '../../shared/services/validation.service';
+import { EmptyStateComponent } from '../../shared/components/empty-state.component';
 
 @Component({
   selector: 'app-evidencia-upload',
@@ -54,47 +55,59 @@ import { ValidationService } from '../../shared/services/validation.service';
           <mat-icon class="text-[18px] text-primary">add</mat-icon>
           Adicionar Evidência
         </h4>
-        <form (ngSubmit)="adicionar()" class="filter-bar gap-4 items-end">
-          <mat-form-field appearance="outline" class="min-w-[180px]">
-            <mat-label>Tipo</mat-label>
-            <mat-select #tipoModel="ngModel" [(ngModel)]="form.tipo" name="tipo" required>
-              <mat-option value="DOCUMENTO">Documento</mat-option>
-              <mat-option value="PLANILHA">Planilha</mat-option>
-              <mat-option value="EMAIL">E-mail</mat-option>
-              <mat-option value="SISTEMA">Sistema</mat-option>
-              <mat-option value="ENTREVISTA">Entrevista</mat-option>
-              <mat-option value="OUTRO">Outro</mat-option>
-            </mat-select>
-            @if (tipoModel.invalid && tipoModel.touched) {
-              <mat-error>{{ validation.required('Tipo') }}</mat-error>
-            }
-          </mat-form-field>
+        <form (ngSubmit)="adicionar()" class="flex flex-col gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1">
+            <mat-form-field appearance="outline">
+              <mat-label>Tipo</mat-label>
+              <mat-select #tipoModel="ngModel" [(ngModel)]="form.tipo" name="tipo" required>
+                <mat-option value="DOCUMENTO">Documento</mat-option>
+                <mat-option value="PLANILHA">Planilha</mat-option>
+                <mat-option value="IMAGEM">Imagem</mat-option>
+                <mat-option value="EMAIL">E-mail</mat-option>
+                <mat-option value="SISTEMA">Sistema</mat-option>
+                <mat-option value="ENTREVISTA">Entrevista</mat-option>
+                <mat-option value="OUTRO">Outro</mat-option>
+              </mat-select>
+              @if (tipoModel.invalid && tipoModel.touched) {
+                <mat-error>{{ validation.required('Tipo') }}</mat-error>
+              }
+            </mat-form-field>
 
-          <mat-form-field appearance="outline" class="min-w-[250px] flex-1">
-            <mat-label>Descrição</mat-label>
-            <input matInput #descModel="ngModel" [(ngModel)]="form.descricao" name="descricao" required />
-            @if (descModel.invalid && descModel.touched) {
-              <mat-error>{{ validation.required('Descrição') }}</mat-error>
-            }
-          </mat-form-field>
+            <mat-form-field appearance="outline" class="md:col-span-2">
+              <mat-label>Descrição</mat-label>
+              <input matInput #descModel="ngModel" [(ngModel)]="form.descricao" name="descricao" required />
+              @if (descModel.invalid && descModel.touched) {
+                <mat-error>{{ validation.required('Descrição') }}</mat-error>
+              }
+            </mat-form-field>
+          </div>
 
-          <mat-form-field appearance="outline" class="min-w-[180px]">
-            <mat-label>Fonte</mat-label>
-            <input matInput [(ngModel)]="form.fonte" name="fonte" />
-          </mat-form-field>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1">
+            <mat-form-field appearance="outline">
+              <mat-label>Fonte</mat-label>
+              <input matInput [(ngModel)]="form.fonte" name="fonte" />
+            </mat-form-field>
 
-          <mat-form-field appearance="outline" class="min-w-[200px]">
-            <mat-label>Caminho do Arquivo</mat-label>
-            <input matInput #arquivoModel="ngModel" [(ngModel)]="form.arquivoPath" name="arquivoPath" required
-                   placeholder="/evidencias/doc-001.pdf" />
-            @if (arquivoModel.invalid && arquivoModel.touched) {
-              <mat-error>{{ validation.required('Caminho do arquivo') }}</mat-error>
-            }
-          </mat-form-field>
+            <mat-form-field appearance="outline" class="md:col-span-2">
+              <mat-label>Arquivo (até 25MB)</mat-label>
+              <input
+                matInput
+                type="file"
+                name="arquivo"
+                #arquivoInput="ngModel"
+                (change)="onFileChange($event)"
+                required
+                placeholder="PDF, DOC(X), XLS(X), JPG, PNG, TIFF, ZIP"
+              />
+              @if (arquivoInput.invalid && arquivoInput.touched) {
+                <mat-error>{{ validation.required('Arquivo') }}</mat-error>
+              }
+            </mat-form-field>
+          </div>
 
           <button mat-raised-button color="primary" type="submit"
-                  [disabled]="!form.tipo || !form.descricao || !form.arquivoPath || uploading"
-                  class="flex items-center gap-2">
+                  [disabled]="!form.tipo || !form.descricao || !file || uploading"
+                  class="flex items-center gap-2 self-start min-w-[160px]">
             @if (uploading) {
               <mat-spinner diameter="16" class="inline-block mr-1" />
             }
@@ -118,7 +131,8 @@ export class EvidenciaUploadComponent {
   @Input() evidencias: any[] = [];
   @Output() evidenciasChange = new EventEmitter<any[]>();
 
-  form = { tipo: '', descricao: '', fonte: '', arquivoPath: '' };
+  form = { tipo: '', descricao: '', fonte: '' };
+  file: File | null = null;
   uploading = false;
   error = '';
 
@@ -127,22 +141,29 @@ export class EvidenciaUploadComponent {
     public readonly validation: ValidationService,
   ) {}
 
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.file = input.files?.length ? input.files[0] : null;
+  }
+
   async adicionar() {
-    if (!this.form.tipo || !this.form.descricao || !this.form.arquivoPath) return;
+    if (!this.form.tipo || !this.form.descricao || !this.file) return;
     this.error = '';
     this.uploading = true;
     try {
+      const formData = new FormData();
+      formData.append('arquivo', this.file, this.file.name);
+      formData.append('tipo', this.form.tipo);
+      formData.append('descricao', this.form.descricao);
+      if (this.form.fonte) formData.append('fonte', this.form.fonte);
+
       const nova = await firstValueFrom(
-        this.http.post(`${environment.apiUrl}/auditorias/${this.auditoriaId}/evidencias`, {
-          tipo: this.form.tipo,
-          descricao: this.form.descricao,
-          fonte: this.form.fonte || undefined,
-          arquivoPath: this.form.arquivoPath,
-        }),
+        this.http.post<any>(`${environment.apiUrl}/auditorias/${this.auditoriaId}/evidencias`, formData),
       );
       this.evidencias = [...this.evidencias, nova];
       this.evidenciasChange.emit(this.evidencias);
-      this.form = { tipo: '', descricao: '', fonte: '', arquivoPath: '' };
+      this.form = { tipo: '', descricao: '', fonte: '' };
+      this.file = null;
     } catch (err: any) {
       this.error = err?.error?.message || 'Erro ao adicionar evidência';
     } finally {

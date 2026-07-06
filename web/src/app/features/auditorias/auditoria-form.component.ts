@@ -18,6 +18,9 @@ import { environment } from '../../../environments/environment';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state.component';
 import { ValidationService } from '../../shared/services/validation.service';
+import { EvidenciaUploadComponent } from './evidencia-upload.component';
+import { PapelTrabalhoEditorComponent } from './papel-trabalho-editor.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-auditoria-form',
@@ -26,7 +29,9 @@ import { ValidationService } from '../../shared/services/validation.service';
     CommonModule, FormsModule, RouterModule,
     MatCardModule, MatFormFieldModule, MatSelectModule,
     MatInputModule, MatButtonModule, MatSlideToggleModule,
-    MatDividerModule, MatIconModule, MatProgressSpinnerModule, StatusBadgeComponent, PageHeaderComponent, EmptyStateComponent,
+    MatDividerModule, MatIconModule, MatProgressSpinnerModule, MatTabsModule,
+    StatusBadgeComponent, PageHeaderComponent, EmptyStateComponent,
+    EvidenciaUploadComponent, PapelTrabalhoEditorComponent,
   ],
   template: `
     <app-page-header [title]="isNew ? 'Abrir Auditoria' : 'Auditoria ' + (auditoria?.codigo ?? '')" />
@@ -133,7 +138,7 @@ import { ValidationService } from '../../shared/services/validation.service';
           </mat-card-content>
         </mat-card>
 
-        <mat-card class="border-t-4 border-primary shadow-md rounded-xl overflow-hidden">
+        <mat-card class="mb-4 border-t-4 border-primary shadow-md rounded-xl overflow-hidden">
           <mat-card-header class="bg-slate-50/50 px-6 py-4 border-b border-gray-100">
             <mat-card-title class="text-lg font-semibold text-text-main flex items-center gap-2">
               <mat-icon class="text-primary">mail</mat-icon>
@@ -161,6 +166,30 @@ import { ValidationService } from '../../shared/services/validation.service';
             </button>
           </mat-card-content>
         </mat-card>
+
+        @if (auditoria.status === 'EM_EXECUCAO') {
+          <mat-card class="border-t-4 border-primary shadow-md rounded-xl overflow-hidden">
+            <mat-card-content class="p-0">
+              <mat-tab-group>
+                <mat-tab label="Evidências">
+                  <div class="p-2">
+                    <app-evidencia-upload
+                      [auditoriaId]="auditoria.id"
+                      [(evidencias)]="evidencias" />
+                  </div>
+                </mat-tab>
+                <mat-tab label="Papéis de Trabalho">
+                  <div class="p-2">
+                    <app-papel-trabalho-editor
+                      [auditoriaId]="auditoria.id"
+                      [evidencias]="evidencias"
+                      [(papeis)]="papeis" />
+                  </div>
+                </mat-tab>
+              </mat-tab-group>
+            </mat-card-content>
+          </mat-card>
+        }
       }
     }
   `,
@@ -175,6 +204,8 @@ export class AuditoriaFormComponent implements OnInit {
   loading = true;
   error = '';
   success = '';
+  evidencias: any[] = [];
+  papeis: any[] = [];
   form = { itemPlanoId: '', observacoes: '', sigilosa: false };
   private id = '';
   /** Referência ao ngForm para detecção de alterações não salvas (Epic D4). */
@@ -230,9 +261,19 @@ export class AuditoriaFormComponent implements OnInit {
       this.auditoria = await firstValueFrom(
         this.http.get<any>(`${environment.apiUrl}/auditorias/${this.id}`),
       );
-      await this.loadComunicado();
+      await Promise.all([this.loadComunicado(), this.loadEvidencias()]);
     } catch (err: any) {
       this.error = err?.error?.message || 'Erro ao carregar auditoria';
+    }
+  }
+
+  async loadEvidencias() {
+    try {
+      this.evidencias = await firstValueFrom(
+        this.http.get<any[]>(`${environment.apiUrl}/auditorias/${this.id}/evidencias`),
+      );
+    } catch {
+      // non-blocking: a aba de Evidências segue funcional mesmo sem dados prévios
     }
   }
 
