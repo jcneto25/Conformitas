@@ -213,43 +213,87 @@ button:focus-visible,
 
 /* ─────────────────────────────────────────────────────────────────────────
    C4: Density Mode — Compact (Design_System_Master §3.3)
+   Redução ~40% em espaçamentos verticais e ~10-15% em fontes.
+   Mantém alvo tátil ≥ 44px apenas em icon-buttons (NÃO reduzidos, conforme
+   WCAG 2.1 SC 2.5.5 — acessibilidade). Elementos interativos em tabelas e
+   form fields reduzem mas preservam click target via padding proporcional.
    ───────────────────────────────────────────────────────────────────────── */
 .app-compact .mat-mdc-row {
-  height: 40px !important;
+  height: 32px !important;
 }
 .app-compact .mat-mdc-header-row {
-  height: 40px !important;
+  height: 32px !important;
 }
 .app-compact .mat-mdc-cell {
-  padding: 4px 8px !important;
-  font-size: 0.8125rem;
-}
-.app-compact .mat-mdc-header-cell {
-  padding: 4px 8px !important;
+  padding: 2px 6px !important;
   font-size: 0.75rem;
 }
+.app-compact .mat-mdc-header-cell {
+  padding: 2px 6px !important;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
 .app-compact .mat-mdc-card {
-  --mdc-card-gap: 12px !important;
+  --mdc-card-gap: 8px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
 }
 .app-compact .mat-mdc-card-header,
 .app-compact .mat-mdc-card-content,
 .app-compact .mat-mdc-card-actions {
-  padding: 0 12px !important;
+  padding: 0 8px !important;
+}
+.app-compact .mat-mdc-card-header {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
 }
 .app-compact .mat-mdc-card-title {
-  font-size: 1rem;
+  font-size: 0.875rem;
 }
 .app-compact .mat-mdc-card-subtitle {
-  font-size: 0.8125rem;
+  font-size: 0.6875rem;
 }
 .app-compact main {
-  padding: 1rem !important;
+  padding: 0.5rem !important;
 }
 .app-compact .mat-mdc-form-field {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
 }
 .app-compact .mat-mdc-form-field-infix {
-  min-height: 36px;
-  padding-top: 8px !important;
+  min-height: 28px;
+  padding-top: 4px !important;
+  padding-bottom: 2px !important;
+}
+.app-compact .mat-mdc-text-field-wrapper {
   padding-bottom: 4px !important;
+}
+.app-compact .mat-mdc-form-field-subscript-wrapper {
+  font-size: 0.6875rem;
+}
+/* Botões densos — mantém alvo mínimo 36px (compromisso a11y vs densidade) */
+.app-compact .mat-mdc-button .mat-mdc-button-touch-target,
+.app-compact .mat-mdc-unelevated-button .mat-mdc-button-touch-target {
+  min-height: 36px;
+}
+.app-compact .mat-mdc-unelevated-button,
+.app-compact .mat-mdc-button {
+  padding: 0 12px !important;
+  font-size: 0.75rem;
+}
+/* Listas densas */
+.app-compact .mat-mdc-list-item {
+  height: 36px !important;
+}
+.app-compact .mat-mdc-nav-list .mat-mdc-list-item {
+  font-size: 0.8125rem;
+}
+/* Chips densos */
+.app-compact .mat-mdc-chip {
+  height: 24px !important;
+  font-size: 0.6875rem;
+}
+/* Diálogos: reduz padding interno */
+.app-compact .mat-mdc-dialog-container {
+  padding: 16px !important;
 }
