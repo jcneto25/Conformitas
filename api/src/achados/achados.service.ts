@@ -11,9 +11,8 @@ import { CreateAchadoDto } from './dto/create-achado.dto';
 import { CreateManifestacaoDto } from './dto/create-manifestacao.dto';
 import { AchadoManifestacaoEvent, ManifestacaoRegistradaEvent } from '../shared/events/auditoria-events';
 import { AchadoStatus } from './domain/achado-status';
+import { PRAZO_MANIFESTACAO_DIAS_UTEIS, RESSALVA_SEM_MANIFESTACAO } from './domain/constants';
 import * as crypto from 'crypto';
-export const PRAZO_MANIFESTACAO_DIAS_UTEIS = 5;
-export const RESSALVA_SEM_MANIFESTACAO = 'Sem manifestação da unidade auditada no prazo regulatório (5 dias úteis).';
 
 @Injectable()
 export class AchadosService {
@@ -30,7 +29,7 @@ export class AchadosService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async create(auditoriaId: string, dto: CreateAchadoDto, autorId: string) {
+  async create(auditoriaId: string, createAchadoDto: CreateAchadoDto, autorId: string) {
     const auditoria = await this.achadoRepo.findUnique(auditoriaId);
     if (!auditoria) throw new NotFoundException('Auditoria não encontrada');
     if (auditoria.status !== 'EM_EXECUCAO')
@@ -40,13 +39,13 @@ export class AchadosService {
       id: crypto.randomUUID(),
       auditoriaId,
       codigo: `ACH-${count + 1}`,
-      tipo: dto.tipo,
-      situacaoEncontrada: dto.situacaoEncontrada,
-      criterio: dto.criterio,
-      causa: dto.causa,
-      efeito: dto.efeito,
+      tipo: createAchadoDto.tipo,
+      situacaoEncontrada: createAchadoDto.situacaoEncontrada,
+      criterio: createAchadoDto.criterio,
+      causa: createAchadoDto.causa,
+      efeito: createAchadoDto.efeito,
       status: AchadoStatus.PRELIMINAR,
-      evidenciaIds: dto.evidenciaIds ?? [],
+      evidenciaIds: createAchadoDto.evidenciaIds ?? [],
       autorId,
     });
   }
@@ -74,9 +73,9 @@ export class AchadosService {
     if (!a) throw new NotFoundException('Achado não encontrado');
     return a;
   }
-  async update(id: string, dto: Partial<CreateAchadoDto>) {
+  async update(id: string, updateAchadoDto: Partial<CreateAchadoDto>) {
     await this.findOne(id);
-    return this.achadoRepo.update(id, dto);
+    return this.achadoRepo.update(id, updateAchadoDto);
   }
 
   async enviarManifestacao(id: string, prazoDiasUteis?: number) {
@@ -102,8 +101,8 @@ export class AchadosService {
 
   async consolidar(id: string) {
     const achado = await this.achadoRepo.findUnique(id);
-    if (!achado) throw new NotFoundException('');
-    if (achado.status !== 'EM_MANIFESTACAO') throw new BadRequestException('');
+    if (!achado) throw new NotFoundException('Achado não encontrado');
+    if (achado.status !== 'EM_MANIFESTACAO') throw new BadRequestException('Apenas achados EM_MANIFESTACAO podem ser consolidados');
     return this.achadoRepo.update(id, { status: 'CONSOLIDADO' });
   }
 
@@ -119,15 +118,15 @@ export class AchadosService {
 
   async criarManifestacao(
     achadoId: string,
-    dto: CreateManifestacaoDto,
+    manifestacaoDto: CreateManifestacaoDto,
     autorId: string,
     unidadeEscopo?: string | null,
   ) {
     const achado = await this.achadoRepo.findUnique(achadoId, { include: { auditoria: true } });
     if (!achado) throw new NotFoundException('Achado não encontrado');
-    if (achado.status !== 'EM_MANIFESTACAO') throw new BadRequestException('');
+    if (achado.status !== 'EM_MANIFESTACAO') throw new BadRequestException('Apenas achados EM_MANIFESTACAO podem receber manifestação');
     if (unidadeEscopo && achado.auditoria.unidadeAuditada !== unidadeEscopo) throw new ForbiddenException('');
-    const result = await this.manifestacaoRepo.create({ achadoId, autorId, conteudo: dto.conteudo });
+    const result = await this.manifestacaoRepo.create({ achadoId, autorId, conteudo: manifestacaoDto.conteudo });
     this.eventEmitter.emit(
       'achado.manifestacao.registrada',
       new ManifestacaoRegistradaEvent(achadoId, achado.codigo, achado.auditoriaId),

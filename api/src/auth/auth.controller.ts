@@ -31,7 +31,7 @@ export class AuthController {
   @Post('mfa/verify')
   @ApiOperation({ summary: 'Verificar código MFA TOTP' })
   verifyMfa(@Body() dto: MfaVerifyDto) {
-    return this.authService.verifyMfa(dto.session_token, dto.totp_code);
+    return this.authService.verifyMfa(dto.sessionToken, dto.totpCode);
   }
 
   @Public()
@@ -66,6 +66,6 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Alterar própria senha (qualquer perfil autenticado)' })
   changePassword(@Req() req: RequestWithUser, @Body() dto: ChangePasswordDto) {
-    return this.authService.changePassword(req.user.sub, dto.senha_atual, dto.nova_senha);
+    return this.authService.changePassword(req.user.sub, dto.senhaAtual, dto.novaSenha);
   }
 }

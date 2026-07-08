@@ -8,7 +8,7 @@ import * as crypto from 'crypto';
 export class CriarAchadoUseCase {
   constructor(@Inject(ACHADO_REPOSITORY) private readonly repo: IAchadoRepository) {}
 
-  async execute(auditoriaId: string, dto: CreateAchadoDto, autorId: string) {
+  async execute(auditoriaId: string, createAchadoDto: CreateAchadoDto, autorId: string) {
     const auditoria = await this.repo.findUnique(auditoriaId);
     if (!auditoria) throw new NotFoundException('Auditoria não encontrada');
     if (auditoria.status !== 'EM_EXECUCAO') {
@@ -22,12 +22,12 @@ export class CriarAchadoUseCase {
       id: crypto.randomUUID(),
       auditoriaId,
       codigo,
-      tipo: dto.tipo,
-      situacaoEncontrada: dto.situacaoEncontrada,
-      criterio: dto.criterio,
-      causa: dto.causa,
-      efeito: dto.efeito,
-      evidenciaIds: dto.evidenciaIds ?? [],
+      tipo: createAchadoDto.tipo,
+      situacaoEncontrada: createAchadoDto.situacaoEncontrada,
+      criterio: createAchadoDto.criterio,
+      causa: createAchadoDto.causa,
+      efeito: createAchadoDto.efeito,
+      evidenciaIds: createAchadoDto.evidenciaIds ?? [],
       autorId,
     });
 

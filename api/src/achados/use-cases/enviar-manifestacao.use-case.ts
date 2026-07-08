@@ -4,7 +4,7 @@ import { IAchadoRepository, ACHADO_REPOSITORY } from '../repositories/achado.rep
 import { Achado } from '../domain/achado.entity';
 import { AchadoStatus } from '../domain/achado-status';
 import { AchadoManifestacaoEvent } from '../../shared/events/auditoria-events';
-import { PRAZO_MANIFESTACAO_DIAS_UTEIS } from '../achados.service';
+import { PRAZO_MANIFESTACAO_DIAS_UTEIS } from '../domain/constants';
 
 @Injectable()
 export class EnviarManifestacaoUseCase {
@@ -14,23 +14,23 @@ export class EnviarManifestacaoUseCase {
   ) {}
 
   async execute(id: string, prazoDiasUteis?: number) {
-    const data = await this.repo.findUnique(id, { include: { auditoria: true } });
-    if (!data) throw new NotFoundException('Achado não encontrado');
+    const achadoRaw = await this.repo.findUnique(id, { include: { auditoria: true } });
+    if (!achadoRaw) throw new NotFoundException('Achado não encontrado');
 
     const entity = new Achado(
-      data.id,
-      data.auditoriaId,
-      data.codigo,
-      data.status as AchadoStatus,
-      data.tipo,
-      data.situacaoEncontrada,
-      data.criterio,
-      data.causa,
-      data.efeito,
-      data.evidenciaIds ?? [],
-      data.autorId,
-      data.dataLimiteManifestacao,
-      data.ressalva,
+      achadoRaw.id,
+      achadoRaw.auditoriaId,
+      achadoRaw.codigo,
+      achadoRaw.status as AchadoStatus,
+      achadoRaw.tipo,
+      achadoRaw.situacaoEncontrada,
+      achadoRaw.criterio,
+      achadoRaw.causa,
+      achadoRaw.efeito,
+      achadoRaw.evidenciaIds ?? [],
+      achadoRaw.autorId,
+      achadoRaw.dataLimiteManifestacao,
+      achadoRaw.ressalva,
     );
 
     const prazo = prazoDiasUteis ?? PRAZO_MANIFESTACAO_DIAS_UTEIS;
@@ -46,8 +46,8 @@ export class EnviarManifestacaoUseCase {
       new AchadoManifestacaoEvent(
         entity.id,
         entity.codigo,
-        data.auditoria?.unidadeAuditada ?? '',
-        data.auditoriaId,
+        achadoRaw.auditoria?.unidadeAuditada ?? '',
+        achadoRaw.auditoriaId,
         prazo,
       ),
     );

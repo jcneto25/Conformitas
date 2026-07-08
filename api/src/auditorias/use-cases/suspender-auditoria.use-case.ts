@@ -13,24 +13,24 @@ export class SuspenderAuditoriaUseCase {
   ) {}
 
   async execute(id: string, motivo: string) {
-    const data = await this.repo.findUnique(id);
-    if (!data) throw new NotFoundException('Auditoria não encontrada');
+    const auditoriaRaw = await this.repo.findUnique(id);
+    if (!auditoriaRaw) throw new NotFoundException('Auditoria não encontrada');
 
     const entity = new Auditoria(
-      data.id,
-      data.numero,
-      data.status as AuditoriaStatus,
-      data.unidadeAuditada,
-      data.objetivo,
-      data.itemPlanoId,
-      data.tipo,
-      data.forma,
-      data.sigilosa,
-      data.escopo,
-      data.dataFimPrevista,
-      data.dataInicio,
-      data.dataFimReal,
-      data.motivoSuspensao,
+      auditoriaRaw.id,
+      auditoriaRaw.numero,
+      auditoriaRaw.status as AuditoriaStatus,
+      auditoriaRaw.unidadeAuditada,
+      auditoriaRaw.objetivo,
+      auditoriaRaw.itemPlanoId,
+      auditoriaRaw.tipo,
+      auditoriaRaw.forma,
+      auditoriaRaw.sigilosa,
+      auditoriaRaw.escopo,
+      auditoriaRaw.dataFimPrevista,
+      auditoriaRaw.dataInicio,
+      auditoriaRaw.dataFimReal,
+      auditoriaRaw.motivoSuspensao,
     );
 
     entity.suspender(motivo);

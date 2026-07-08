@@ -59,12 +59,12 @@ describe('AuthController', () => {
 
   describe('POST /auth/mfa/verify', () => {
     it('deve chamar authService.verifyMfa', async () => {
-      const dto: MfaVerifyDto = { session_token: 'sess-token', totp_code: '123456' };
+      const dto: MfaVerifyDto = { sessionToken: 'sess-token', totpCode: '123456' };
       authService.verifyMfa.mockResolvedValue({ access_token: 'token', refresh_token: 'rt', expires_in: 1800 });
 
       const result = await controller.verifyMfa(dto);
 
-      expect(authService.verifyMfa).toHaveBeenCalledWith(dto.session_token, dto.totp_code);
+      expect(authService.verifyMfa).toHaveBeenCalledWith(dto.sessionToken, dto.totpCode);
       expect(result).toHaveProperty('access_token');
     });
   });
@@ -99,8 +99,8 @@ describe('AuthController', () => {
       authService.changePassword.mockResolvedValue({ mensagem: 'Senha alterada com sucesso' });
 
       const result = await controller.changePassword(mockReq as any, {
-        senha_atual: 'Old@123',
-        nova_senha: 'New@123456',
+        senhaAtual: 'Old@123',
+        novaSenha: 'New@123456',
       });
 
       expect(authService.changePassword).toHaveBeenCalledWith('user-uuid', 'Old@123', 'New@123456');

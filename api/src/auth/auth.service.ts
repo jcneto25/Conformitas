@@ -4,6 +4,7 @@ import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { authenticator } from 'otplib';
 import { IAuthRepository, AUTH_REPOSITORY } from './repositories/auth.repository';
+import appConfig from '../config/app.config';
 
 @Injectable()
 export class AuthService {
@@ -24,22 +25,14 @@ export class AuthService {
       const upd: any = { tentativasLogin: novasTentativas };
       if (novasTentativas >= tentativasMax) upd.bloqueadoAte = new Date(Date.now() + bloqueioMinutos * 60 * 1000);
       await this.repo.updateUsuario(usuario.id, upd);
-      await this.repo.createLog({
-        usuarioId: usuario.id,
-        acao: 'LOGIN_FALHA',
-        detalhes: { tentativas: novasTentativas, tentativasMax },
-      });
+      await this.repo.createLog({ usuarioId: usuario.id, acao: 'LOGIN_FALHA', detalhes: { tentativas: novasTentativas, tentativasMax } });
       throw new UnauthorizedException('Credenciais inválidas');
     }
     await this.repo.updateUsuario(usuario.id, { tentativasLogin: 0, bloqueadoAte: null });
     await this.repo.createLog({ usuarioId: usuario.id, acao: 'LOGIN_SUCESSO' });
     if (usuario.mfaEnabled) {
       const sessionToken = crypto.randomBytes(32).toString('hex');
-      await this.repo.createSessaoMfa({
-        sessionToken,
-        usuarioId: usuario.id,
-        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
-      });
+      await this.repo.createSessaoMfa({ sessionToken, usuarioId: usuario.id, expiresAt: new Date(Date.now() + appConfig.mfa.sessionExpiresInMs) });
       return { mfaRequired: true, sessionToken };
     }
     return this.generateTokens(usuario);
@@ -55,8 +48,14 @@ export class AuthService {
   }
 
   async setupMfa(usuarioId: string, senha: string) {
-    const usuario = await this.repo.findUsuario(senha);
-    throw new UnauthorizedException('Método não implementado');
+    const usuario = await this.repo.findUsuario(usuarioId);
+    if (!usuario || !usuario.ativo) throw new UnauthorizedException('Usuário não encontrado');
+    const senhaValida = await bcrypt.compare(senha, usuario.senhaHash);
+    if (!senhaValida) throw new UnauthorizedException('Senha incorreta');
+    const secret = authenticator.generateSecret();
+    const qrCodeUrl = authenticator.keyuri(usuario.email, appConfig.mfa.issuer, secret);
+    await this.repo.updateUsuario(usuarioId, { mfaEnabled: true, mfaSecret: secret });
+    return { secret, qrCodeUrl };
   }
 
   async verifyMfa(sessionToken: string, totpCode: string) {
@@ -64,7 +63,8 @@ export class AuthService {
     if (!sessao || sessao.expiresAt < new Date()) throw new UnauthorizedException('Sessão MFA inválida');
     await this.repo.deleteSessaoMfa(sessao.id);
     const usuario = await this.repo.updateUsuario(sessao.usuarioId, { tentativasLogin: 0 });
-    return this.generateTokens(usuario as any);
+    const { senhaHash: _sh, ...usuarioSemHash } = usuario;
+    return this.generateTokens(usuarioSemHash);
   }
 
   async logout(usuarioId: string) {
@@ -74,36 +74,28 @@ export class AuthService {
   }
 
   async changePassword(usuarioId: string, senhaAtual: string, novaSenha: string) {
-    const usuario = await this.repo.findUsuario(senhaAtual);
-    throw new UnauthorizedException('Método não implementado');
+    const usuario = await this.repo.findUsuario(usuarioId);
+    if (!usuario || !usuario.ativo) throw new UnauthorizedException('Usuário não encontrado');
+    const senhaValida = await bcrypt.compare(senhaAtual, usuario.senhaHash);
+    if (!senhaValida) throw new UnauthorizedException('Senha atual incorreta');
+    const senhaHash = await bcrypt.hash(novaSenha, 12);
+    await this.repo.updateUsuario(usuarioId, { senhaHash });
+    await this.repo.createLog({ usuarioId, acao: 'SENHA_ALTERADA' });
+    return { mensagem: 'Senha alterada com sucesso' };
   }
 
   async getProfile(usuarioId: string) {
     const usuario = await this.repo.findUsuario(usuarioId);
     if (!usuario) throw new UnauthorizedException('Usuário não encontrado');
-    return {
-      id: usuario.id,
-      nome: usuario.nome,
-      email: usuario.email,
-      perfis: usuario.usuariosPerfis?.map((up: any) => up.perfil) || [],
-    };
+    return { id: usuario.id, nome: usuario.nome, email: usuario.email, perfis: usuario.usuariosPerfis?.map((up: any) => up.perfil) || [] };
   }
 
   private async generateTokens(usuario: any) {
-    const payload = {
-      sub: usuario.id,
-      email: usuario.email,
-      roles: usuario.usuariosPerfis?.map((up: any) => up.perfil.codigo) || [],
-      unidadeEscopo: usuario.usuariosPerfis?.[0]?.unidadeEscopo || null,
-    };
-    const accessToken = this.jwtService.sign(payload, { expiresIn: '30m' });
+    const payload = { sub: usuario.id, email: usuario.email, roles: usuario.usuariosPerfis?.map((up: any) => up.perfil.codigo) || [], unidadeEscopo: usuario.usuariosPerfis?.[0]?.unidadeEscopo || null };
+    const accessToken = this.jwtService.sign(payload, { expiresIn: appConfig.jwt.expiresInShort });
     const refreshToken = crypto.randomBytes(40).toString('hex');
     const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
-    await this.repo.createRefreshToken({
-      tokenHash,
-      usuarioId: usuario.id,
-      expiresAt: new Date(Date.now() + 8 * 60 * 60 * 1000),
-    });
+    await this.repo.createRefreshToken({ tokenHash, usuarioId: usuario.id, expiresAt: new Date(Date.now() + appConfig.jwt.refreshExpiresInMs) });
     await this.repo.createLog({ usuarioId: usuario.id, acao: 'TOKEN_EMITIDO' });
     return { accessToken, refreshToken };
   }
