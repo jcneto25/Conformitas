@@ -15,7 +15,7 @@ export class GovernancaSchedule {
     if (result.pendentes > 0) {
       this.logger.warn(
         `${result.pendentes} registro(s) de fraude com 60+ dias sem comunicação ao TCE. ` +
-        `IDs: ${result.registros.map((r) => r.id).join(', ')}`,
+          `IDs: ${result.registros.map((r) => r.id).join(', ')}`,
       );
     } else {
       this.logger.log('Nenhum registro de fraude pendente de comunicação ao TCE.');

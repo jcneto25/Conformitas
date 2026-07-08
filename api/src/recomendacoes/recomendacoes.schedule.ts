@@ -13,7 +13,7 @@ export class RecomendacoesSchedule {
   async verificarVencidas() {
     const result = await this.service.verificarVencidas();
     if (result.vencidas > 0) {
-      this.logger.warn(`${result.vencidas} recomendação(ões) vencida(s). Notificar: ${result.notificados.join(', ')}`);
+      this.logger.warn(`${result.vencidas} recomendação(ões) vencida(s).`);
     }
   }
 
@@ -21,9 +21,7 @@ export class RecomendacoesSchedule {
   async escalarVencidas() {
     const result = await this.service.escalarVencidas();
     if (result.escaladas > 0) {
-      this.logger.warn(
-        `${result.escaladas} recomendação(ões) VENCIDA(s) há +30 dias — escalonar a ${result.notificar.join(', ')}`,
-      );
+      this.logger.warn(`${result.escaladas} recomendação(ões) VENCIDA(s) há +30 dias — revisar escalonamento.`);
     }
   }
 }

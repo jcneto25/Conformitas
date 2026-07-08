@@ -1,16 +1,12 @@
 import { Test } from '@nestjs/testing';
 import { ScheduleService } from './schedule.service';
-import { AchadosService } from './achados.service';
+import { ConsolidarAchadoUseCase } from './use-cases/consolidar-achado.use-case';
 
-/**
- * T-078 — o cron (@Cron EVERY_HOUR) delega a consolidação de expirados
- * ao AchadosService. Garante o fio do cron (antes sem cobertura).
- */
 describe('ScheduleService', () => {
-  it('delega a consolidação de expirados para AchadosService', async () => {
+  it('delega consolidação de expirados para ConsolidarAchadoUseCase', async () => {
     const consolidarExpirados = jest.fn().mockResolvedValue({ consolidados: 0 });
     const module = await Test.createTestingModule({
-      providers: [ScheduleService, { provide: AchadosService, useValue: { consolidarExpirados } }],
+      providers: [ScheduleService, { provide: ConsolidarAchadoUseCase, useValue: { consolidarExpirados } }],
     }).compile();
 
     const service = module.get(ScheduleService);

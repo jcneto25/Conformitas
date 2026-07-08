@@ -62,10 +62,7 @@ export class GovernancaController {
   @Get('registros-fraude')
   @Roles('P01', 'P02')
   @ApiOperation({ summary: 'Listar registros de fraude' })
-  listarRegistrosFraude(
-    @Query('classificacao') classificacao?: string,
-    @Query('auditoriaId') auditoriaId?: string,
-  ) {
+  listarRegistrosFraude(@Query('classificacao') classificacao?: string, @Query('auditoriaId') auditoriaId?: string) {
     return this.service.listarRegistrosFraude({ classificacao, auditoriaId });
   }
 

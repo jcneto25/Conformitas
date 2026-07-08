@@ -3,19 +3,23 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateCapacitacaoDto {
   @ApiProperty({ example: 'Curso de Auditoria Governamental' })
-  @IsString() @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   titulo: string;
 
   @ApiPropertyOptional({ example: 'ENAP' })
-  @IsOptional() @IsString()
+  @IsOptional()
+  @IsString()
   instituicao?: string;
 
   @ApiProperty({ example: 20 })
-  @IsInt() @Min(1)
+  @IsInt()
+  @Min(1)
   cargaHoraria: number;
 
   @ApiProperty({ example: 'CURSO' })
-  @IsString() @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   tipo: string;
 
   @ApiProperty({ example: '2026-03-01' })
@@ -23,7 +27,8 @@ export class CreateCapacitacaoDto {
   dataInicio: string;
 
   @ApiPropertyOptional({ example: '2026-03-05' })
-  @IsOptional() @IsDateString()
+  @IsOptional()
+  @IsDateString()
   dataFim?: string;
 
   @ApiProperty({ example: ['user-001', 'user-002'] })
@@ -32,6 +37,7 @@ export class CreateCapacitacaoDto {
   participanteIds: string[];
 
   @ApiPropertyOptional({ example: '/uploads/certificados/curso-auditoria.pdf' })
-  @IsOptional() @IsString()
+  @IsOptional()
+  @IsString()
   certificadoPath?: string;
 }

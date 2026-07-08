@@ -1,11 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import {
+  IUniversoAuditavelRepository,
+  buildCreateData,
+  buildUpdateData,
+  UNIVERSO_AUDITAVEL_REPOSITORY,
+} from './repositories/universo-auditavel.repository';
 import { CreateUniversoDto } from './dto/create-universo.dto';
 import { UpdateUniversoDto } from './dto/update-universo.dto';
 
 @Injectable()
 export class UniversoService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@Inject(UNIVERSO_AUDITAVEL_REPOSITORY) private readonly repo: IUniversoAuditavelRepository) {}
 
   private calcularIndice(item: {
     materialidade: number;
@@ -18,45 +23,24 @@ export class UniversoService {
 
   async create(dto: CreateUniversoDto) {
     const indicePriorizacao = this.calcularIndice(dto);
-    return this.prisma.universoAuditavel.create({
-      data: {
-        nome: dto.nome,
-        descricao: dto.descricao,
-        tipo: dto.tipo,
-        unidadeResponsavel: dto.unidadeResponsavel,
-        materialidade: dto.materialidade,
-        relevancia: dto.relevancia,
-        criticidade: dto.criticidade,
-        risco: dto.risco,
-        indicePriorizacao,
-      },
-    });
+    return this.repo.create({ ...buildCreateData(dto), indicePriorizacao });
   }
 
   async findAll(params?: { tipo?: string; ativo?: boolean; search?: string }) {
-    const where: any = { deletedAt: null };
-    if (params?.tipo) where.tipo = params.tipo;
-    if (params?.ativo !== undefined) where.ativo = params.ativo;
-    if (params?.search) {
-      where.OR = [
-        { nome: { contains: params.search, mode: 'insensitive' } },
-        { unidadeResponsavel: { contains: params.search, mode: 'insensitive' } },
-      ];
-    }
-    return this.prisma.universoAuditavel.findMany({ where, orderBy: { indicePriorizacao: 'desc' } });
+    return this.repo.findMany({ tipo: params?.tipo, ativo: params?.ativo, search: params?.search });
   }
 
   async findOne(id: string) {
-    const item = await this.prisma.universoAuditavel.findUnique({ where: { id } });
+    const item = await this.repo.findUnique(id);
     if (!item || item.deletedAt) throw new NotFoundException('Item do universo não encontrado');
     return item;
   }
 
   async update(id: string, dto: UpdateUniversoDto) {
     await this.findOne(id);
-    const data: any = { ...dto };
+    const data = buildUpdateData(dto);
     if (dto.materialidade || dto.relevancia || dto.criticidade || dto.risco) {
-      const atual = await this.prisma.universoAuditavel.findUnique({ where: { id } });
+      const atual = await this.repo.findUnique(id);
       if (atual) {
         data.indicePriorizacao = this.calcularIndice({
           materialidade: dto.materialidade ?? atual.materialidade,
@@ -66,28 +50,23 @@ export class UniversoService {
         });
       }
     }
-    return this.prisma.universoAuditavel.update({ where: { id }, data });
+    return this.repo.update(id, data);
   }
 
   async remove(id: string) {
     await this.findOne(id);
-    return this.prisma.universoAuditavel.update({ where: { id }, data: { deletedAt: new Date(), ativo: false } });
+    return this.repo.update(id, { deletedAt: new Date(), ativo: false });
   }
 
   async matrizPriorizacao(horasDisponiveis?: number) {
-    const itens = await this.prisma.universoAuditavel.findMany({
-      where: { deletedAt: null, ativo: true },
-      orderBy: { indicePriorizacao: 'desc' },
-    });
-
+    const itens = await this.repo.findMany({ ativo: true });
     if (!horasDisponiveis) return { itens, destaques: [] };
-
     let horasRestantes = horasDisponiveis;
     const destaques: string[] = [];
     for (const item of itens) {
       if (horasRestantes <= 0) break;
       destaques.push(item.id);
-      horasRestantes -= 100; // 100h estimadas por item como default
+      horasRestantes -= 100;
     }
     return { itens, destaques };
   }

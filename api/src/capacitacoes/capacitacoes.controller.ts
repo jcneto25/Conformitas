@@ -14,7 +14,9 @@ export class CapacitacoesController {
   @Post()
   @Roles('P01', 'P10')
   @ApiOperation({ summary: 'Registrar capacitação (P01, P10)' })
-  create(@Body() dto: CreateCapacitacaoDto) { return this.service.create(dto); }
+  create(@Body() dto: CreateCapacitacaoDto) {
+    return this.service.create(dto);
+  }
 
   @Get()
   @Roles('P01', 'P02', 'P10')
@@ -43,7 +45,9 @@ export class CapacitacoesController {
   @Get(':id')
   @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Obter capacitação por ID' })
-  findOne(@Param('id', ParseUUIDPipe) id: string) { return this.service.findOne(id); }
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.service.findOne(id);
+  }
 
   @Patch(':id')
   @Roles('P01', 'P10')
@@ -55,5 +59,7 @@ export class CapacitacoesController {
   @Delete(':id')
   @Roles('P01')
   @ApiOperation({ summary: 'Remover capacitação (P01)' })
-  remove(@Param('id', ParseUUIDPipe) id: string) { return this.service.remove(id); }
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.service.remove(id);
+  }
 }

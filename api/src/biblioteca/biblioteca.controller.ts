@@ -14,7 +14,9 @@ export class BibliotecaController {
   @Post()
   @Roles('P01', 'P10')
   @ApiOperation({ summary: 'Adicionar documento metodológico (P01, P10)' })
-  create(@Body() dto: CreateDocumentoDto) { return this.service.create(dto); }
+  create(@Body() dto: CreateDocumentoDto) {
+    return this.service.create(dto);
+  }
 
   @Post('upload')
   @Roles('P01', 'P10')
@@ -22,7 +24,12 @@ export class BibliotecaController {
   @ApiQuery({ name: 'titulo', required: true })
   @ApiQuery({ name: 'tipo', required: true, enum: ['NORMA', 'MANUAL', 'TEMPLATE', 'CHECKLIST'] })
   @ApiQuery({ name: 'categoria', required: false })
-  upload(@Query('titulo') titulo: string, @Query('tipo') tipo: string, @Query('arquivo_path') arquivoPath: string, @Query('categoria') categoria?: string) {
+  upload(
+    @Query('titulo') titulo: string,
+    @Query('tipo') tipo: string,
+    @Query('arquivo_path') arquivoPath: string,
+    @Query('categoria') categoria?: string,
+  ) {
     return this.service.upload(titulo, tipo, arquivoPath, categoria);
   }
 
@@ -33,14 +40,21 @@ export class BibliotecaController {
   @ApiQuery({ name: 'categoria', required: false })
   @ApiQuery({ name: 'search', required: false })
   @ApiQuery({ name: 'status', required: false })
-  findAll(@Query('tipo') tipo?: string, @Query('categoria') categoria?: string, @Query('search') search?: string, @Query('status') status?: string) {
+  findAll(
+    @Query('tipo') tipo?: string,
+    @Query('categoria') categoria?: string,
+    @Query('search') search?: string,
+    @Query('status') status?: string,
+  ) {
     return this.service.findAll({ tipo, categoria, search, status });
   }
 
   @Get(':id')
   @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Obter documento por ID' })
-  findOne(@Param('id', ParseUUIDPipe) id: string) { return this.service.findOne(id); }
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.service.findOne(id);
+  }
 
   @Patch(':id')
   @Roles('P01', 'P10')
@@ -52,5 +66,7 @@ export class BibliotecaController {
   @Delete(':id')
   @Roles('P01')
   @ApiOperation({ summary: 'Arquivar documento (soft, P01)' })
-  remove(@Param('id', ParseUUIDPipe) id: string) { return this.service.remove(id); }
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.service.remove(id);
+  }
 }

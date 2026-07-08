@@ -1,182 +1,64 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-
-interface CriarSolicitacaoDto {
-  unidadeSolicitante: string;
-  tema: string;
-  duvida: string;
-  fundamentacao?: string;
-  solicitanteId: string;
-}
-
-interface RegistrarConsultoriaDto {
-  tipo: string;
-  escopo?: string;
-  horasUtilizadas?: number;
-  planoId?: string;
-  solicitacaoId?: string;
-  equipeIds?: string[];
-  resultado?: string;
-}
+import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  ISolicitacaoConsultoriaRepository,
+  SOLICITACAO_CONSULTORIA_REPOSITORY,
+} from './repositories/solicitacao-consultoria.repository';
+import { IConsultoriaRepository, CONSULTORIA_REPOSITORY } from './repositories/consultoria.repository';
 
 const TIPOS_VALIDOS = ['ASSESSORAMENTO', 'CONSULTORIA', 'COGESTAO'];
 
 @Injectable()
 export class ConsultoriasService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject(SOLICITACAO_CONSULTORIA_REPOSITORY) private readonly solicitacaoRepo: ISolicitacaoConsultoriaRepository,
+    @Inject(CONSULTORIA_REPOSITORY) private readonly consultoriaRepo: IConsultoriaRepository,
+  ) {}
 
-  // ── Solicitações de Consultoria (P05) ─────────
-
-  async criarSolicitacao(dto: CriarSolicitacaoDto) {
-    return this.prisma.solicitacaoConsultoria.create({
-      data: {
-        unidadeSolicitante: dto.unidadeSolicitante,
-        tema: dto.tema,
-        duvida: dto.duvida,
-        fundamentacao: dto.fundamentacao ?? null,
-        status: 'PENDENTE',
-        solicitanteId: dto.solicitanteId,
-      },
-    });
+  async criarSolicitacao(dto: any) {
+    return this.solicitacaoRepo.create({ ...dto, status: 'PENDENTE' });
   }
-
   async listarSolicitacoes(status?: string) {
-    const where: any = {};
-    if (status) where.status = status;
-    return this.prisma.solicitacaoConsultoria.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-    });
+    return this.solicitacaoRepo.findMany(status);
   }
-
   async aceitarSolicitacao(id: string) {
-    const solicitacao = await this.prisma.solicitacaoConsultoria.findUnique({
-      where: { id },
-    });
-    if (!solicitacao) throw new NotFoundException('Solicitação não encontrada');
-    if (solicitacao.status !== 'PENDENTE') {
-      throw new BadRequestException('Apenas solicitações PENDENTE podem ser aceitas');
-    }
-    return this.prisma.solicitacaoConsultoria.update({
-      where: { id },
-      data: { status: 'ACEITA' },
-    });
+    const s = await this.solicitacaoRepo.findUnique(id);
+    if (!s) throw new NotFoundException('Solicitação não encontrada');
+    if (s.status !== 'PENDENTE') throw new BadRequestException('Apenas solicitações PENDENTE podem ser aceitas');
+    return this.solicitacaoRepo.update(id, { status: 'ACEITA' });
   }
-
   async recusarSolicitacao(id: string) {
-    const solicitacao = await this.prisma.solicitacaoConsultoria.findUnique({
-      where: { id },
-    });
-    if (!solicitacao) throw new NotFoundException('Solicitação não encontrada');
-    if (solicitacao.status !== 'PENDENTE') {
-      throw new BadRequestException('Apenas solicitações PENDENTE podem ser recusadas');
-    }
-    return this.prisma.solicitacaoConsultoria.update({
-      where: { id },
-      data: { status: 'RECUSADA' },
-    });
+    const s = await this.solicitacaoRepo.findUnique(id);
+    if (!s) throw new NotFoundException('Solicitação não encontrada');
+    if (s.status !== 'PENDENTE') throw new BadRequestException('Apenas solicitações PENDENTE podem ser recusadas');
+    return this.solicitacaoRepo.update(id, { status: 'RECUSADA' });
   }
-
   async concluirSolicitacao(id: string, resultado: string) {
-    const solicitacao = await this.prisma.solicitacaoConsultoria.findUnique({
-      where: { id },
-    });
-    if (!solicitacao) throw new NotFoundException('Solicitação não encontrada');
-    if (solicitacao.status !== 'ACEITA') {
-      throw new BadRequestException('Apenas solicitações ACEITAS podem ser concluídas');
-    }
-
-    const termo = 'Esta consultoria não configura ato de gestão';
-
-    await this.prisma.solicitacaoConsultoria.update({
-      where: { id },
-      data: { status: 'CONCLUIDA' },
-    });
-
-    // Se existir consultoria vinculada, atualizar resultado com termo
-    const consultorias = await this.prisma.consultoria.findMany({
-      where: { solicitacaoId: id },
-    });
+    const s = await this.solicitacaoRepo.findUnique(id);
+    if (!s) throw new NotFoundException('Solicitação não encontrada');
+    if (s.status !== 'ACEITA') throw new BadRequestException('Apenas solicitações ACEITAS podem ser concluídas');
+    await this.solicitacaoRepo.update(id, { status: 'CONCLUIDA' });
+    const consultorias = await this.consultoriaRepo.findBySolicitacao(id);
     for (const c of consultorias) {
-      await this.prisma.consultoria.update({
-        where: { id: c.id },
-        data: { resultado: `${resultado}\n\n---\n${termo}` },
+      await this.consultoriaRepo.update(c.id, {
+        resultado: `${resultado}\n\n---\nEsta consultoria não configura ato de gestão`,
       });
     }
-
-    return { mensagem: 'Consultoria concluída', termo };
+    return { mensagem: 'Consultoria concluída' };
   }
-
-  // ── Consultorias ──────────────────────────────
-
-  async registrarConsultoria(dto: RegistrarConsultoriaDto) {
-    if (!TIPOS_VALIDOS.includes(dto.tipo)) {
+  async registrarConsultoria(dto: any) {
+    if (!TIPOS_VALIDOS.includes(dto.tipo))
       throw new BadRequestException(`Tipo inválido. Válidos: ${TIPOS_VALIDOS.join(', ')}`);
-    }
-
-    // Validar horas PAA se vinculado a um plano
-    if (dto.horasUtilizadas && dto.horasUtilizadas > 0 && dto.planoId) {
-      const plano = await this.prisma.planoAuditoria.findUnique({
-        where: { id: dto.planoId },
-      });
-      if (!plano) throw new NotFoundException('Plano não encontrado');
-      if (plano.tipo !== 'PAA') {
-        throw new BadRequestException('Horas são validadas apenas para PAA');
-      }
-
-      // Horas disponíveis
-      const forcaTrabalho = await this.prisma.forcaTrabalho.findMany({
-        where: { planoId: dto.planoId },
-      });
-      const horasDisponiveis = forcaTrabalho.reduce((s, f) => s + f.horasDisponiveisAno, 0);
-
-      // Horas já alocadas em consultorias existentes
-      const consultoriasExistentes = await this.prisma.consultoria.findMany({
-        where: { planoId: dto.planoId },
-      });
-      const horasAlocadas = consultoriasExistentes.reduce((s, c) => s + (c.horasUtilizadas || 0), 0);
-
-      if (horasAlocadas + dto.horasUtilizadas > horasDisponiveis) {
-        throw new BadRequestException(
-          `Horas insuficientes: ${horasAlocadas}h já alocadas + ${dto.horasUtilizadas}h solicitadas > ${horasDisponiveis}h disponíveis`,
-        );
-      }
-    }
-
-    return this.prisma.consultoria.create({
-      data: {
-        tipo: dto.tipo,
-        escopo: dto.escopo ?? null,
-        horasUtilizadas: dto.horasUtilizadas ?? null,
-        resultado: dto.resultado ?? null,
-        planoId: dto.planoId ?? null,
-        solicitacaoId: dto.solicitacaoId ?? null,
-        equipeIds: dto.equipeIds ?? undefined,
-      },
-    });
+    return this.consultoriaRepo.create(dto);
   }
-
   async listarConsultorias(tipo?: string) {
-    const where: any = {};
-    if (tipo) where.tipo = tipo;
-    return this.prisma.consultoria.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-    });
+    return this.consultoriaRepo.findAll(tipo);
   }
-
   async findOne(id: string) {
-    const consultoria = await this.prisma.consultoria.findUnique({
-      where: { id },
-    });
-    if (!consultoria) throw new NotFoundException('Consultoria não encontrada');
-    return consultoria;
+    const c = await this.consultoriaRepo.findUnique(id);
+    if (!c) throw new NotFoundException('Consultoria não encontrada');
+    return c;
   }
-
-  // Compatibilidade com controller legado
   async findAll() {
-    return this.prisma.consultoria.findMany({
-      orderBy: { createdAt: 'desc' },
-    });
+    return this.consultoriaRepo.findAll();
   }
 }

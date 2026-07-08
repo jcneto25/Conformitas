@@ -1,24 +1,17 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
+import { PrismaModule } from '../prisma/prisma.module';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { JwtStrategy } from './strategies/jwt.strategy';
-import { KeycloakStrategy } from './strategies/keycloak.strategy';
-import { PrismaModule } from '../prisma/prisma.module';
+import { PrismaAuthRepository } from './repositories/prisma-auth.repository';
+import { AUTH_REPOSITORY } from './repositories/auth.repository';
 import appConfig from '../config/app.config';
-
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: appConfig.auth.provider }),
-    JwtModule.register({
-      secret: appConfig.jwt.secret,
-      signOptions: { expiresIn: appConfig.jwt.expiresIn },
-    }),
     PrismaModule,
+    JwtModule.register({ secret: appConfig.jwt.secret, signOptions: { expiresIn: appConfig.jwt.expiresIn } }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, KeycloakStrategy],
-  exports: [AuthService],
+  providers: [AuthService, { provide: AUTH_REPOSITORY, useClass: PrismaAuthRepository }],
 })
 export class AuthModule {}

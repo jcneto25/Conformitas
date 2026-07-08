@@ -18,9 +18,10 @@ const mockService = () => ({
   atualizarIndicador: jest.fn(),
 });
 
-const mockReq = (overrides = {}) => ({
-  user: { sub: 'user-1', email: 'auditor@tjce.jus.br', roles: ['P01'], ...overrides },
-}) as any;
+const mockReq = (overrides = {}) =>
+  ({
+    user: { sub: 'user-1', email: 'auditor@tjce.jus.br', roles: ['P01'], ...overrides },
+  }) as any;
 
 describe('QualidadeController', () => {
   let controller: QualidadeController;

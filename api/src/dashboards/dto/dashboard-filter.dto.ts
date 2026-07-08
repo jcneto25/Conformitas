@@ -20,4 +20,9 @@ export class DashboardFilterDto {
   @IsOptional()
   @IsString()
   unidade?: string;
+
+  @ApiPropertyOptional({ description: 'Status (filtro)' })
+  @IsOptional()
+  @IsString()
+  status?: string;
 }
