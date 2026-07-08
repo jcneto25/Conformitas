@@ -2,6 +2,10 @@ import { Controller, Get, Post, Patch, Param, Body, Query, Req } from '@nestjs/c
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AchadosService } from './achados.service';
+import { CriarAchadoUseCase } from './use-cases/criar-achado.use-case';
+import { EnviarManifestacaoUseCase } from './use-cases/enviar-manifestacao.use-case';
+import { ConsolidarAchadoUseCase } from './use-cases/consolidar-achado.use-case';
+import { RegistrarManifestacaoUseCase } from './use-cases/registrar-manifestacao.use-case';
 import { Roles } from '../common/decorators/roles.decorator';
 import { CreateAchadoDto } from './dto/create-achado.dto';
 import { CreateManifestacaoDto } from './dto/create-manifestacao.dto';
@@ -14,7 +18,12 @@ interface RequestWithUser extends Request {
 @ApiBearerAuth()
 @Controller('achados')
 export class AchadosController {
-  constructor(private readonly service: AchadosService) {}
+  constructor(
+    private readonly enviarManifestacaoUseCase: EnviarManifestacaoUseCase,
+    private readonly consolidarUseCase: ConsolidarAchadoUseCase,
+    private readonly registrarManifestacaoUseCase: RegistrarManifestacaoUseCase,
+    private readonly service: AchadosService,
+  ) {}
 
   @Get()
   @Roles('P01', 'P02', 'P05')
@@ -43,14 +52,14 @@ export class AchadosController {
   @Roles('P02')
   @ApiOperation({ summary: 'Enviar achado para manifestação da unidade auditada' })
   enviarManifestacao(@Param('id') id: string, @Body('prazoDiasUteis') prazoDiasUteis?: number) {
-    return this.service.enviarManifestacao(id, prazoDiasUteis);
+    return this.enviarManifestacaoUseCase.execute(id, prazoDiasUteis);
   }
 
   @Post(':id/consolidar')
   @Roles('P02')
   @ApiOperation({ summary: 'Consolidar achado (manual)' })
   consolidar(@Param('id') id: string) {
-    return this.service.consolidar(id);
+    return this.consolidarUseCase.execute(id);
   }
 
   // ── Manifestações ─────────────────────────────
@@ -59,7 +68,7 @@ export class AchadosController {
   @Roles('P05')
   @ApiOperation({ summary: 'Registrar manifestação da unidade auditada' })
   criarManifestacao(@Param('id') id: string, @Body() dto: CreateManifestacaoDto, @Req() req: RequestWithUser) {
-    return this.service.criarManifestacao(id, dto, req.user.sub, req.user?.unidadeEscopo);
+    return this.registrarManifestacaoUseCase.execute(id, dto, req.user.sub, req.user?.unidadeEscopo);
   }
 
   @Get(':id/manifestacoes')

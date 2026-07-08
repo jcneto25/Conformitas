@@ -1,35 +1,33 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { ICompetenciaRepository, COMPETENCIA_REPOSITORY } from './repositories/competencia.repository';
 import { CreateCompetenciaDto } from './dto/create-competencia.dto';
 import { UpdateCompetenciaDto } from './dto/update-competencia.dto';
 
 @Injectable()
 export class CompetenciasService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@Inject(COMPETENCIA_REPOSITORY) private readonly repo: ICompetenciaRepository) {}
 
   async create(dto: CreateCompetenciaDto) {
-    return this.prisma.competencia.create({ data: dto });
+    return this.repo.create(dto);
   }
 
   async findAll(params?: { tipo?: string }) {
-    const where: any = {};
-    if (params?.tipo) where.tipo = params.tipo;
-    return this.prisma.competencia.findMany({ where, orderBy: { nome: 'asc' } });
+    return this.repo.findMany({ tipo: params?.tipo });
   }
 
   async findOne(id: string) {
-    const item = await this.prisma.competencia.findUnique({ where: { id } });
+    const item = await this.repo.findUnique(id);
     if (!item) throw new NotFoundException('Competência não encontrada');
     return item;
   }
 
   async update(id: string, dto: UpdateCompetenciaDto) {
     await this.findOne(id);
-    return this.prisma.competencia.update({ where: { id }, data: dto });
+    return this.repo.update(id, dto);
   }
 
   async remove(id: string) {
     await this.findOne(id);
-    return this.prisma.competencia.delete({ where: { id } });
+    return this.repo.delete(id);
   }
 }

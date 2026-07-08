@@ -44,7 +44,12 @@ describe('BibliotecaController', () => {
   it('findAll should delegate with search', async () => {
     mockService.findAll.mockResolvedValue([]);
     await controller.findAll('MANUAL', undefined, 'Auditoria', 'ATIVO');
-    expect(mockService.findAll).toHaveBeenCalledWith({ tipo: 'MANUAL', categoria: undefined, search: 'Auditoria', status: 'ATIVO' });
+    expect(mockService.findAll).toHaveBeenCalledWith({
+      tipo: 'MANUAL',
+      categoria: undefined,
+      search: 'Auditoria',
+      status: 'ATIVO',
+    });
   });
 
   it('findOne should delegate', async () => {

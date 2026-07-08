@@ -14,18 +14,24 @@ export class CompetenciasController {
   @Post()
   @Roles('P01', 'P10')
   @ApiOperation({ summary: 'Cadastrar competência (P01, P10)' })
-  create(@Body() dto: CreateCompetenciaDto) { return this.service.create(dto); }
+  create(@Body() dto: CreateCompetenciaDto) {
+    return this.service.create(dto);
+  }
 
   @Get()
   @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Listar competências (P01, P02, P10)' })
   @ApiQuery({ name: 'tipo', required: false, enum: ['TECNICA', 'GERENCIAL'] })
-  findAll(@Query('tipo') tipo?: string) { return this.service.findAll({ tipo }); }
+  findAll(@Query('tipo') tipo?: string) {
+    return this.service.findAll({ tipo });
+  }
 
   @Get(':id')
   @Roles('P01', 'P02', 'P10')
   @ApiOperation({ summary: 'Obter competência por ID' })
-  findOne(@Param('id', ParseUUIDPipe) id: string) { return this.service.findOne(id); }
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.service.findOne(id);
+  }
 
   @Patch(':id')
   @Roles('P01', 'P10')
@@ -37,5 +43,7 @@ export class CompetenciasController {
   @Delete(':id')
   @Roles('P01')
   @ApiOperation({ summary: 'Remover competência (P01)' })
-  remove(@Param('id', ParseUUIDPipe) id: string) { return this.service.remove(id); }
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.service.remove(id);
+  }
 }

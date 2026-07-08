@@ -222,6 +222,9 @@ next_action: ..." --json
 
 **Durante a sessão,** appenda deltas ao arquivo `.ace/sessions/YYYY-MM-DD-NNN.md` via escrita no final do arquivo. NUNCA reescreva arquivos de sessão existentes.
 
+**Toda sessão inicia conhecendo o workflow:**
+ esse projeto segue o workflow LLC com base em https://github.com/jcneto25/Live-and-Let-Code/blob/master/LLC_GUIDE.md and https://github.com/jcneto25/Live-and-Let-Code/blob/master/llc-pipeline-design.md leia-os
+
 ---
 
 ## Document Hierarchy

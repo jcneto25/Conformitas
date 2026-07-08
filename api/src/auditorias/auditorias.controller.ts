@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
   Body,
   Param,
   Query,
@@ -18,6 +17,10 @@ import { extname, join } from 'path';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuditoriasService } from './auditorias.service';
+import { AbrirAuditoriaUseCase } from './use-cases/abrir-auditoria.use-case';
+import { IniciarExecucaoUseCase } from './use-cases/iniciar-execucao.use-case';
+import { ConcluirAuditoriaUseCase } from './use-cases/concluir-auditoria.use-case';
+import { SuspenderAuditoriaUseCase } from './use-cases/suspender-auditoria.use-case';
 import { CreateAuditoriaDto } from './dto/create-auditoria.dto';
 import { CriarEvidenciaDto } from './dto/criar-evidencia.dto';
 import { CriarPapelTrabalhoDto } from './dto/criar-papel-trabalho.dto';
@@ -33,13 +36,19 @@ interface RequestWithUser extends Request {
 @Controller()
 @ApiBearerAuth()
 export class AuditoriasController {
-  constructor(private readonly service: AuditoriasService) {}
+  constructor(
+    private readonly abrirUseCase: AbrirAuditoriaUseCase,
+    private readonly iniciarExecucaoUseCase: IniciarExecucaoUseCase,
+    private readonly concluirUseCase: ConcluirAuditoriaUseCase,
+    private readonly suspenderUseCase: SuspenderAuditoriaUseCase,
+    private readonly service: AuditoriasService,
+  ) {}
 
   @Post('auditorias')
   @Roles('P01')
   @ApiOperation({ summary: 'Abrir auditoria a partir de item do PAA (P01)' })
   create(@Req() req: RequestWithUser, @Body() dto: CreateAuditoriaDto) {
-    return this.service.create(dto, req.user.sub);
+    return this.abrirUseCase.execute(dto, req.user.sub);
   }
 
   @Get('auditorias')
@@ -66,21 +75,21 @@ export class AuditoriasController {
   @Roles('P01')
   @ApiOperation({ summary: 'Iniciar execução da auditoria (P01)' })
   iniciarExecucao(@Param('id', ParseUUIDPipe) id: string) {
-    return this.service.iniciarExecucao(id);
+    return this.iniciarExecucaoUseCase.execute(id);
   }
 
   @Post('auditorias/:id/concluir')
   @Roles('P01')
   @ApiOperation({ summary: 'Concluir auditoria (P01)' })
   concluir(@Param('id', ParseUUIDPipe) id: string) {
-    return this.service.concluir(id);
+    return this.concluirUseCase.execute(id);
   }
 
   @Post('auditorias/:id/suspender')
   @Roles('P01')
   @ApiOperation({ summary: 'Suspender auditoria (P01)' })
   suspender(@Param('id', ParseUUIDPipe) id: string, @Body('motivo') motivo: string) {
-    return this.service.suspender(id, motivo);
+    return this.suspenderUseCase.execute(id, motivo);
   }
 
   @Post('auditorias/:id/comunicado')

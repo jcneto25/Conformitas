@@ -75,8 +75,11 @@ describe('DashboardsController', () => {
     it('should call exportSummary with correct tipo and formato', async () => {
       const mockRes = { setHeader: jest.fn(), send: jest.fn(), json: jest.fn() };
       mockService.exportSummary.mockResolvedValue({
-        tipo: 'paa', formato: 'PDF', dados: { totalPlanos: 5 },
-        geradoEm: '2026-01-01', filtros: {},
+        tipo: 'paa',
+        formato: 'PDF',
+        dados: { totalPlanos: 5 },
+        geradoEm: '2026-01-01',
+        filtros: {},
       });
 
       await controller.export('paa', 'PDF' as any, {} as any, mockRes as any);

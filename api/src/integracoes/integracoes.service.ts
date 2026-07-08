@@ -1,66 +1,42 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable, Inject, NotFoundException, ConflictException } from '@nestjs/common';
+import { IIntegracaoRepository, INTEGRACAO_REPOSITORY } from './repositories/integracao.repository';
+import { ILogIntegracaoRepository, LOG_INTEGRACAO_REPOSITORY } from './repositories/log-integracao.repository';
 import { CreateIntegracaoDto, UpdateIntegracaoDto } from './dto/integracao.dto';
-
 @Injectable()
 export class IntegracoesService {
-  constructor(private readonly prisma: PrismaService) {}
-
+  constructor(
+    @Inject(INTEGRACAO_REPOSITORY) private readonly integracaoRepo: IIntegracaoRepository,
+    @Inject(LOG_INTEGRACAO_REPOSITORY) private readonly logRepo: ILogIntegracaoRepository,
+  ) {}
   async findAll() {
-    return this.prisma.integracao.findMany({ orderBy: { createdAt: 'desc' } });
+    return this.integracaoRepo.findAll();
   }
-
   async findOne(id: string) {
-    const integracao = await this.prisma.integracao.findUnique({ where: { id } });
-    if (!integracao) throw new NotFoundException('Integração não encontrada');
-    return integracao;
+    const i = await this.integracaoRepo.findUnique(id);
+    if (!i) throw new NotFoundException('Integração não encontrada');
+    return i;
   }
-
   async create(dto: CreateIntegracaoDto) {
-    const existente = await this.prisma.integracao.findFirst({
-      where: { nome: dto.nome },
-    });
+    const existente = await this.integracaoRepo.findByNome(dto.nome);
     if (existente) throw new ConflictException('Já existe uma integração com este nome');
-
-    return this.prisma.integracao.create({
-      data: {
-        nome: dto.nome,
-        sistemaExterno: dto.sistemaExterno,
-        tipo: dto.tipo,
-        protocolo: dto.protocolo,
-        endpoint: dto.endpoint,
-        metodoAutenticacao: dto.metodoAutenticacao,
-        frequencia: dto.frequencia,
-        status: dto.status,
-        healthStatus: 'NAO_TESTADO',
-      },
-    });
+    return this.integracaoRepo.create({ ...dto, healthStatus: 'NAO_TESTADO' });
   }
-
   async update(id: string, dto: UpdateIntegracaoDto) {
     await this.findOne(id);
-    return this.prisma.integracao.update({ where: { id }, data: dto });
+    return this.integracaoRepo.update(id, dto);
   }
-
   async remove(id: string) {
     await this.findOne(id);
-    return this.prisma.integracao.delete({ where: { id } });
+    return this.integracaoRepo.delete(id);
   }
-
   async healthCheck(id: string) {
     const integracao = await this.findOne(id);
-
-    // Simula health check — em produção, faria uma chamada real ao endpoint
     const inicio = Date.now();
     let status = 'ONLINE';
     let erro: string | null = null;
-
     try {
       if (integracao.endpoint) {
-        const response = await fetch(integracao.endpoint, {
-          method: 'GET',
-          signal: AbortSignal.timeout(5000),
-        });
+        const response = await fetch(integracao.endpoint, { method: 'GET', signal: AbortSignal.timeout(5000) });
         if (!response.ok) {
           status = 'ERRO';
           erro = `HTTP ${response.status}`;
@@ -72,58 +48,38 @@ export class IntegracoesService {
       status = 'OFFLINE';
       erro = e.message;
     }
-
     const duracaoMs = Date.now() - inicio;
-
-    // Registra log
-    await this.prisma.logIntegracao.create({
-      data: {
-        integracaoId: id,
-        status,
-        requisicao: { metodo: 'GET', url: integracao.endpoint },
-        resposta: erro ? { erro } : { status: 'ok' },
-        erro,
-        duracaoMs,
-      },
+    await this.logRepo.create({
+      integracaoId: id,
+      status,
+      requisicao: { metodo: 'GET', url: integracao.endpoint },
+      resposta: erro ? { erro } : { status: 'ok' },
+      erro,
+      duracaoMs,
     });
-
-    // Atualiza health status
-    await this.prisma.integracao.update({
-      where: { id },
-      data: { healthStatus: status },
-    });
-
+    await this.integracaoRepo.update(id, { healthStatus: status });
     return { integracaoId: id, healthStatus: status, duracaoMs, erro, timestamp: new Date().toISOString() };
   }
-
   async healthAll() {
     const integracoes = await this.findAll();
     const results = await Promise.allSettled(integracoes.map((i) => this.healthCheck(i.id)));
-
-    return integracoes.map((integracao, index) => {
-      const result = results[index];
-      const base: any = {
+    return integracoes.map((integracao, i) => {
+      const base = {
         id: integracao.id,
         nome: integracao.nome,
         sistemaExterno: integracao.sistemaExterno,
         healthStatus: integracao.healthStatus,
         status: integracao.status,
       };
-      if (result && result.status === 'fulfilled') {
-        base.detalhe = result.value;
-      } else if (result && result.status === 'rejected') {
-        base.detalhe = { erro: result.reason?.message };
+      const r = results[i]!;
+      if (r.status === 'fulfilled') {
+        return { ...base, detalhe: r.value };
       }
-      return base;
+      return { ...base, detalhe: { erro: r.reason?.message } };
     });
   }
-
   async logs(id: string) {
     await this.findOne(id);
-    return this.prisma.logIntegracao.findMany({
-      where: { integracaoId: id },
-      orderBy: { createdAt: 'desc' },
-      take: 50,
-    });
+    return this.logRepo.findByIntegracao(id);
   }
 }

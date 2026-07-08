@@ -1,5 +1,7 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
+import { IPlanoAuditoriaRepository, PLANO_AUDITORIA_REPOSITORY } from './repositories/plano-auditoria.repository';
+import { IItemPlanoRepository, ITEM_PLANO_REPOSITORY } from './repositories/item-plano.repository';
+import { IForcaTrabalhoRepository, FORCA_TRABALHO_REPOSITORY } from './repositories/forca-trabalho.repository';
 import { CreatePlanoDto } from './dto/create-plano.dto';
 import { UpdatePlanoDto } from './dto/update-plano.dto';
 import { CreateItemPlanoDto } from './dto/create-item-plano.dto';
@@ -7,251 +9,122 @@ import { CreateForcaTrabalhoDto } from './dto/create-forca-trabalho.dto';
 
 @Injectable()
 export class PlanosService {
-  constructor(private readonly prisma: PrismaService) {}
-
-  // ── Planos ────────────────────────────────────
-
+  constructor(
+    @Inject(PLANO_AUDITORIA_REPOSITORY) private readonly planoRepo: IPlanoAuditoriaRepository,
+    @Inject(ITEM_PLANO_REPOSITORY) private readonly itemRepo: IItemPlanoRepository,
+    @Inject(FORCA_TRABALHO_REPOSITORY) private readonly ftRepo: IForcaTrabalhoRepository,
+  ) {}
   async create(dto: CreatePlanoDto, criadoPorId: string) {
-    return this.prisma.planoAuditoria.create({
-      data: {
-        tipo: dto.tipo,
-        anoInicio: dto.anoInicio,
-        anoFim: dto.anoFim,
-        status: 'RASCUNHO',
-        versao: 1,
-        criadoPorId,
-      },
+    return this.planoRepo.create({
+      tipo: dto.tipo,
+      anoInicio: dto.anoInicio,
+      anoFim: dto.anoFim,
+      status: 'RASCUNHO',
+      versao: 1,
+      criadoPorId,
     });
   }
-
   async findAll(params?: { tipo?: string; ano?: number; status?: string }) {
     const where: any = { deletedAt: null };
     if (params?.tipo) where.tipo = params.tipo;
-    if (params?.ano) {
-      where.anoInicio = { lte: params.ano };
-      where.anoFim = { gte: params.ano };
-    }
+    if (params?.ano) where.ano = params.ano;
     if (params?.status) where.status = params.status;
-    return this.prisma.planoAuditoria.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        itensPlano: {
-          include: { universo: true },
-        },
-      },
-    });
+    return this.planoRepo.findMany(where);
   }
-
   async findOne(id: string) {
-    const plano = await this.prisma.planoAuditoria.findUnique({
-      where: { id },
-      include: {
-        itensPlano: {
-          include: { universo: true },
-        },
-        forcTrabalho: {
-          include: { usuario: { select: { id: true, nome: true, email: true } } },
-        },
-      },
+    const p = await this.planoRepo.findUnique(id, {
+      itensPlano: { include: { universo: true } },
+      forcTrabalho: { include: { usuario: { select: { id: true, nome: true, email: true } } } },
     });
-    if (!plano || plano.deletedAt) throw new NotFoundException('Plano não encontrado');
-    return plano;
+    if (!p || p.deletedAt) throw new NotFoundException('Plano não encontrado');
+    return p;
   }
-
   async submeter(id: string) {
-    const plano = await this.prisma.planoAuditoria.findUnique({
-      where: { id },
-      include: {
-        itensPlano: true,
-        forcTrabalho: true,
-      },
-    });
-    if (!plano) throw new NotFoundException('Plano não encontrado');
-    if (plano.status !== 'RASCUNHO') {
-      throw new BadRequestException('Apenas planos em RASCUNHO podem ser submetidos');
+    const p = await this.planoRepo.findUnique(id, { itensPlano: true, forcTrabalho: true });
+    if (!p) throw new NotFoundException('Plano não encontrado');
+    if (p.status !== 'RASCUNHO') throw new BadRequestException('Apenas planos em RASCUNHO podem ser submetidos');
+    if (p.itensPlano.length === 0) throw new BadRequestException('Plano deve ter ao menos 1 item');
+    if (p.tipo === 'PAA' && p.forcTrabalho.length > 0) {
+      const hDisp = p.forcTrabalho.reduce((s: number, f: any) => s + f.horasDisponiveisAno, 0);
+      const hAloc = p.itensPlano.reduce((s: number, i: any) => s + (i.horasEstimadas || 0), 0);
+      if (hAloc > hDisp)
+        throw new BadRequestException(`Horas alocadas (${hAloc}h) excedem a força de trabalho (${hDisp}h)`);
     }
-    if (plano.itensPlano.length === 0) {
-      throw new BadRequestException('Plano deve ter ao menos 1 item');
-    }
-
-    // Validar horas disponíveis vs alocadas (apenas para PAA)
-    if (plano.tipo === 'PAA' && plano.forcTrabalho.length > 0) {
-      const horasDisponiveis = plano.forcTrabalho.reduce((s, f) => s + f.horasDisponiveisAno, 0);
-      const horasAlocadas = plano.itensPlano.reduce((s, i) => s + (i.horasEstimadas || 0), 0);
-      if (horasAlocadas > horasDisponiveis) {
-        throw new BadRequestException(
-          `Horas alocadas (${horasAlocadas}h) excedem a força de trabalho (${horasDisponiveis}h)`,
-        );
-      }
-    }
-
-    return this.prisma.planoAuditoria.update({
-      where: { id },
-      data: { status: 'SUBMETIDO', dataSubmissao: new Date() },
-    });
+    return this.planoRepo.update(id, { status: 'SUBMETIDO', dataSubmissao: new Date() });
   }
-
   async aprovar(id: string) {
-    const plano = await this.prisma.planoAuditoria.findUnique({ where: { id } });
-    if (!plano) throw new NotFoundException('Plano não encontrado');
-    if (plano.status !== 'SUBMETIDO') {
-      throw new BadRequestException('Apenas planos SUBMETIDOS podem ser aprovados');
-    }
-
-    return this.prisma.planoAuditoria.update({
-      where: { id },
-      data: { status: 'APROVADO', dataAprovacao: new Date() },
-    });
+    const p = await this.planoRepo.findUnique(id);
+    if (!p) throw new NotFoundException('');
+    if (p.status !== 'SUBMETIDO') throw new BadRequestException('');
+    return this.planoRepo.update(id, { status: 'APROVADO', dataAprovacao: new Date() });
   }
-
   async publicar(id: string) {
-    const plano = await this.prisma.planoAuditoria.findUnique({ where: { id } });
-    if (!plano) throw new NotFoundException('Plano não encontrado');
-    if (plano.status !== 'APROVADO') {
-      throw new BadRequestException('Apenas planos APROVADOS podem ser publicados');
-    }
-    return this.prisma.planoAuditoria.update({
-      where: { id },
-      data: { status: 'PUBLICADO', dataPublicacao: new Date() },
-    });
+    const p = await this.planoRepo.findUnique(id);
+    if (!p) throw new NotFoundException('');
+    if (p.status !== 'APROVADO') throw new BadRequestException('');
+    return this.planoRepo.update(id, { status: 'PUBLICADO', dataPublicacao: new Date() });
   }
-
   async update(id: string, dto: UpdatePlanoDto) {
-    const plano = await this.prisma.planoAuditoria.findUnique({ where: { id } });
-    if (!plano || plano.deletedAt) throw new NotFoundException('Plano não encontrado');
-    if (plano.status !== 'RASCUNHO') {
-      throw new BadRequestException('Apenas planos em RASCUNHO podem ser editados');
-    }
-    return this.prisma.planoAuditoria.update({
-      where: { id },
-      data: {
-        tipo: dto.tipo,
-        anoInicio: dto.anoInicio,
-        anoFim: dto.anoFim,
-      },
-    });
+    const p = await this.planoRepo.findUnique(id);
+    if (!p || p.deletedAt) throw new NotFoundException('');
+    if (p.status !== 'RASCUNHO') throw new BadRequestException('');
+    return this.planoRepo.update(id, dto);
   }
-
   async devolver(id: string, motivo: string) {
-    const plano = await this.prisma.planoAuditoria.findUnique({ where: { id } });
-    if (!plano) throw new NotFoundException('Plano não encontrado');
-    if (plano.status !== 'SUBMETIDO') {
-      throw new BadRequestException('Apenas planos SUBMETIDOS podem ser devolvidos');
-    }
-    if (!motivo) {
-      throw new BadRequestException('Motivo da devolução é obrigatório');
-    }
-    return this.prisma.planoAuditoria.update({
-      where: { id },
-      data: { status: 'RASCUNHO' },
-    });
+    const p = await this.planoRepo.findUnique(id);
+    if (!p) throw new NotFoundException('');
+    if (p.status !== 'SUBMETIDO') throw new BadRequestException('');
+    if (!motivo) throw new BadRequestException('');
+    return this.planoRepo.update(id, { status: 'RASCUNHO' });
   }
-
   async criarRevisao(id: string, criadoPorId: string) {
-    const plano = await this.findOne(id);
-    const novoPlano = await this.prisma.planoAuditoria.create({
-      data: {
-        tipo: plano.tipo,
-        anoInicio: plano.anoInicio,
-        anoFim: plano.anoFim,
-        status: 'RASCUNHO',
-        versao: plano.versao + 1,
-        criadoPorId,
-      },
+    const p = await this.findOne(id);
+    const novo = await this.planoRepo.create({
+      tipo: p.tipo,
+      anoInicio: p.anoInicio,
+      anoFim: p.anoFim,
+      status: 'RASCUNHO',
+      versao: p.versao + 1,
+      criadoPorId,
     });
-
-    if (plano.itensPlano?.length) {
-      const itensParaCopiar = (plano as any).itensPlano || [];
-      for (const item of itensParaCopiar) {
-        await this.prisma.itemPlano.create({
-          data: {
-            planoId: novoPlano.id,
-            universoAuditavelId: item.universoAuditavelId,
-            tipoAuditoria: item.tipoAuditoria,
-            formaExecucao: item.formaExecucao,
-            horasEstimadas: item.horasEstimadas,
-            escopo: item.escopo,
-            objetivo: item.objetivo,
-            resultadosEsperados: item.resultadosEsperados,
-            equipeIds: item.equipeIds,
-            questoesAuditoria: item.questoesAuditoria,
-            testesPrevistos: item.testesPrevistos,
-            cronogramaInicio: item.cronogramaInicio,
-            cronogramaFim: item.cronogramaFim,
-            prioridade: item.prioridade,
-          },
+    if (p.itensPlano?.length)
+      for (const i of p.itensPlano)
+        await this.itemRepo.create({
+          ...i,
+          id: undefined,
+          planoId: novo.id,
+          universoAuditavelId: i.universoAuditavelId,
+          createdAt: undefined,
+          updatedAt: undefined,
         });
-      }
-    }
-
-    return this.findOne(novoPlano.id);
+    return this.findOne(novo.id);
   }
-
-  // ── Itens do Plano ────────────────────────────
-
   async adicionarItem(planoId: string, dto: CreateItemPlanoDto) {
-    const plano = await this.prisma.planoAuditoria.findUnique({ where: { id: planoId } });
-    if (!plano) throw new NotFoundException('Plano não encontrado');
-    if (plano.status !== 'RASCUNHO') {
-      throw new BadRequestException('Itens só podem ser adicionados em planos RASCUNHO');
-    }
-
-    return this.prisma.itemPlano.create({
-      data: {
-        planoId,
-        universoAuditavelId: dto.universoAuditavelId,
-        tipoAuditoria: dto.tipoAuditoria,
-        formaExecucao: dto.formaExecucao,
-        horasEstimadas: dto.horasEstimadas,
-        escopo: dto.escopo,
-        objetivo: dto.objetivo,
-        resultadosEsperados: dto.resultadosEsperados,
-        equipeIds: dto.equipeIds ? JSON.parse(JSON.stringify(dto.equipeIds)) : undefined,
-        questoesAuditoria: dto.questoesAuditoria ? JSON.parse(JSON.stringify(dto.questoesAuditoria)) : undefined,
-        testesPrevistos: dto.testesPrevistos ? JSON.parse(JSON.stringify(dto.testesPrevistos)) : undefined,
-        cronogramaInicio: dto.cronogramaInicio ? new Date(dto.cronogramaInicio) : undefined,
-        cronogramaFim: dto.cronogramaFim ? new Date(dto.cronogramaFim) : undefined,
-        prioridade: dto.prioridade,
-      },
-      include: { universo: true },
+    const p = await this.planoRepo.findUnique(planoId);
+    if (!p) throw new NotFoundException('');
+    if (p.status !== 'RASCUNHO') throw new BadRequestException('');
+    return this.itemRepo.create({
+      planoId,
+      ...dto,
+      equipeIds: dto.equipeIds ? JSON.parse(JSON.stringify(dto.equipeIds)) : undefined,
+      questoesAuditoria: dto.questoesAuditoria ? JSON.parse(JSON.stringify(dto.questoesAuditoria)) : undefined,
     });
   }
-
   async listarItens(planoId: string) {
-    return this.prisma.itemPlano.findMany({
-      where: { planoId },
-      include: { universo: true },
-    });
+    return this.itemRepo.findMany({ where: { planoId } });
   }
-
   async removerItem(id: string) {
-    const item = await this.prisma.itemPlano.findUnique({ where: { id } });
-    if (!item) throw new NotFoundException('Item não encontrado');
-    return this.prisma.itemPlano.delete({ where: { id } });
+    const i = await this.itemRepo.findUnique(id);
+    if (!i) throw new NotFoundException('');
+    return this.itemRepo.delete(id);
   }
-
-  // ── Força de Trabalho ─────────────────────────
-
   async adicionarForcaTrabalho(planoId: string, dto: Omit<CreateForcaTrabalhoDto, 'planoId'>) {
-    return this.prisma.forcaTrabalho.create({
-      data: {
-        planoId,
-        usuarioId: dto.usuarioId,
-        horasDisponiveisAno: dto.horasDisponiveisAno,
-        ano: dto.ano,
-      },
-      include: { usuario: { select: { id: true, nome: true, email: true } } },
-    });
+    return this.ftRepo.create({ planoId, ...dto });
   }
-
   async listarForcaTrabalho(planoId?: string, ano?: number) {
     const where: any = {};
     if (planoId) where.planoId = planoId;
     if (ano) where.ano = ano;
-    return this.prisma.forcaTrabalho.findMany({
-      where,
-      include: { usuario: { select: { id: true, nome: true, email: true } } },
-    });
+    return this.ftRepo.findMany(where);
   }
 }
