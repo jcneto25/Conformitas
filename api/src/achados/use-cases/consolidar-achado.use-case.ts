@@ -2,30 +2,30 @@ import { Injectable, Inject, NotFoundException, BadRequestException } from '@nes
 import { IAchadoRepository, ACHADO_REPOSITORY } from '../repositories/achado.repository';
 import { Achado } from '../domain/achado.entity';
 import { AchadoStatus } from '../domain/achado-status';
-import { RESSALVA_SEM_MANIFESTACAO } from '../achados.service';
+import { RESSALVA_SEM_MANIFESTACAO } from '../domain/constants';
 
 @Injectable()
 export class ConsolidarAchadoUseCase {
   constructor(@Inject(ACHADO_REPOSITORY) private readonly repo: IAchadoRepository) {}
 
   async execute(id: string, ressalva?: string) {
-    const data = await this.repo.findUnique(id);
-    if (!data) throw new NotFoundException('Achado não encontrado');
+    const achadoRaw = await this.repo.findUnique(id);
+    if (!achadoRaw) throw new NotFoundException('Achado não encontrado');
 
     const entity = new Achado(
-      data.id,
-      data.auditoriaId,
-      data.codigo,
-      data.status as AchadoStatus,
-      data.tipo,
-      data.situacaoEncontrada,
-      data.criterio,
-      data.causa,
-      data.efeito,
-      data.evidenciaIds ?? [],
-      data.autorId,
-      data.dataLimiteManifestacao,
-      data.ressalva,
+      achadoRaw.id,
+      achadoRaw.auditoriaId,
+      achadoRaw.codigo,
+      achadoRaw.status as AchadoStatus,
+      achadoRaw.tipo,
+      achadoRaw.situacaoEncontrada,
+      achadoRaw.criterio,
+      achadoRaw.causa,
+      achadoRaw.efeito,
+      achadoRaw.evidenciaIds ?? [],
+      achadoRaw.autorId,
+      achadoRaw.dataLimiteManifestacao,
+      achadoRaw.ressalva,
     );
 
     entity.consolidar(ressalva);

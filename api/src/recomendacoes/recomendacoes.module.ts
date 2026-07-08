@@ -4,6 +4,8 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { RecomendacoesService } from './recomendacoes.service';
 import { RecomendacoesController } from './recomendacoes.controller';
 import { RecomendacoesSchedule } from './recomendacoes.schedule';
+import { VerificarVencidasUseCase } from './use-cases/verificar-vencidas.use-case';
+import { EscalarVencidasUseCase } from './use-cases/escalar-vencidas.use-case';
 import {
   PrismaRecomendacaoRepository,
   PrismaProvidenciaRepository,
@@ -15,6 +17,8 @@ import { RECOMENDACAO_REPOSITORY, PROVIDENCIA_REPOSITORY } from './repositories/
   providers: [
     RecomendacoesService,
     RecomendacoesSchedule,
+    VerificarVencidasUseCase,
+    EscalarVencidasUseCase,
     { provide: RECOMENDACAO_REPOSITORY, useClass: PrismaRecomendacaoRepository },
     { provide: PROVIDENCIA_REPOSITORY, useClass: PrismaProvidenciaRepository },
   ],

@@ -14,11 +14,11 @@ export class PlanosService {
     @Inject(ITEM_PLANO_REPOSITORY) private readonly itemRepo: IItemPlanoRepository,
     @Inject(FORCA_TRABALHO_REPOSITORY) private readonly ftRepo: IForcaTrabalhoRepository,
   ) {}
-  async create(dto: CreatePlanoDto, criadoPorId: string) {
+  async create(createPlanoDto: CreatePlanoDto, criadoPorId: string) {
     return this.planoRepo.create({
-      tipo: dto.tipo,
-      anoInicio: dto.anoInicio,
-      anoFim: dto.anoFim,
+      tipo: createPlanoDto.tipo,
+      anoInicio: createPlanoDto.anoInicio,
+      anoFim: createPlanoDto.anoFim,
       status: 'RASCUNHO',
       versao: 1,
       criadoPorId,
@@ -54,27 +54,27 @@ export class PlanosService {
   }
   async aprovar(id: string) {
     const p = await this.planoRepo.findUnique(id);
-    if (!p) throw new NotFoundException('');
-    if (p.status !== 'SUBMETIDO') throw new BadRequestException('');
+    if (!p) throw new NotFoundException('Plano não encontrado');
+    if (p.status !== 'SUBMETIDO') throw new BadRequestException('Apenas planos SUBMETIDOS podem ser aprovados');
     return this.planoRepo.update(id, { status: 'APROVADO', dataAprovacao: new Date() });
   }
   async publicar(id: string) {
     const p = await this.planoRepo.findUnique(id);
-    if (!p) throw new NotFoundException('');
-    if (p.status !== 'APROVADO') throw new BadRequestException('');
+    if (!p) throw new NotFoundException('Plano não encontrado');
+    if (p.status !== 'APROVADO') throw new BadRequestException('Apenas planos APROVADOS podem ser publicados');
     return this.planoRepo.update(id, { status: 'PUBLICADO', dataPublicacao: new Date() });
   }
   async update(id: string, dto: UpdatePlanoDto) {
     const p = await this.planoRepo.findUnique(id);
-    if (!p || p.deletedAt) throw new NotFoundException('');
-    if (p.status !== 'RASCUNHO') throw new BadRequestException('');
+    if (!p || p.deletedAt) throw new NotFoundException('Plano não encontrado');
+    if (p.status !== 'RASCUNHO') throw new BadRequestException('Apenas planos em RASCUNHO podem ser editados');
     return this.planoRepo.update(id, dto);
   }
   async devolver(id: string, motivo: string) {
     const p = await this.planoRepo.findUnique(id);
-    if (!p) throw new NotFoundException('');
-    if (p.status !== 'SUBMETIDO') throw new BadRequestException('');
-    if (!motivo) throw new BadRequestException('');
+    if (!p) throw new NotFoundException('Plano não encontrado');
+    if (p.status !== 'SUBMETIDO') throw new BadRequestException('Apenas planos SUBMETIDOS podem ser devolvidos');
+    if (!motivo) throw new BadRequestException('Motivo da devolução é obrigatório');
     return this.planoRepo.update(id, { status: 'RASCUNHO' });
   }
   async criarRevisao(id: string, criadoPorId: string) {
@@ -101,8 +101,8 @@ export class PlanosService {
   }
   async adicionarItem(planoId: string, dto: CreateItemPlanoDto) {
     const p = await this.planoRepo.findUnique(planoId);
-    if (!p) throw new NotFoundException('');
-    if (p.status !== 'RASCUNHO') throw new BadRequestException('');
+    if (!p) throw new NotFoundException('Plano não encontrado');
+    if (p.status !== 'RASCUNHO') throw new BadRequestException('Apenas planos em RASCUNHO podem receber itens');
     return this.itemRepo.create({
       planoId,
       ...dto,
@@ -115,7 +115,7 @@ export class PlanosService {
   }
   async removerItem(id: string) {
     const i = await this.itemRepo.findUnique(id);
-    if (!i) throw new NotFoundException('');
+    if (!i) throw new NotFoundException('Item do plano não encontrado');
     return this.itemRepo.delete(id);
   }
   async adicionarForcaTrabalho(planoId: string, dto: Omit<CreateForcaTrabalhoDto, 'planoId'>) {

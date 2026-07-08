@@ -1,22 +1,14 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Query,
-  Req,
-  ParseUUIDPipe,
-  UseInterceptors,
-  UploadedFile,
-  BadRequestException,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, Req, ParseUUIDPipe, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuditoriasService } from './auditorias.service';
+import { EvidenciasService } from './evidencias.service';
+import { PapeisTrabalhoService } from './papeis-trabalho.service';
+import { RequisicoesService } from './requisicoes.service';
+import { ComunicadosService } from './comunicados.service';
 import { AbrirAuditoriaUseCase } from './use-cases/abrir-auditoria.use-case';
 import { IniciarExecucaoUseCase } from './use-cases/iniciar-execucao.use-case';
 import { ConcluirAuditoriaUseCase } from './use-cases/concluir-auditoria.use-case';
@@ -28,9 +20,7 @@ import { CriarRequisicaoDto } from './dto/criar-requisicao.dto';
 import { Roles } from '../common/decorators/roles.decorator';
 import { ExigeClassificacao } from '../common/decorators/classificacao.decorator';
 
-interface RequestWithUser extends Request {
-  user: { sub: string; email: string; roles: string[]; unidadeEscopo?: string | null };
-}
+interface RequestWithUser extends Request { user: { sub: string; email: string; roles: string[]; unidadeEscopo?: string | null }; }
 
 @ApiTags('auditorias')
 @Controller()
@@ -42,150 +32,74 @@ export class AuditoriasController {
     private readonly concluirUseCase: ConcluirAuditoriaUseCase,
     private readonly suspenderUseCase: SuspenderAuditoriaUseCase,
     private readonly service: AuditoriasService,
+    private readonly evidenciasService: EvidenciasService,
+    private readonly papeisService: PapeisTrabalhoService,
+    private readonly requisicoesService: RequisicoesService,
+    private readonly comunicadosService: ComunicadosService,
   ) {}
 
   @Post('auditorias')
   @Roles('P01')
-  @ApiOperation({ summary: 'Abrir auditoria a partir de item do PAA (P01)' })
-  create(@Req() req: RequestWithUser, @Body() dto: CreateAuditoriaDto) {
-    return this.abrirUseCase.execute(dto, req.user.sub);
-  }
+  create(@Req() req: RequestWithUser, @Body() dto: CreateAuditoriaDto) { return this.abrirUseCase.execute(dto, req.user.sub); }
 
   @Get('auditorias')
   @Roles('P01', 'P02', 'P05', 'P10')
-  @ApiOperation({ summary: 'Listar auditorias' })
-  findAll(
-    @Query('status') status?: string,
-    @Query('unidade') unidade?: string,
-    @Query('search') search?: string,
-    @Req() req?: RequestWithUser,
-  ) {
+  findAll(@Query('status') status?: string, @Query('unidade') unidade?: string, @Query('search') search?: string, @Req() req?: RequestWithUser) {
     return this.service.findAll({ status, unidade, search }, req?.user?.unidadeEscopo);
   }
 
   @Get('auditorias/:id')
   @Roles('P01', 'P02', 'P10')
   @ExigeClassificacao({ entidadeTipo: 'auditoria', entidadeIdParam: 'id' })
-  @ApiOperation({ summary: 'Obter auditoria por ID' })
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.service.findOne(id);
-  }
+  findOne(@Param('id', ParseUUIDPipe) id: string) { return this.service.findOne(id); }
 
   @Post('auditorias/:id/iniciar')
   @Roles('P01')
-  @ApiOperation({ summary: 'Iniciar execução da auditoria (P01)' })
-  iniciarExecucao(@Param('id', ParseUUIDPipe) id: string) {
-    return this.iniciarExecucaoUseCase.execute(id);
-  }
+  iniciarExecucao(@Param('id', ParseUUIDPipe) id: string) { return this.iniciarExecucaoUseCase.execute(id); }
 
   @Post('auditorias/:id/concluir')
   @Roles('P01')
-  @ApiOperation({ summary: 'Concluir auditoria (P01)' })
-  concluir(@Param('id', ParseUUIDPipe) id: string) {
-    return this.concluirUseCase.execute(id);
-  }
+  concluir(@Param('id', ParseUUIDPipe) id: string) { return this.concluirUseCase.execute(id); }
 
   @Post('auditorias/:id/suspender')
   @Roles('P01')
-  @ApiOperation({ summary: 'Suspender auditoria (P01)' })
-  suspender(@Param('id', ParseUUIDPipe) id: string, @Body('motivo') motivo: string) {
-    return this.suspenderUseCase.execute(id, motivo);
-  }
+  suspender(@Param('id', ParseUUIDPipe) id: string, @Body('motivo') motivo: string) { return this.suspenderUseCase.execute(id, motivo); }
 
   @Post('auditorias/:id/comunicado')
   @Roles('P01')
-  @ApiOperation({ summary: 'Gerar comunicado de auditoria (P01)' })
-  gerarComunicado(@Req() req: RequestWithUser, @Param('id', ParseUUIDPipe) id: string) {
-    return this.service.gerarComunicado(id, req.user.sub);
-  }
-
-  // ── Evidências ───────────────────────────────
+  gerarComunicado(@Req() req: RequestWithUser, @Param('id', ParseUUIDPipe) id: string) { return this.comunicadosService.gerar(id, req.user.sub); }
 
   @Post('auditorias/:id/evidencias')
   @Roles('P02')
-  @ApiOperation({ summary: 'Adicionar evidência com arquivo à auditoria (P02)' })
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(
-    FileInterceptor('arquivo', {
-      storage: diskStorage({
-        destination: join(process.cwd(), 'uploads'),
-        filename: (_req, file, cb) => {
-          const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname)}`;
-          cb(null, uniqueName);
-        },
-      }),
-      limits: { fileSize: 25 * 1024 * 1024 },
-      fileFilter: (_req, file, cb) => {
-        const allowedMimes = [
-          'application/pdf',
-          'application/msword',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-          'application/vnd.ms-excel',
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          'image/jpeg',
-          'image/png',
-          'image/tiff',
-          'application/zip',
-          'application/x-zip-compressed',
-        ];
-        if (allowedMimes.includes(file.mimetype)) {
-          cb(null, true);
-        } else {
-          cb(new BadRequestException(`Tipo de arquivo não permitido: ${file.mimetype}`), false);
-        }
-      },
-    }),
-  )
-  criarEvidencia(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: CriarEvidenciaDto,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
+  @UseInterceptors(FileInterceptor('arquivo', {
+    storage: diskStorage({ destination: join(process.cwd(), 'uploads'), filename: (_req, file, cb) => { cb(null, `${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname)}`); } }),
+    limits: { fileSize: 25 * 1024 * 1024 },
+    fileFilter: (_req, file, cb) => { const allowed = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'image/jpeg', 'image/png', 'image/tiff', 'application/zip']; if (allowed.includes(file.mimetype)) cb(null, true); else cb(new BadRequestException(`Tipo não permitido: ${file.mimetype}`), false); },
+  }))
+  criarEvidencia(@Param('id', ParseUUIDPipe) id: string, @Body() dto: CriarEvidenciaDto, @UploadedFile() file: Express.Multer.File) {
     if (!file) throw new BadRequestException('Arquivo é obrigatório');
-    return this.service.criarEvidencia(id, dto, file.path);
+    return this.evidenciasService.criar(id, dto, file.path);
   }
 
   @Get('auditorias/:id/evidencias')
   @Roles('P01', 'P02', 'P10')
   @ExigeClassificacao({ entidadeTipo: 'auditoria', entidadeIdParam: 'id' })
-  @ApiOperation({ summary: 'Listar evidências da auditoria' })
-  listarEvidencias(@Param('id', ParseUUIDPipe) id: string) {
-    return this.service.listarEvidencias(id);
-  }
-
-  // ── Papéis de Trabalho ───────────────────────
+  listarEvidencias(@Param('id', ParseUUIDPipe) id: string) { return this.evidenciasService.listar(id); }
 
   @Post('auditorias/:id/papeis-trabalho')
   @Roles('P02')
-  @ApiOperation({ summary: 'Criar papel de trabalho (P02)' })
-  criarPapelTrabalho(
-    @Req() req: RequestWithUser,
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: CriarPapelTrabalhoDto,
-  ) {
-    return this.service.criarPapelTrabalho(id, dto, req.user.sub);
-  }
+  criarPapelTrabalho(@Req() req: RequestWithUser, @Param('id', ParseUUIDPipe) id: string, @Body() dto: CriarPapelTrabalhoDto) { return this.papeisService.criar(id, dto, req.user.sub); }
 
   @Get('auditorias/:id/papeis-trabalho')
   @Roles('P01', 'P02', 'P10')
-  @ApiOperation({ summary: 'Listar papéis de trabalho da auditoria' })
-  listarPapeisTrabalho(@Param('id', ParseUUIDPipe) id: string) {
-    return this.service.listarPapeisTrabalho(id);
-  }
-
-  // ── Requisições ──────────────────────────────
+  listarPapeisTrabalho(@Param('id', ParseUUIDPipe) id: string) { return this.papeisService.listar(id); }
 
   @Post('auditorias/:id/requisicoes')
   @Roles('P02')
-  @ApiOperation({ summary: 'Emitir requisição à unidade auditada (P02)' })
-  criarRequisicao(@Param('id', ParseUUIDPipe) id: string, @Body() dto: CriarRequisicaoDto) {
-    return this.service.criarRequisicao(id, dto);
-  }
+  criarRequisicao(@Param('id', ParseUUIDPipe) id: string, @Body() dto: CriarRequisicaoDto) { return this.requisicoesService.criar(id, dto); }
 
   @Get('auditorias/:id/requisicoes')
   @Roles('P01', 'P02', 'P10')
-  @ApiOperation({ summary: 'Listar requisições da auditoria' })
-  listarRequisicoes(@Param('id', ParseUUIDPipe) id: string) {
-    return this.service.listarRequisicoes(id);
-  }
+  listarRequisicoes(@Param('id', ParseUUIDPipe) id: string) { return this.requisicoesService.listar(id); }
 }

@@ -1,17 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { RecomendacoesService } from './recomendacoes.service';
+import { VerificarVencidasUseCase } from './use-cases/verificar-vencidas.use-case';
+import { EscalarVencidasUseCase } from './use-cases/escalar-vencidas.use-case';
 
-// RF-008.4 / RF-008.5 — alertas de vencimento e escalonamento periódico.
 @Injectable()
 export class RecomendacoesSchedule {
   private readonly logger = new Logger(RecomendacoesSchedule.name);
 
-  constructor(private readonly service: RecomendacoesService) {}
+  constructor(
+    private readonly verificarUseCase: VerificarVencidasUseCase,
+    private readonly escalarUseCase: EscalarVencidasUseCase,
+  ) {}
 
   @Cron(CronExpression.EVERY_HOUR)
   async verificarVencidas() {
-    const result = await this.service.verificarVencidas();
+    const result = await this.verificarUseCase.execute();
     if (result.vencidas > 0) {
       this.logger.warn(`${result.vencidas} recomendação(ões) vencida(s).`);
     }
@@ -19,7 +22,7 @@ export class RecomendacoesSchedule {
 
   @Cron(CronExpression.EVERY_DAY_AT_3AM)
   async escalarVencidas() {
-    const result = await this.service.escalarVencidas();
+    const result = await this.escalarUseCase.execute();
     if (result.escaladas > 0) {
       this.logger.warn(`${result.escaladas} recomendação(ões) VENCIDA(s) há +30 dias — revisar escalonamento.`);
     }

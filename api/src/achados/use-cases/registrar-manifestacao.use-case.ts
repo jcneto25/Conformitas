@@ -17,7 +17,7 @@ export class RegistrarManifestacaoUseCase {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async execute(achadoId: string, dto: CreateManifestacaoDto, autorId: string, unidadeEscopo?: string | null) {
+  async execute(achadoId: string, manifestacaoDto: CreateManifestacaoDto, autorId: string, unidadeEscopo?: string | null) {
     const achado = await this.achadoRepo.findUnique(achadoId, { include: { auditoria: true } });
     if (!achado) throw new NotFoundException('Achado não encontrado');
     if (achado.status !== 'EM_MANIFESTACAO') {
@@ -30,7 +30,7 @@ export class RegistrarManifestacaoUseCase {
     const result = await this.manifestacaoRepo.create({
       achadoId,
       autorId,
-      conteudo: dto.conteudo,
+      conteudo: manifestacaoDto.conteudo,
     });
 
     this.eventEmitter.emit(

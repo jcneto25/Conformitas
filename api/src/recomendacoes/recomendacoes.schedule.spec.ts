@@ -1,34 +1,41 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RecomendacoesSchedule } from './recomendacoes.schedule';
-import { RecomendacoesService } from './recomendacoes.service';
+import { VerificarVencidasUseCase } from './use-cases/verificar-vencidas.use-case';
+import { EscalarVencidasUseCase } from './use-cases/escalar-vencidas.use-case';
 
 describe('RecomendacoesSchedule', () => {
   let schedule: RecomendacoesSchedule;
-  let service: { verificarVencidas: jest.Mock; escalarVencidas: jest.Mock };
+  let verificarUC: { execute: jest.Mock };
+  let escalarUC: { execute: jest.Mock };
 
   beforeEach(async () => {
-    service = { verificarVencidas: jest.fn(), escalarVencidas: jest.fn() };
+    verificarUC = { execute: jest.fn() };
+    escalarUC = { execute: jest.fn() };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [RecomendacoesSchedule, { provide: RecomendacoesService, useValue: service }],
+      providers: [
+        RecomendacoesSchedule,
+        { provide: VerificarVencidasUseCase, useValue: verificarUC },
+        { provide: EscalarVencidasUseCase, useValue: escalarUC },
+      ],
     }).compile();
     schedule = module.get<RecomendacoesSchedule>(RecomendacoesSchedule);
   });
 
-  it('delegar verificarVencidas ao service (com vencidas)', async () => {
-    service.verificarVencidas.mockResolvedValue({ vencidas: 2, notificados: ['P01', 'P06'] });
+  it('delegar verificarVencidas ao use case (com vencidas)', async () => {
+    verificarUC.execute.mockResolvedValue({ vencidas: 2 });
     await schedule.verificarVencidas();
-    expect(service.verificarVencidas).toHaveBeenCalled();
+    expect(verificarUC.execute).toHaveBeenCalled();
   });
 
-  it('delegar verificarVencidas ao service (sem vencidas)', async () => {
-    service.verificarVencidas.mockResolvedValue({ vencidas: 0, notificados: [] });
+  it('delegar verificarVencidas ao use case (sem vencidas)', async () => {
+    verificarUC.execute.mockResolvedValue({ vencidas: 0 });
     await schedule.verificarVencidas();
-    expect(service.verificarVencidas).toHaveBeenCalled();
+    expect(verificarUC.execute).toHaveBeenCalled();
   });
 
-  it('delegar escalarVencidas ao service', async () => {
-    service.escalarVencidas.mockResolvedValue({ escaladas: 1, notificar: ['P01'], recomendacoes: [] });
+  it('delegar escalarVencidas ao use case', async () => {
+    escalarUC.execute.mockResolvedValue({ escaladas: 1 });
     await schedule.escalarVencidas();
-    expect(service.escalarVencidas).toHaveBeenCalled();
+    expect(escalarUC.execute).toHaveBeenCalled();
   });
 });

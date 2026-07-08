@@ -6,9 +6,12 @@ export default {
   jwt: {
     secret: config.get('JWT_SECRET') || 'dev-jwt-secret-change-in-production',
     expiresIn: config.get('JWT_EXPIRES_IN') || '1800',
+    expiresInShort: config.get('JWT_EXPIRES_IN_SHORT') || '30m',
     refreshExpiresIn: config.get('REFRESH_EXPIRES_IN') || '28800',
+    refreshExpiresInMs: parseInt(config.get('REFRESH_EXPIRES_IN_MS') || '28800000', 10),
   },
-  totp: {
+  mfa: {
+    sessionExpiresInMs: parseInt(config.get('MFA_SESSION_EXPIRES_MS') || '600000', 10),
     issuer: config.get('TOTP_ISSUER') || 'CONFORMITAS-DEV',
   },
   auth: {

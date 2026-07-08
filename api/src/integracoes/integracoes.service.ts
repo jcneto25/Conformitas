@@ -71,7 +71,8 @@ export class IntegracoesService {
         healthStatus: integracao.healthStatus,
         status: integracao.status,
       };
-      const r = results[i]!;
+      const r = results[i];
+      if (!r) return { ...base, detalhe: { erro: 'Resultado indisponível' } };
       if (r.status === 'fulfilled') {
         return { ...base, detalhe: r.value };
       }

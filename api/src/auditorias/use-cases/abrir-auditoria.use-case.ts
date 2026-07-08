@@ -19,8 +19,8 @@ export class AbrirAuditoriaUseCase {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async execute(dto: CreateAuditoriaDto, criadoPorId: string) {
-    const itemPlano = await this.auditoriaRepo.findUnique(dto.itemPlanoId, {
+  async execute(createAuditoriaDto: CreateAuditoriaDto, criadoPorId: string) {
+    const itemPlano = await this.auditoriaRepo.findUnique(createAuditoriaDto.itemPlanoId, {
       include: { plano: true, universo: true },
     });
     if (!itemPlano) throw new NotFoundException('Item do plano não encontrado');
@@ -36,12 +36,12 @@ export class AbrirAuditoriaUseCase {
       numero,
       unidadeAuditada: itemPlano.universo?.unidadeResponsavel ?? '',
       objetivo: itemPlano.objetivo ?? '',
-      itemPlanoId: dto.itemPlanoId,
-      tipo: dto.tipo || 'CONFORMIDADE',
-      forma: dto.forma || 'DIRETA',
-      sigilosa: dto.sigilosa || false,
+      itemPlanoId: createAuditoriaDto.itemPlanoId,
+      tipo: createAuditoriaDto.tipo || 'CONFORMIDADE',
+      forma: createAuditoriaDto.forma || 'DIRETA',
+      sigilosa: createAuditoriaDto.sigilosa || false,
       escopo: itemPlano.escopo ?? null,
-      dataFimPrevista: dto.dataFimPrevista ? new Date(dto.dataFimPrevista) : null,
+      dataFimPrevista: createAuditoriaDto.dataFimPrevista ? new Date(createAuditoriaDto.dataFimPrevista) : null,
     });
 
     const saved = await this.auditoriaRepo.create({
