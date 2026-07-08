@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../services/auth.service';
 import { authGuard, rolesGuard } from './auth.guard';
 
@@ -84,6 +85,7 @@ describe('authGuard', () => {
 describe('rolesGuard', () => {
   let authSpy: jasmine.SpyObj<AuthService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
 
   beforeEach(() => {
     authSpy = jasmine.createSpyObj<AuthService>(
@@ -92,11 +94,13 @@ describe('rolesGuard', () => {
       { ready: Promise.resolve() },
     );
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    snackBarSpy = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
 
     TestBed.configureTestingModule({
       providers: [
         { provide: AuthService, useValue: authSpy },
         { provide: Router, useValue: routerSpy },
+        { provide: MatSnackBar, useValue: snackBarSpy },
       ],
     });
   });
@@ -112,9 +116,10 @@ describe('rolesGuard', () => {
 
     expect(result).toBeTrue();
     expect(authSpy.hasAnyRole).toHaveBeenCalledWith(['P10']);
+    expect(snackBarSpy.open).not.toHaveBeenCalled();
   });
 
-  it('should redirect to / when authenticated but lacks role', async () => {
+  it('should show snackbar and redirect to / when authenticated but lacks role', async () => {
     authSpy.isAuthenticated.and.returnValue(true);
     authSpy.hasAnyRole.and.returnValue(false);
 
@@ -124,7 +129,21 @@ describe('rolesGuard', () => {
     );
 
     expect(result).toBeFalse();
+    expect(snackBarSpy.open).toHaveBeenCalled();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/']);
+  });
+
+  it('should not show snackbar when not authenticated', async () => {
+    authSpy.isAuthenticated.and.returnValue(false);
+
+    const guard = rolesGuard(['P10']);
+    const result = await TestBed.runInInjectionContext(() =>
+      guard(mockRoute, mockState),
+    );
+
+    expect(result).toBeFalse();
+    expect(snackBarSpy.open).not.toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
   });
 
   it('should redirect to /login when not authenticated', async () => {
