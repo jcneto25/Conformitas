@@ -75,7 +75,8 @@ import { environment } from '../../../environments/environment';
               <div class="flex gap-3 justify-end mt-2">
                 <button mat-stroked-button routerLink="/qualidade" type="button">Cancelar</button>
                 <button mat-flat-button color="primary" type="submit"
-                        [disabled]="form.invalid || salvando">
+                        [disabled]="form.invalid || salvando" class="min-w-[140px]">
+                  @if (salvando) { <mat-spinner diameter="18" class="inline-block" /> }
                   {{ salvando ? 'Salvando...' : (isEdit ? 'Atualizar' : 'Criar Avaliação') }}
                 </button>
               </div>
@@ -83,7 +84,7 @@ import { environment } from '../../../environments/environment';
           }
 
           @if (error) {
-            <div class="flex items-center gap-2 text-red-600 text-sm mt-4 p-3 bg-red-50 rounded-lg border border-red-100" role="alert">
+            <div class="flex items-center gap-2 text-critical text-sm mt-4 p-3 bg-critical-bg rounded-lg border border-critical/20" role="alert">
               <span>{{ error }}</span>
             </div>
           }

@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
 import { ApiService } from '../../core/services/api.service';
+import { EmptyStateComponent } from '../../shared/components/empty-state.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,7 +18,7 @@ import { ApiService } from '../../core/services/api.service';
   imports: [
     MatCardModule, MatProgressSpinnerModule, MatIconModule,
     MatFormFieldModule, MatSelectModule, MatButtonModule,
-    FormsModule, RouterModule, BaseChartDirective,
+    FormsModule, RouterModule, BaseChartDirective, EmptyStateComponent,
   ],
   template: `
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
@@ -64,6 +65,8 @@ import { ApiService } from '../../core/services/api.service';
           </mat-card>
         }
       </div>
+    } @else if (!temDados) {
+      <app-empty-state icon="dashboard" title="Nenhum dado disponível" description="Não há dados de auditoria ou recomendação para o período selecionado." size="md" />
     } @else {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <mat-card class="shadow-[0_2px_4px_rgba(0,0,0,0.04)] rounded-xl border border-divider hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)] transition-all duration-200 group">
@@ -195,6 +198,12 @@ export class DashboardComponent implements OnInit {
       },
     },
   };
+
+  get temDados(): boolean {
+    return this.totalAuditorias > 0 || this.totalRecomendacoes > 0
+      || (this.auditoriasBarData.labels?.length ?? 0) > 0
+      || (this.recomendacoesDoughnutData.labels?.length ?? 0) > 0;
+  }
 
   readonly doughnutOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,

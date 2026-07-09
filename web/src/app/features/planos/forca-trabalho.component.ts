@@ -53,7 +53,7 @@ import { EmptyStateComponent } from '../../shared/components/empty-state.compone
             <mat-card class="border-t-4 border-primary shadow-sm rounded-xl">
               <mat-card-content class="p-5">
                 <div class="text-3xl font-bold"
-                     [class.text-red-600]="totalAlocado > totalDisponivel"
+                     [class.text-critical]="totalAlocado > totalDisponivel"
                      [class.text-green-700]="totalAlocado <= totalDisponivel">
                   {{ totalAlocado }}h
                 </div>
@@ -64,7 +64,7 @@ import { EmptyStateComponent } from '../../shared/components/empty-state.compone
             <mat-card class="border-t-4 border-primary shadow-sm rounded-xl">
               <mat-card-content class="p-5">
                 <div class="text-3xl font-bold"
-                     [class.text-red-600]="saldo < 0"
+                     [class.text-critical]="saldo < 0"
                      [class.text-green-700]="saldo >= 0">
                   {{ saldo }}h
                 </div>
@@ -81,7 +81,7 @@ import { EmptyStateComponent } from '../../shared/components/empty-state.compone
             <mat-progress-bar mode="determinate" [value]="percentualAlocado"
                               [color]="percentualAlocado > 100 ? 'warn' : 'primary'" />
             <div class="text-right text-xs mt-1"
-                 [class.text-red-600]="percentualAlocado > 100"
+                 [class.text-critical]="percentualAlocado > 100"
                  [class.text-text-sec]="percentualAlocado <= 100">
               {{ percentualAlocado | number:'1.0-1' }}% alocado
             </div>
@@ -148,10 +148,14 @@ import { EmptyStateComponent } from '../../shared/components/empty-state.compone
 
               <div class="md:col-span-3 flex items-center gap-3 mt-2">
                 <button mat-raised-button color="primary" type="submit"
-                        [disabled]="!form.usuarioId || !form.horasDisponiveisAno"
-                        class="flex items-center gap-2">
-                  <mat-icon>add</mat-icon>
-                  Adicionar
+                        [disabled]="!form.usuarioId || !form.horasDisponiveisAno || adicionando"
+                        class="flex items-center gap-2 min-w-[120px]">
+                  @if (adicionando) {
+                    <mat-spinner diameter="18" class="inline-block" />
+                  } @else {
+                    <mat-icon>add</mat-icon>
+                  }
+                  {{ adicionando ? 'Adicionando...' : 'Adicionar' }}
                 </button>
               </div>
             </form>
@@ -159,7 +163,7 @@ import { EmptyStateComponent } from '../../shared/components/empty-state.compone
         }
 
         @if (error) {
-          <div class="flex items-center gap-2 text-red-600 text-sm p-3 bg-red-50 rounded-lg border border-red-100 mt-2" role="alert">
+          <div class="flex items-center gap-2 text-critical text-sm p-3 bg-critical-bg rounded-lg border border-critical/20 mt-2" role="alert">
             <mat-icon class="text-[18px]">error_outline</mat-icon>
             <span>{{ error }}</span>
           </div>
@@ -174,6 +178,7 @@ export class ForcaTrabalhoComponent implements OnInit {
 
   usuarios: any[] = [];
   carregando = false;
+  adicionando = false;
   error = '';
   anoAtual = new Date().getFullYear();
   form = { usuarioId: '', horasDisponiveisAno: 0, ano: this.anoAtual };
@@ -223,6 +228,7 @@ export class ForcaTrabalhoComponent implements OnInit {
   async adicionar() {
     if (!this.form.usuarioId || !this.form.horasDisponiveisAno) return;
     this.error = '';
+    this.adicionando = true;
     try {
       const novo = await firstValueFrom(
         this.http.post(`${environment.apiUrl}/forca-trabalho`, {
@@ -236,6 +242,8 @@ export class ForcaTrabalhoComponent implements OnInit {
       this.form = { usuarioId: '', horasDisponiveisAno: 0, ano: this.anoAtual };
     } catch (err: any) {
       this.error = err?.error?.message || 'Erro ao adicionar força de trabalho';
+    } finally {
+      this.adicionando = false;
     }
   }
 }

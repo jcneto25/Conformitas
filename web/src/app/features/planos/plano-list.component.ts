@@ -105,23 +105,38 @@ import { ToastService } from '../../core/services/toast.service';
             </button>
 
             @if (plano.status === 'RASCUNHO') {
-              <button mat-raised-button color="primary" (click)="submeter(plano)" *appHasRole="'P01'" class="flex items-center gap-1">
-                <mat-icon>send</mat-icon> Submeter
+              <button mat-raised-button color="primary" (click)="submeter(plano)" *appHasRole="'P01'" class="flex items-center gap-1 min-w-[130px]" [disabled]="submetendoId === plano.id">
+                @if (submetendoId === plano.id) {
+                  <mat-spinner diameter="18" class="inline-block" />
+                } @else {
+                  <mat-icon>send</mat-icon>
+                }
+                {{ submetendoId === plano.id ? 'Submetendo...' : 'Submeter' }}
               </button>
-              <button mat-stroked-button color="warn" (click)="remover(plano)" *appHasRole="'P01'" class="flex items-center gap-1">
-                <mat-icon>delete</mat-icon> Remover
+              <button mat-stroked-button color="warn" (click)="remover(plano)" *appHasRole="'P01'" class="flex items-center gap-1 min-w-[110px]" [disabled]="removendoId === plano.id">
+                @if (removendoId === plano.id) {
+                  <mat-spinner diameter="18" class="inline-block" />
+                } @else {
+                  <mat-icon>delete</mat-icon>
+                }
+                {{ removendoId === plano.id ? 'Removendo...' : 'Remover' }}
               </button>
             }
 
             @if (plano.status === 'SUBMETIDO') {
-              <button mat-stroked-button color="accent" (click)="devolver(plano)" *appHasRole="'P03'" class="flex items-center gap-1">
-                <mat-icon>undo</mat-icon> Devolver
+              <button mat-stroked-button color="accent" (click)="devolver(plano)" *appHasRole="'P03'" class="flex items-center gap-1 min-w-[130px]" [disabled]="devolvendoId === plano.id">
+                @if (devolvendoId === plano.id) {
+                  <mat-spinner diameter="18" class="inline-block" />
+                } @else {
+                  <mat-icon>undo</mat-icon>
+                }
+                {{ devolvendoId === plano.id ? 'Devolvendo...' : 'Devolver' }}
               </button>
             }
           </div>
 
           @if (msgMap[plano.id]) {
-            <p class="mt-2 text-sm" [class.text-green-700]="!errMap[plano.id]" [class.text-red-600]="errMap[plano.id]">
+            <p class="mt-2 text-sm" [class.text-green-700]="!errMap[plano.id]" [class.text-critical]="errMap[plano.id]">
               {{ msgMap[plano.id] }}
             </p>
           }
@@ -139,6 +154,9 @@ export class PlanoListComponent implements OnInit {
   filtroTipo = '';
   filtroStatus = '';
   carregando = false;
+  submetendoId: string | null = null;
+  devolvendoId: string | null = null;
+  removendoId: string | null = null;
   msgMap: Record<string, string> = {};
   errMap: Record<string, boolean> = {};
   readonly anoAtual = new Date().getFullYear();
@@ -184,6 +202,7 @@ export class PlanoListComponent implements OnInit {
     });
     const confirmed = await firstValueFrom(ref.afterClosed());
     if (!confirmed) return;
+    this.submetendoId = plano.id;
     this.msgMap[plano.id] = '';
     this.errMap[plano.id] = false;
     try {
@@ -193,6 +212,8 @@ export class PlanoListComponent implements OnInit {
     } catch (err: any) {
       this.msgMap[plano.id] = err?.error?.message || 'Erro ao submeter';
       this.errMap[plano.id] = true;
+    } finally {
+      this.submetendoId = null;
     }
   }
 
@@ -202,6 +223,7 @@ export class PlanoListComponent implements OnInit {
     });
     const confirmed = await firstValueFrom(ref.afterClosed());
     if (!confirmed) return;
+    this.devolvendoId = plano.id;
     this.msgMap[plano.id] = '';
     this.errMap[plano.id] = false;
     try {
@@ -211,6 +233,8 @@ export class PlanoListComponent implements OnInit {
     } catch (err: any) {
       this.msgMap[plano.id] = err?.error?.message || 'Erro ao devolver';
       this.errMap[plano.id] = true;
+    } finally {
+      this.devolvendoId = null;
     }
   }
 
@@ -220,12 +244,15 @@ export class PlanoListComponent implements OnInit {
     });
     const confirmed = await firstValueFrom(ref.afterClosed());
     if (!confirmed) return;
+    this.removendoId = plano.id;
     try {
       await firstValueFrom(this.http.delete(`${environment.apiUrl}/planos/${plano.id}`));
       this.toast.show('Plano removido', 'success');
       await this.carregar();
     } catch (err: any) {
       this.toast.show(err?.error?.message || 'Erro ao remover', 'error');
+    } finally {
+      this.removendoId = null;
     }
   }
 }

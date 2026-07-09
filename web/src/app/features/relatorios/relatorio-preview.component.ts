@@ -63,8 +63,13 @@ import { EmptyStateComponent } from '../../shared/components/empty-state.compone
               <mat-option value="FINAL">Final</mat-option>
             </mat-select>
           </mat-form-field>
-          <button mat-raised-button color="accent" (click)="gerar()" [disabled]="!auditoriaId" class="flex items-center gap-2">
-            <mat-icon>picture_as_pdf</mat-icon> Gerar
+          <button mat-raised-button color="accent" (click)="gerar()" [disabled]="!auditoriaId || gerando" class="flex items-center gap-2 min-w-[120px]">
+            @if (gerando) {
+              <mat-spinner diameter="18" class="inline-block" />
+            } @else {
+              <mat-icon>picture_as_pdf</mat-icon>
+            }
+            {{ gerando ? 'Gerando...' : 'Gerar' }}
           </button>
           <span class="text-text-sec text-sm">
             Preliminar compila achados PRELIMINAR; Final exige todos CONSOLIDADO.
@@ -119,8 +124,8 @@ import { EmptyStateComponent } from '../../shared/components/empty-state.compone
     }
 
     @if (error) {
-      <mat-card class="mt-4 border border-red-200 bg-red-50 rounded-xl shadow-sm">
-        <mat-card-content class="flex items-center gap-2 text-red-600 p-4">
+      <mat-card class="mt-4 border border-critical/20 bg-critical-bg rounded-xl shadow-sm">
+        <mat-card-content class="flex items-center gap-2 text-critical p-4">
           <mat-icon>error_outline</mat-icon>
           <span class="text-sm">{{ error }}</span>
         </mat-card-content>
@@ -133,6 +138,7 @@ export class RelatorioPreviewComponent {
   relatorios: any[] = [];
   gerarTipo: 'PRELIMINAR' | 'FINAL' = 'PRELIMINAR';
   carregando = false;
+  gerando = false;
   error = '';
 
   constructor(
@@ -158,6 +164,7 @@ export class RelatorioPreviewComponent {
   async gerar() {
     if (!this.auditoriaId) return;
     this.error = '';
+    this.gerando = true;
     try {
       await firstValueFrom(
         this.http.post(`${environment.apiUrl}/auditorias/${this.auditoriaId}/relatorios`, {
@@ -167,6 +174,8 @@ export class RelatorioPreviewComponent {
       );
     } catch (err: any) {
       this.error = err?.error?.message || 'Erro ao gerar relatório';
+    } finally {
+      this.gerando = false;
     }
     await this.carregar();
   }

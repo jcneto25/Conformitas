@@ -31,10 +31,7 @@ const API = environment.apiUrl;
   template: `
     <app-page-header
       [title]="isNew ? 'Novo Item do Universo' : 'Editar Item do Universo'"
-      [breadcrumbs]="[
-        { label: 'Universo Auditável', route: '/universo' },
-        { label: isNew ? 'Novo' : 'Editar' }
-      ]"
+     
     />
 
     <div class="max-w-3xl">

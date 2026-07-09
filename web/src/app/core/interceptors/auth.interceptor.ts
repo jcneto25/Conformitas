@@ -44,11 +44,10 @@ export const authInterceptor: HttpInterceptorFn = (
       if (error.status === 403) {
         const msg = error.error?.message || 'Acesso negado — você não tem permissão para acessar este recurso';
         toast.show(msg, 'error');
-      } else if (error.status === 0 || error.status >= 500) {
-        toast.show(
-          `Erro de conexão com o servidor (${error.status || 'offline'}). Tente novamente.`,
-          'error',
-        );
+      } else if (error.status === 0) {
+        toast.show('Sem conexão com o servidor. Verifique sua rede.', 'error');
+      } else if (error.status >= 500) {
+        toast.show('Erro interno do servidor. Tente novamente.', 'error');
       }
       return throwError(() => error);
     }),

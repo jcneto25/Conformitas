@@ -41,8 +41,8 @@ const HEALTH_COLOR: Record<string, string> = {
     @if (loading) {
       <div class="flex justify-center py-12"><mat-spinner diameter="40" /></div>
     } @else if (error) {
-      <mat-card class="shadow-sm rounded-xl border border-red-100">
-        <mat-card-content class="flex items-center gap-2 text-red-600 p-6">
+      <mat-card class="shadow-sm rounded-xl border border-critical/20">
+        <mat-card-content class="flex items-center gap-2 text-critical p-6">
           <mat-icon>error_outline</mat-icon>
           <span>{{ error }}</span>
           <button mat-button color="primary" (click)="ngOnInit()" class="ml-auto">Tentar novamente</button>

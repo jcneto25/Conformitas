@@ -34,10 +34,7 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../shared/componen
   template: `
     <app-page-header
       title="Recomendação"
-      [breadcrumbs]="[
-        { label: 'Recomendações', route: '/recomendacoes' },
-        { label: 'Detalhes' }
-      ]"
+     
     />
 
     @if (loading) {

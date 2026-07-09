@@ -3,19 +3,16 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
 import { StatusBadgeComponent } from '../../shared/components/status-badge.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
-import { EmptyStateComponent } from '../../shared/components/empty-state.component';
-import { AuthService } from '../../core/services/auth.service';
+import { DataTableComponent } from '../../shared/components/data-table.component';
 
 const API = environment.apiUrl;
 
@@ -24,12 +21,12 @@ const API = environment.apiUrl;
   standalone: true,
   imports: [
     CommonModule, FormsModule, RouterModule,
-    MatCardModule, MatTableModule, StatusBadgeComponent,
-    MatButtonModule, MatIconModule, MatSelectModule,
-    MatFormFieldModule, MatProgressSpinnerModule, PageHeaderComponent, EmptyStateComponent,
+    MatCardModule, MatButtonModule, MatIconModule, MatSelectModule,
+    MatFormFieldModule, FormsModule, RouterModule,
+    PageHeaderComponent, StatusBadgeComponent, DataTableComponent,
   ],
   template: `
-    <app-page-header title="Quadro de Achados" [breadcrumbs]="[{label: 'Auditoria', route: '/auditorias'}, {label: 'Achados'}]">
+    <app-page-header title="Quadro de Achados">
       <div actions>
         @if (canCreate()) {
           <button mat-raised-button color="primary" routerLink="/achados/novo" class="flex items-center gap-2">
@@ -68,53 +65,35 @@ const API = environment.apiUrl;
       <div class="flex justify-center py-8">
         <mat-spinner diameter="40" />
       </div>
-    } @else if (error) {
-      <mat-card class="border border-red-100">
-        <mat-card-content class="flex items-center gap-2 text-red-600">
-          <mat-icon>error_outline</mat-icon>
-          <span>{{ error }}</span>
-          <button mat-button color="primary" (click)="load()" class="ml-auto">Tentar novamente</button>
-        </mat-card-content>
-      </mat-card>
-    } @else if (achados.length === 0) {
-      <mat-card>
-        <mat-card-content>
-          <app-empty-state icon="search_off" title="Nenhum achado encontrado" description="Nenhum achado de auditoria foi registrado para esta auditoria." />
-        </mat-card-content>
-      </mat-card>
     } @else {
-      <div class="shadow-sm rounded-xl overflow-hidden border border-gray-100 bg-white">
-        <table mat-table [dataSource]="achados" class="w-full">
-          <ng-container matColumnDef="codigo">
-            <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main w-[130px]">Código</th>
-            <td mat-cell *matCellDef="let a" class="py-3 font-medium text-text-main">{{ a.codigo }}</td>
-          </ng-container>
-          <ng-container matColumnDef="tipo">
-            <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main">Tipo</th>
-            <td mat-cell *matCellDef="let a" class="py-3 pr-4 text-gray-700">{{ a.tipo }}</td>
-          </ng-container>
-          <ng-container matColumnDef="situacao">
-            <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main">Situação</th>
-            <td mat-cell *matCellDef="let a" class="py-3 pr-4 max-w-xs truncate text-gray-700">{{ a.situacaoEncontrada }}</td>
-          </ng-container>
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main w-[140px]">Status</th>
-            <td mat-cell *matCellDef="let a" class="py-3">
-              <app-status-badge [status]="a.status" />
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="acoes">
-            <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main w-[100px]"></th>
-            <td mat-cell *matCellDef="let a" class="py-3">
-              <button mat-icon-button [routerLink]="['/achados', a.id]" matTooltip="Visualizar" aria-label="Visualizar achado">
-                <mat-icon>visibility</mat-icon>
-              </button>
-            </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="cols; sticky: true" class="bg-gray-50"></tr>
-          <tr mat-row *matRowDef="let r; columns: cols" class="hover:bg-gray-50 transition-colors"></tr>
-        </table>
-      </div>
+      <app-data-table [data]="achados" [displayedColumns]="cols" [loading]="false" [error]="error" (retry)="load()" emptyMessage="Nenhum achado encontrado.">
+        <ng-container matColumnDef="codigo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="font-semibold text-text-main w-[130px]">Código</th>
+          <td mat-cell *matCellDef="let a" class="py-3 font-medium text-text-main">{{ a.codigo }}</td>
+        </ng-container>
+        <ng-container matColumnDef="tipo">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main">Tipo</th>
+          <td mat-cell *matCellDef="let a" class="py-3 pr-4 text-text-sec">{{ a.tipo }}</td>
+        </ng-container>
+        <ng-container matColumnDef="situacao">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main">Situação</th>
+          <td mat-cell *matCellDef="let a" class="py-3 pr-4 max-w-xs truncate text-text-sec">{{ a.situacaoEncontrada }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main w-[140px]">Status</th>
+          <td mat-cell *matCellDef="let a" class="py-3">
+            <app-status-badge [status]="a.status" />
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main w-[100px]"></th>
+          <td mat-cell *matCellDef="let a" class="py-3">
+            <button mat-icon-button [routerLink]="['/achados', a.id]" matTooltip="Visualizar" aria-label="Visualizar achado">
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+      </app-data-table>
     }
   `,
 })

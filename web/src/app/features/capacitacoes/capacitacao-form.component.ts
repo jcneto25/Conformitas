@@ -33,10 +33,7 @@ const API = environment.apiUrl;
   template: `
     <app-page-header
       [title]="isNew ? 'Nova Capacitação' : 'Editar Capacitação'"
-      [breadcrumbs]="[
-        { label: 'Capacitações (PAC-Aud)', route: '/capacitacoes' },
-        { label: isNew ? 'Nova' : 'Editar' }
-      ]"
+     
     />
 
     <div class="max-w-3xl">

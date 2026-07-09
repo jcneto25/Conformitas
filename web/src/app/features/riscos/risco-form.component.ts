@@ -31,10 +31,7 @@ const API = environment.apiUrl;
   template: `
     <app-page-header
       [title]="isNew ? 'Novo Risco' : 'Editar Risco'"
-      [breadcrumbs]="[
-        { label: 'Gestão de Riscos', route: '/riscos' },
-        { label: isNew ? 'Novo' : 'Editar' }
-      ]"
+     
     />
 
     <div class="max-w-3xl">
@@ -141,7 +138,7 @@ const API = environment.apiUrl;
                     [class.text-green-600]="nivelCalculado === 'BAIXO'"
                     [class.text-yellow-600]="nivelCalculado === 'MEDIO'"
                     [class.text-orange-600]="nivelCalculado === 'ALTO'"
-                    [class.text-red-600]="nivelCalculado === 'CRITICO'"
+                    [class.text-critical]="nivelCalculado === 'CRITICO'"
                     [class.text-purple-600]="nivelCalculado === 'EXTREMO'">
                     {{ nivelCalculado }}
                   </span>

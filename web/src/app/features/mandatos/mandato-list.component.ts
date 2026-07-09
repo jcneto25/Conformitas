@@ -90,7 +90,7 @@ import { ValidationService } from '../../shared/services/validation.service';
             </button>
           </form>
           @if (createError) {
-            <p class="text-red-600 text-sm mt-2">{{ createError }}</p>
+            <p class="text-critical text-sm mt-2">{{ createError }}</p>
           }
           @if (createSuccess) {
             <p class="text-green-700 text-sm mt-2">{{ createSuccess }}</p>

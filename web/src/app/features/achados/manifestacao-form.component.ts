@@ -31,8 +31,8 @@ const API = environment.apiUrl;
   ],
   template: `
     @if (loadError) {
-      <mat-card class="border border-red-200 bg-red-50 rounded-xl shadow-sm">
-        <mat-card-content class="flex items-center gap-2 text-red-600 p-4">
+      <mat-card class="border border-critical/20 bg-critical-bg rounded-xl shadow-sm">
+        <mat-card-content class="flex items-center gap-2 text-critical p-4">
           <mat-icon>error_outline</mat-icon>
           <span class="text-sm">{{ loadError }}</span>
           <button mat-button color="primary" (click)="load()" class="ml-auto">Tentar novamente</button>
@@ -41,7 +41,7 @@ const API = environment.apiUrl;
     } @else if (loading) {
       <div class="flex justify-center py-8"><mat-spinner diameter="40" /></div>
     } @else {
-      <app-page-header title="Registrar Manifestação" [breadcrumbs]="[{label: 'Achados', route: '/achados'}, {label: achado?.codigo ?? ''}]" />
+      <app-page-header title="Registrar Manifestação" />
 
       @if (achado) {
         <mat-card class="mb-6 bg-blue-50 border border-blue-100 rounded-xl shadow-sm">
@@ -86,7 +86,7 @@ const API = environment.apiUrl;
                 </mat-form-field>
 
                 @if (saveError) {
-                  <div class="flex items-center gap-2 text-red-600 text-sm p-3 bg-red-50 rounded-lg border border-red-100" role="alert">
+                  <div class="flex items-center gap-2 text-critical text-sm p-3 bg-critical-bg rounded-lg border border-critical/20" role="alert">
                     <mat-icon class="text-[18px]">error_outline</mat-icon>
                     <span>{{ saveError }}</span>
                   </div>

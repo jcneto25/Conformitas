@@ -43,11 +43,17 @@ interface Crumb {
     MatBadgeModule, MatTooltipModule, MatSlideToggleModule,
   ],
   template: `
+    <!-- Skip-to-content: visível apenas no foco via Tab (WCAG 2.4.1) -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-primary focus:rounded focus:shadow-lg">
+      Pular para conteúdo
+    </a>
+
     <mat-sidenav-container class="h-screen bg-background">
       <mat-sidenav
         #sidenav
         [mode]="isMobile() ? 'over' : 'side'"
         [opened]="!isMobile()"
+        (keydown.escape)="sidenav.close()"
         class="sidebar w-60 bg-primary text-white border-0">
         <div class="flex flex-col h-full">
           <div class="px-4 py-5 text-center">
@@ -162,7 +168,7 @@ interface Crumb {
           }
         </mat-toolbar>
 
-        <main class="p-6 max-w-[1200px] mx-auto">
+        <main id="main-content" class="p-6 max-w-[1400px] mx-auto" role="main">
           <router-outlet />
         </main>
       </mat-sidenav-content>
