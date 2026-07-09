@@ -117,6 +117,7 @@ import { EmptyStateComponent } from '../../shared/components/empty-state.compone
 export class PapelTrabalhoEditorComponent implements OnInit {
   @Input() auditoriaId = '';
   @Input() papeis: any[] = [];
+  @Input() evidencias: any[] = [];
   @Output() papeisChange = new EventEmitter<any[]>();
 
   evidenciasDisponiveis: any[] = [];
@@ -138,14 +139,24 @@ export class PapelTrabalhoEditorComponent implements OnInit {
     }
   }
 
+  /**
+   * Mescla evidências recebidas via @Input() (do EvidenciaUploadComponent,
+   * refletindo adições em tempo real) com as buscadas do backend (caso o
+   * parent não tenha provido a lista). Usa o id como chave de deduplicação.
+   */
   async loadEvidencias() {
+    let buscadas: any[] = [];
     try {
-      this.evidenciasDisponiveis = await firstValueFrom(
+      buscadas = await firstValueFrom(
         this.http.get<any[]>(`${environment.apiUrl}/auditorias/${this.auditoriaId}/evidencias`),
       );
     } catch {
       // non-blocking
     }
+    const porId = new Map<string, any>();
+    for (const e of this.evidencias) porId.set(e.id, e);
+    for (const e of buscadas) porId.set(e.id, e);
+    this.evidenciasDisponiveis = Array.from(porId.values());
   }
 
   async criar() {

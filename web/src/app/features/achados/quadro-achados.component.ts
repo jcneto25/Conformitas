@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
@@ -28,9 +28,11 @@ const API = environment.apiUrl;
   template: `
     <app-page-header title="Quadro de Achados">
       <div actions>
-        <button mat-raised-button color="primary" routerLink="/achados/novo" class="flex items-center gap-2">
-          <mat-icon>add</mat-icon> Novo Achado
-        </button>
+        @if (canCreate()) {
+          <button mat-raised-button color="primary" routerLink="/achados/novo" class="flex items-center gap-2">
+            <mat-icon>add</mat-icon> Novo Achado
+          </button>
+        }
       </div>
     </app-page-header>
 
@@ -102,8 +104,9 @@ export class QuadroAchadosComponent implements OnInit {
   filtroTipo = '';
   loading = false;
   error = '';
+  canCreate = computed(() => this.auth.hasAnyRole(['P01', 'P02']));
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient, private readonly auth: AuthService) {}
 
   async ngOnInit() {
     await this.load();
