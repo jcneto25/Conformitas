@@ -2,6 +2,12 @@ import { test, expect } from '@playwright/test';
 import { login } from './helpers';
 
 test.describe('Fluxo de Autenticação', () => {
+  test.beforeEach(async ({ page }) => {
+    // addInitScript roda antes de qualquer JS da página — AuthService nunca
+    // encontra token sujo de retry anterior.
+    await page.addInitScript(() => localStorage.clear());
+  });
+
   test('deve exibir tela de login', async ({ page }) => {
     await page.goto('/login');
     await expect(page.locator('mat-card-title')).toContainText('Conformitas');

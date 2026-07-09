@@ -4,7 +4,8 @@ import { login } from './helpers';
 test.describe('Fluxo: Plano → Auditoria → Achado', () => {
   test.beforeEach(async ({ page }) => {
     // Login como P02 (Auditor) — necessário para acessar /achados/novo
-    await login(page, 'carlos.pontes@mvp.local', '123456');
+    // P02 sem MFA — login direto
+    await login(page, 'juliana.alves@mvp.local', '123456');
   });
 
   test('deve listar planos de auditoria', async ({ page }) => {
