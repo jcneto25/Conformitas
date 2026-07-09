@@ -42,8 +42,8 @@ const NORMA_ACHADO = 'CNJ 309 art. 46';
   ],
   template: `
     @if (loadError) {
-      <mat-card class="border border-red-200 bg-red-50 rounded-xl shadow-sm">
-        <mat-card-content class="flex items-center gap-2 text-red-600 p-4">
+      <mat-card class="border border-critical/20 bg-critical-bg rounded-xl shadow-sm">
+        <mat-card-content class="flex items-center gap-2 text-critical p-4">
           <mat-icon>error_outline</mat-icon>
           <span class="text-sm">{{ loadError }}</span>
           <button mat-button color="primary" (click)="load()" class="ml-auto">Tentar novamente</button>
@@ -168,7 +168,7 @@ const NORMA_ACHADO = 'CNJ 309 art. 46';
                     </mat-form-field>
 
                     @if (saveError) {
-                      <div class="flex items-center gap-2 text-red-600 text-sm p-3 bg-red-50 rounded-lg border border-red-100 mt-2" role="alert">
+                      <div class="flex items-center gap-2 text-critical text-sm p-3 bg-critical-bg rounded-lg border border-critical/20 mt-2" role="alert">
                         <mat-icon class="text-[18px]">error_outline</mat-icon>
                         <span>{{ saveError }}</span>
                       </div>

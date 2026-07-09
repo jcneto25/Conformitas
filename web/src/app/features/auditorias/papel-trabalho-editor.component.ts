@@ -14,6 +14,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { environment } from '../../../environments/environment';
 import { ValidationService } from '../../shared/services/validation.service';
+import { EmptyStateComponent } from '../../shared/components/empty-state.component';
 
 @Component({
   selector: 'app-papel-trabalho-editor',
@@ -104,7 +105,7 @@ import { ValidationService } from '../../shared/services/validation.service';
         </form>
 
         @if (error) {
-          <div class="flex items-center gap-2 text-red-600 text-sm p-3 bg-red-50 rounded-lg border border-red-100 mt-3" role="alert">
+          <div class="flex items-center gap-2 text-critical text-sm p-3 bg-critical-bg rounded-lg border border-critical/20 mt-3" role="alert">
             <mat-icon class="text-[18px]">error_outline</mat-icon>
             <span>{{ error }}</span>
           </div>

@@ -104,7 +104,8 @@ import { ValidationService } from '../../shared/services/validation.service';
 
             <div class="form-actions">
               <button mat-stroked-button type="button" routerLink="/integracoes">Cancelar</button>
-              <button mat-raised-button color="primary" type="submit" [disabled]="salvando">
+              <button mat-raised-button color="primary" type="submit" [disabled]="salvando" class="min-w-[120px]">
+                @if (salvando) { <mat-spinner diameter="18" class="inline-block" /> }
                 {{ salvando ? 'Salvando...' : 'Salvar' }}
               </button>
             </div>

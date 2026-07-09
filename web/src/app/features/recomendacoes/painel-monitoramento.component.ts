@@ -50,7 +50,7 @@ import { PageHeaderComponent } from '../../shared/components/page-header.compone
 
         <mat-card class="border-t-4 border-primary shadow-sm rounded-xl">
           <mat-card-content class="p-5">
-            <div class="text-3xl font-bold text-text-main text-red-600">{{ vencidas }}</div>
+            <div class="text-3xl font-bold text-text-main text-critical">{{ vencidas }}</div>
             <div class="text-text-sec text-sm mt-1">Vencidas</div>
           </mat-card-content>
         </mat-card>
@@ -59,8 +59,8 @@ import { PageHeaderComponent } from '../../shared/components/page-header.compone
       @if (recomendacoesVencidas.length) {
         <mat-card class="mt-6 border-l-4 border-red-600 shadow-md rounded-xl overflow-hidden">
           <mat-card-header class="px-6 py-4 border-b border-gray-100">
-            <mat-card-title class="text-lg font-semibold text-red-600 flex items-center gap-2">
-              <mat-icon class="text-red-600">warning</mat-icon>
+            <mat-card-title class="text-lg font-semibold text-critical flex items-center gap-2">
+              <mat-icon class="text-critical">warning</mat-icon>
               Recomendações Vencidas ({{ recomendacoesVencidas.length }})
             </mat-card-title>
           </mat-card-header>
@@ -79,7 +79,7 @@ import { PageHeaderComponent } from '../../shared/components/page-header.compone
                 </ng-container>
                 <ng-container matColumnDef="prazo">
                   <th mat-header-cell *matHeaderCellDef class="font-semibold text-text-main">Prazo</th>
-                  <td mat-cell *matCellDef="let r" class="py-3 px-4 text-red-600 font-semibold">
+                  <td mat-cell *matCellDef="let r" class="py-3 px-4 text-critical font-semibold">
                     {{ r.prazo | date:'dd/MM/yyyy' }}
                   </td>
                 </ng-container>
@@ -93,7 +93,7 @@ import { PageHeaderComponent } from '../../shared/components/page-header.compone
     }
 
     @if (error) {
-      <p class="text-red-600 text-center mt-4">{{ error }}</p>
+      <p class="text-critical text-center mt-4">{{ error }}</p>
     }
   `,
 })

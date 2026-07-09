@@ -125,7 +125,7 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../shared/componen
               <span>{{ totalHorasDisponiveis(plano) }}h disponíveis</span>
               <span class="ms-4"
                     [class.text-green-700]="horasAlocadas(plano) <= totalHorasDisponiveis(plano)"
-                    [class.text-red-600]="horasAlocadas(plano) > totalHorasDisponiveis(plano)">
+                    [class.text-critical]="horasAlocadas(plano) > totalHorasDisponiveis(plano)">
                 {{ horasAlocadas(plano) }}h alocadas
               </span>
             </div>
@@ -148,7 +148,7 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../shared/componen
           @if (actionMsg[plano.id]) {
             <p class="mt-2 text-sm"
                [class.text-green-700]="!actionError[plano.id]"
-               [class.text-red-600]="actionError[plano.id]">
+               [class.text-critical]="actionError[plano.id]">
               {{ actionMsg[plano.id] }}
             </p>
           }
@@ -161,7 +161,7 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../shared/componen
     }
 
     @if (error && planos.length) {
-      <p class="text-red-600 text-center">{{ error }}</p>
+      <p class="text-critical text-center">{{ error }}</p>
     }
   `,
 })

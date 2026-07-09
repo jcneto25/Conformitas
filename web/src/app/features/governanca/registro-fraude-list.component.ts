@@ -106,13 +106,14 @@ import { environment } from '../../../environments/environment';
             </mat-select>
           </mat-form-field>
           <button mat-flat-button color="primary" (click)="criar()"
-                  [disabled]="!novaDescricao || !novaClassificacao || criando">
-            {{ criando ? '...' : 'Registrar' }}
+                  [disabled]="!novaDescricao || !novaClassificacao || criando" class="min-w-[120px]">
+            @if (criando) { <mat-spinner diameter="18" class="inline-block" /> }
+            {{ criando ? 'Registrando...' : 'Registrar' }}
           </button>
         </div>
 
         @if (error) {
-          <div class="text-red-600 text-sm mt-2">{{ error }}</div>
+          <div class="text-critical text-sm mt-2">{{ error }}</div>
         }
       </mat-card-content>
     </mat-card>

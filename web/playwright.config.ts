@@ -5,7 +5,7 @@ export default defineConfig({
   fullyParallel: false,
   retries: 1,
   workers: 1,
-  reporter: [['html', { outputFolder: 'test-results/e2e-report' }]],
+  reporter: [['html', { outputFolder: 'playwright-report' }]],
   use: {
     baseURL: process.env['PLAYWRIGHT_BASE_URL'] ?? 'http://localhost:4200',
     trace: 'on-first-retry',

@@ -12,6 +12,7 @@ import { ChartConfiguration, ChartData } from 'chart.js';
 import { ApiService } from '../../core/services/api.service';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
 import { KpiCardComponent } from '../../shared/components/kpi-card.component';
+import { EmptyStateComponent } from '../../shared/components/empty-state.component';
 
 @Component({
   selector: 'app-dashboard-paa',
@@ -20,7 +21,7 @@ import { KpiCardComponent } from '../../shared/components/kpi-card.component';
     MatCardModule, MatProgressSpinnerModule, MatIconModule,
     MatButtonModule, MatFormFieldModule, MatSelectModule,
     FormsModule, RouterModule, BaseChartDirective,
-    PageHeaderComponent, KpiCardComponent,
+    PageHeaderComponent, KpiCardComponent, EmptyStateComponent,
   ],
   template: `
     <app-page-header title="Dashboard PAA — Planejado × Executado" />
@@ -45,6 +46,8 @@ import { KpiCardComponent } from '../../shared/components/kpi-card.component';
 
     @if (loading) {
       <div class="flex justify-center py-12"><mat-spinner diameter="40" /></div>
+    } @else if (!temDados) {
+      <app-empty-state icon="bar_chart" title="Nenhum dado disponível" description="Não há planos de auditoria para o ano selecionado." size="md" />
     } @else {
       <div class="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
         <app-kpi-card label="Total de Planos" [value]="dados.totalPlanos ?? 0" icon="description" accent="primary" />
@@ -90,6 +93,10 @@ export class DashboardPaaComponent implements OnInit {
   loading = true;
   ano = 2026;
   dados: any = {};
+
+  get temDados(): boolean {
+    return (this.dados.totalPlanos ?? 0) > 0 || (this.dados.auditoriasConcluidas ?? 0) > 0;
+  }
 
   planejadoBarData: ChartData<'bar'> = {
     labels: ['Planejado', 'Executado'],

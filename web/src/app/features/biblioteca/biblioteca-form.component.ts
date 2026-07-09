@@ -33,10 +33,7 @@ const API = environment.apiUrl;
   template: `
     <app-page-header
       [title]="isNew ? 'Novo Documento' : 'Editar Documento'"
-      [breadcrumbs]="[
-        { label: 'Biblioteca', route: '/biblioteca' },
-        { label: isNew ? 'Novo' : 'Editar' }
-      ]"
+     
     />
 
     <div class="max-w-3xl">

@@ -114,7 +114,7 @@ import { environment } from '../../../environments/environment';
       }
 
       @if (error) {
-        <div class="text-red-600 text-sm mt-2">{{ error }}</div>
+        <div class="text-critical text-sm mt-2">{{ error }}</div>
       }
     </div>
   `,
