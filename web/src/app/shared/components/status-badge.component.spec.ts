@@ -1,94 +1,142 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StatusBadgeComponent } from './status-badge.component';
+import { By } from '@angular/platform-browser';
 
 describe('StatusBadgeComponent', () => {
-  let fixture: ComponentFixture<StatusBadgeComponent>;
   let component: StatusBadgeComponent;
+  let fixture: ComponentFixture<StatusBadgeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StatusBadgeComponent],
     }).compileComponents();
+  });
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(StatusBadgeComponent);
     component = fixture.componentInstance;
   });
 
-  it('should display status text', () => {
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should display the status text as badge label when label is not set', () => {
     component.status = 'APROVADO';
     fixture.detectChanges();
-
-    const el = fixture.debugElement.nativeElement;
-    expect(el.textContent.trim()).toBe('APROVADO');
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.nativeElement.textContent.trim()).toBe('APROVADO');
   });
 
-  it('should prefer label over status text', () => {
+  it('should display the label text when provided', () => {
     component.status = 'APROVADO';
-    component.label = 'Aprovado pelo Presidente';
+    component.label = 'Aprovado';
     fixture.detectChanges();
-
-    const el = fixture.debugElement.nativeElement;
-    expect(el.textContent.trim()).toBe('Aprovado pelo Presidente');
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.nativeElement.textContent.trim()).toBe('Aprovado');
   });
 
-  it('should apply success style for APROVADO', () => {
+  it('should apply success style for APROVADO status', () => {
     component.status = 'APROVADO';
     fixture.detectChanges();
-
-    const span = fixture.debugElement.nativeElement.querySelector('span');
-    expect(span.classList).toContain('bg-success-bg');
-    expect(span.classList).toContain('text-success');
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.classes['bg-success-bg']).toBeTrue();
+    expect(badgeEl.classes['text-success']).toBeTrue();
   });
 
-  it('should apply info style for EM_EXECUCAO', () => {
-    component.status = 'EM_EXECUCAO';
+  it('should apply success style for PUBLICADO status', () => {
+    component.status = 'PUBLICADO';
     fixture.detectChanges();
-
-    const span = fixture.debugElement.nativeElement.querySelector('span');
-    expect(span.classList).toContain('bg-info-bg');
-    expect(span.classList).toContain('text-info');
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.classes['bg-success-bg']).toBeTrue();
+    expect(badgeEl.classes['text-success']).toBeTrue();
   });
 
-  it('should apply warning style for PENDENTE', () => {
-    component.status = 'PENDENTE';
+  it('should apply success style for CUMPRIDA status', () => {
+    component.status = 'CUMPRIDA';
     fixture.detectChanges();
-
-    const span = fixture.debugElement.nativeElement.querySelector('span');
-    expect(span.classList).toContain('bg-warning-bg');
-    expect(span.classList).toContain('text-warning');
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.classes['bg-success-bg']).toBeTrue();
+    expect(badgeEl.classes['text-success']).toBeTrue();
   });
 
-  it('should apply critical style for VENCIDA', () => {
-    component.status = 'VENCIDA';
-    fixture.detectChanges();
-
-    const span = fixture.debugElement.nativeElement.querySelector('span');
-    expect(span.classList).toContain('bg-critical-bg');
-    expect(span.classList).toContain('text-critical');
-  });
-
-  it('should fallback to INATIVO style for unknown status', () => {
-    component.status = 'UNKNOWN_STATUS';
-    fixture.detectChanges();
-
-    const span = fixture.debugElement.nativeElement.querySelector('span');
-    expect(span.classList).toContain('text-text-sec');
-  });
-
-  it('should be case-insensitive', () => {
-    component.status = 'aprovado';
-    fixture.detectChanges();
-
-    const span = fixture.debugElement.nativeElement.querySelector('span');
-    expect(span.classList).toContain('bg-success-bg');
-  });
-
-  it('should handle CUSTOM LABEL for ATIVO status', () => {
+  it('should apply success style for ATIVO status', () => {
     component.status = 'ATIVO';
     fixture.detectChanges();
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.classes['bg-success-bg']).toBeTrue();
+    expect(badgeEl.classes['text-success']).toBeTrue();
+  });
 
-    const span = fixture.debugElement.nativeElement.querySelector('span');
-    expect(span.classList).toContain('bg-success-bg');
-    expect(span.textContent?.trim()).toBe('ATIVO');
+  it('should apply info style for RASCUNHO status', () => {
+    component.status = 'RASCUNHO';
+    fixture.detectChanges();
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.classes['bg-info-bg']).toBeTrue();
+    expect(badgeEl.classes['text-info']).toBeTrue();
+  });
+
+  it('should apply info style for EM_EXECUCAO status', () => {
+    component.status = 'EM_EXECUCAO';
+    fixture.detectChanges();
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.classes['bg-info-bg']).toBeTrue();
+    expect(badgeEl.classes['text-info']).toBeTrue();
+  });
+
+  it('should apply warning style for SUBMETIDO status', () => {
+    component.status = 'SUBMETIDO';
+    fixture.detectChanges();
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.classes['bg-warning-bg']).toBeTrue();
+    expect(badgeEl.classes['text-warning']).toBeTrue();
+  });
+
+  it('should apply warning style for PENDENTE status', () => {
+    component.status = 'PENDENTE';
+    fixture.detectChanges();
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.classes['bg-warning-bg']).toBeTrue();
+    expect(badgeEl.classes['text-warning']).toBeTrue();
+  });
+
+  it('should apply critical style for VENCIDA status', () => {
+    component.status = 'VENCIDA';
+    fixture.detectChanges();
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.classes['bg-critical-bg']).toBeTrue();
+    expect(badgeEl.classes['text-critical']).toBeTrue();
+  });
+
+  it('should apply critical style for SUSPENSA status', () => {
+    component.status = 'SUSPENSA';
+    fixture.detectChanges();
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.classes['bg-critical-bg']).toBeTrue();
+    expect(badgeEl.classes['text-critical']).toBeTrue();
+  });
+
+  it('should default to inactive style for unknown status', () => {
+    component.status = 'UNKNOWN_STATUS';
+    fixture.detectChanges();
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.classes['bg-background']).toBeTrue();
+    expect(badgeEl.classes['text-text-sec']).toBeTrue();
+  });
+
+  it('should be case-insensitive when matching status', () => {
+    component.status = 'aprovado';
+    fixture.detectChanges();
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.classes['bg-success-bg']).toBeTrue();
+    expect(badgeEl.classes['text-success']).toBeTrue();
+  });
+
+  it('should apply rounded-full and font-medium classes', () => {
+    component.status = 'APROVADO';
+    fixture.detectChanges();
+    const badgeEl = fixture.debugElement.query(By.css('span'));
+    expect(badgeEl.classes['rounded-full']).toBeTrue();
+    expect(badgeEl.classes['font-medium']).toBeTrue();
   });
 });

@@ -38,8 +38,14 @@ import appConfig from './config/app.config';
 
 @Module({
   imports: [
-    EventEmitterModule.forRoot(),
-    ThrottlerModule.forRoot([{ ttl: 60000, limit: 60 }]),
+    ThrottlerModule.forRootAsync({
+      useFactory: () => {
+        const isTest = process.env['NODE_ENV'] === 'test';
+        return isTest
+          ? [{ ttl: 60000, limit: 1000 }]   // high limit during tests
+          : [{ ttl: 60000, limit: 60 }]; // 60 req/min in dev/prod
+      },
+    }),
     ScheduleModule.forRoot(),
     JwtModule.register({
       secret: appConfig.jwt.secret,

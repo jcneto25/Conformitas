@@ -33,7 +33,7 @@ export class OuvidoriaConnector {
       const response = await fetch(url, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${this.apiKey}`,
+          'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
         },
         signal: AbortSignal.timeout(10000),
@@ -44,7 +44,7 @@ export class OuvidoriaConnector {
       }
 
       const data = await response.json();
-      return Array.isArray(data) ? data : (data.data ?? []);
+      return Array.isArray(data) ? data : data.data ?? [];
     } catch {
       return [];
     }
@@ -56,7 +56,7 @@ export class OuvidoriaConnector {
       const response = await fetch(url, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${this.apiKey}`,
+          'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
         },
         signal: AbortSignal.timeout(10000),
