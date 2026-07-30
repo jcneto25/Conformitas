@@ -3,8 +3,6 @@ import { login } from './helpers';
 
 test.describe('Fluxo: Plano → Auditoria → Achado', () => {
   test.beforeEach(async ({ page }) => {
-    // Login como P02 (Auditor) — necessário para acessar /achados/novo
-    // P02 sem MFA — login direto
     await login(page, 'juliana.alves@mvp.local', '123456');
   });
 
@@ -31,11 +29,11 @@ test.describe('Fluxo: Plano → Auditoria → Achado', () => {
 
   test('deve filtrar achados por status', async ({ page }) => {
     await page.goto('/achados');
-    await expect(page.locator('app-data-table')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('table')).toBeVisible({ timeout: 5000 });
     const filterCard = page.locator('app-quadro-achados .filter-bar').first();
     const select = filterCard.locator('mat-select').first();
     await select.click();
     await page.locator('mat-option', { hasText: 'Consolidado' }).click();
-    await expect(page.locator('app-data-table')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('table')).toBeVisible({ timeout: 5000 });
   });
 });

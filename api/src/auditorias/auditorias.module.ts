@@ -7,6 +7,7 @@ import { PapeisTrabalhoService } from './papeis-trabalho.service';
 import { RequisicoesService } from './requisicoes.service';
 import { ComunicadosService } from './comunicados.service';
 import { AuditoriasController } from './auditorias.controller';
+import { AuditoriaEvidenciasController, AuditoriaPapeisController, AuditoriaRequisicoesController } from './auditoria-sub-resources.controller';
 import { AbrirAuditoriaUseCase } from './use-cases/abrir-auditoria.use-case';
 import { IniciarExecucaoUseCase } from './use-cases/iniciar-execucao.use-case';
 import { ConcluirAuditoriaUseCase } from './use-cases/concluir-auditoria.use-case';
@@ -16,7 +17,7 @@ import { AUDITORIA_REPOSITORY, COMUNICADO_REPOSITORY, EVIDENCIA_REPOSITORY, PAPE
 
 @Module({
   imports: [PrismaModule, NotificacoesModule],
-  controllers: [AuditoriasController],
+  controllers: [AuditoriasController, AuditoriaEvidenciasController, AuditoriaPapeisController, AuditoriaRequisicoesController],
   providers: [
     AuditoriasService, EvidenciasService, PapeisTrabalhoService, RequisicoesService, ComunicadosService,
     AbrirAuditoriaUseCase, IniciarExecucaoUseCase, ConcluirAuditoriaUseCase, SuspenderAuditoriaUseCase,

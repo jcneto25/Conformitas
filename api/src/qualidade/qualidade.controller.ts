@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Param, Body, Query, Req, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, Query, Req, ParseUUIDPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { QualidadeService } from './qualidade.service';
@@ -43,7 +43,7 @@ export class QualidadeController {
     return this.service.buscarAvaliacao(id);
   }
 
-  @Put('avaliacoes/:id')
+  @Patch('avaliacoes/:id')
   @Roles('P01')
   @ApiOperation({ summary: 'Atualizar avaliação (apenas RASCUNHO)' })
   atualizarAvaliacao(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateAvaliacaoDto) {
@@ -83,7 +83,7 @@ export class QualidadeController {
     return this.service.listarNaoConformidades(avaliacaoId);
   }
 
-  @Put('nao-conformidades/:id/acao-corretiva')
+  @Patch('nao-conformidades/:id/acao-corretiva')
   @Roles('P01')
   @ApiOperation({ summary: 'Registrar ação corretiva (ABERTA → EM_CORRECAO)' })
   registrarAcaoCorretiva(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateNaoConformidadeDto) {
@@ -113,7 +113,7 @@ export class QualidadeController {
     return this.service.listarIndicadores();
   }
 
-  @Put('indicadores/:id')
+  @Patch('indicadores/:id')
   @Roles('P01')
   @ApiOperation({ summary: 'Atualizar indicador de qualidade (inclui valorAtual)' })
   atualizarIndicador(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateIndicadorDto) {

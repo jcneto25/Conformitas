@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Body, Param } from '@nestjs/common';
+import { Controller, Get, Patch, Body, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ConfigService } from './config.service';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -23,7 +23,7 @@ export class ConfigController {
     return this.service.findOne(chave);
   }
 
-  @Put(':chave')
+  @Patch(':chave')
   @Roles('P10')
   @ApiOperation({ summary: 'Atualizar configuração (P10)' })
   update(@Param('chave') chave: string, @Body() body: { valor: string }) {

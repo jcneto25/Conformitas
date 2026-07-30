@@ -36,7 +36,7 @@ describe('BibliotecaController', () => {
 
   it('upload should delegate with versionamento', async () => {
     mockService.upload.mockResolvedValue({ versao: '1.1' });
-    const result = await controller.upload('Manual', 'MANUAL', '/docs/v2.pdf', 'Categoria');
+    const result = await controller.upload('Manual', 'MANUAL', '/docs/v2.pdf', undefined, 'Categoria');
     expect(result.versao).toBe('1.1');
     expect(mockService.upload).toHaveBeenCalledWith('Manual', 'MANUAL', '/docs/v2.pdf', 'Categoria');
   });

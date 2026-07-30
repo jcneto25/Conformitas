@@ -3,7 +3,6 @@ import { login } from './helpers';
 
 test.describe('Fluxo: Recomendações e Monitoramento', () => {
   test.beforeEach(async ({ page }) => {
-    // P01 (romulo.ribeiro) tem MFA habilitado
     await login(page, 'romulo.ribeiro@mvp.local', '123456');
   });
 

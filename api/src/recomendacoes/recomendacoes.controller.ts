@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Param, Body, Query, Req } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, Query, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { RecomendacoesService } from './recomendacoes.service';
@@ -44,7 +44,7 @@ export class RecomendacoesController {
     return this.service.findOne(id, req.user?.unidadeEscopo);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @Roles('P01', 'P02')
   @ApiOperation({ summary: 'Atualizar recomendação (P01, P02)' })
   atualizar(@Param('id') id: string, @Body() body: any) {

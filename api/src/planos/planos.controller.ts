@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, Req, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, Req, ParseUUIDPipe, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { PlanosService } from './planos.service';
@@ -57,6 +57,21 @@ export class PlanosController {
   @ApiOperation({ summary: 'Submeter plano para aprovação (P01)' })
   submeter(@Param('id', ParseUUIDPipe) id: string) {
     return this.service.submeter(id);
+  }
+
+  @Patch('planos/:id/status')
+  @Roles('P01', 'P03')
+  @ApiOperation({ summary: 'Atualizar status do plano (P01/P03) — compat PATCH' })
+  atualizarStatus(@Param('id', ParseUUIDPipe) id: string, @Body() body: { status: string; motivo?: string }) {
+    const statusMap: Record<string, () => any> = {
+      'SUBMETIDO': () => this.service.submeter(id),
+      'APROVADO': () => this.service.aprovar(id),
+      'PUBLICADO': () => this.service.publicar(id),
+      'RASCUNHO': () => this.service.devolver(id, body.motivo ?? ''),
+    };
+    const handler = statusMap[body.status];
+    if (!handler) throw new BadRequestException(`Status inválido: ${body.status}`);
+    return handler();
   }
 
   @Post('planos/:id/aprovar')
