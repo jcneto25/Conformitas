@@ -87,8 +87,8 @@ export class BibliotecaService {
 
   private incrementarVersao(versaoAtual: string): string {
     const partes = versaoAtual.split('.');
-    const major = parseInt(partes[0], 10) || 1;
-    const minor = parseInt(partes[1], 10) || 0;
+    const major = parseInt(partes[0] ?? '1', 10) || 1;
+    const minor = parseInt(partes[1] ?? '', 10) || 0;
     return `${major}.${minor + 1}`;
   }
 }

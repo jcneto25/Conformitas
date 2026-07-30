@@ -6,7 +6,7 @@ describe('RiscosService', () => {
   let service: RiscosService;
   let prisma: any;
 
-  const mockPrisma = () => ({
+  const mockPrisma = {
     risco: {
       create: jest.fn(),
       findMany: jest.fn(),
@@ -14,14 +14,15 @@ describe('RiscosService', () => {
       update: jest.fn(),
       delete: jest.fn(),
     },
-  });
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [RiscosService, { provide: PrismaService, useValue: mockPrisma }],
     }).compile();
     service = module.get<RiscosService>(RiscosService);
-    prisma = module.get(PrismaService);
+    prisma = mockPrisma;
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {

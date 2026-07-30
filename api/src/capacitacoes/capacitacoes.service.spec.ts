@@ -6,7 +6,7 @@ describe('CapacitacoesService', () => {
   let service: CapacitacoesService;
   let prisma: any;
 
-  const mockPrisma = () => ({
+  const mockPrisma = {
     capacitacao: {
       create: jest.fn(),
       findMany: jest.fn(),
@@ -17,14 +17,15 @@ describe('CapacitacoesService', () => {
     configuracaoSistema: {
       findUnique: jest.fn(),
     },
-  });
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [CapacitacoesService, { provide: PrismaService, useValue: mockPrisma }],
     }).compile();
     service = module.get<CapacitacoesService>(CapacitacoesService);
-    prisma = module.get(PrismaService);
+    prisma = mockPrisma;
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {

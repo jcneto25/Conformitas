@@ -6,21 +6,22 @@ describe('BibliotecaService', () => {
   let service: BibliotecaService;
   let prisma: any;
 
-  const mockPrisma = () => ({
+  const mockPrisma = {
     documentoMetodologico: {
       create: jest.fn(),
       findMany: jest.fn(),
       findUnique: jest.fn(),
       update: jest.fn(),
     },
-  });
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [BibliotecaService, { provide: PrismaService, useValue: mockPrisma }],
     }).compile();
     service = module.get<BibliotecaService>(BibliotecaService);
-    prisma = module.get(PrismaService);
+    prisma = mockPrisma;
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
