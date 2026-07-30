@@ -1,119 +1,175 @@
-import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { MatColumnDef, MatTableModule } from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { DataTableComponent } from './data-table.component';
 
+/** Host component that wraps DataTableComponent with projected column definitions. */
 @Component({
-  standalone: true,
-  imports: [
-    DataTableComponent,
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule,
-    MatColumnDef,
-  ],
   template: `
     <app-data-table
       [data]="data"
-      [displayedColumns]="columns"
+      [displayedColumns]="displayedColumns"
       [loading]="loading"
       [error]="error"
       [emptyMessage]="emptyMessage"
       [emptyActionLabel]="emptyActionLabel"
       (retry)="onRetry()"
       (emptyAction)="onEmptyAction()">
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef>ID</th>
-        <td mat-cell *matCellDef="let row">{{ row.id }}</td>
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let row">{{ row.name }}</td>
       </ng-container>
-      <ng-container matColumnDef="nome">
-        <th mat-header-cell *matHeaderCellDef>Nome</th>
-        <td mat-cell *matCellDef="let row">{{ row.nome }}</td>
+      <ng-container matColumnDef="value">
+        <th mat-header-cell *matHeaderCellDef>Value</th>
+        <td mat-cell *matCellDef="let row">{{ row.value }}</td>
       </ng-container>
     </app-data-table>
   `,
+  standalone: true,
+  imports: [DataTableComponent, MatTableModule],
 })
 class TestHostComponent {
   data: any[] = [];
-  columns: string[] = ['id', 'nome'];
+  displayedColumns = ['name', 'value'];
   loading = false;
   error = '';
-  emptyMessage = 'Nenhum registro';
+  emptyMessage = 'Nenhum registro encontrado';
   emptyActionLabel = '';
-  retried = false;
-  emptyClicked = false;
 
-  onRetry() { this.retried = true; }
-  onEmptyAction() { this.emptyClicked = true; }
+  onRetry(): void {}
+  onEmptyAction(): void {}
 }
 
 describe('DataTableComponent', () => {
+  let hostComponent: TestHostComponent;
   let hostFixture: ComponentFixture<TestHostComponent>;
-  let host: TestHostComponent;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TestHostComponent, NoopAnimationsModule],
+      imports: [
+        TestHostComponent,
+        NoopAnimationsModule,
+      ],
     }).compileComponents();
+  });
 
+  beforeEach(() => {
     hostFixture = TestBed.createComponent(TestHostComponent);
-    host = hostFixture.componentInstance;
+    hostComponent = hostFixture.componentInstance;
+    hostFixture.detectChanges();
   });
 
-  it('should display empty state when data is empty', () => {
-    host.data = [];
-    hostFixture.detectChanges();
-
-    const emptyEl = hostFixture.debugElement.query(By.css('app-empty-state'));
-    expect(emptyEl).not.toBeNull();
+  it('should create the host component', () => {
+    expect(hostComponent).toBeTruthy();
   });
 
-  it('should show loading spinner when loading is true', () => {
-    host.loading = true;
+  it('should render table with data rows when data is provided', () => {
+    hostComponent.data = [
+      { name: 'Auditoria 1', value: 100 },
+      { name: 'Auditoria 2', value: 200 },
+    ];
     hostFixture.detectChanges();
+    const rows = hostFixture.debugElement.queryAll(By.css('tr.mat-mdc-row'));
+    expect(rows.length).toBe(2);
+  });
 
+  it('should render header row', () => {
+    hostComponent.data = [{ name: 'A', value: 1 }];
+    hostFixture.detectChanges();
+    const headerRows = hostFixture.debugElement.queryAll(By.css('tr.mat-mdc-header-row'));
+    expect(headerRows.length).toBe(1);
+  });
+
+  it('should display no-data row when data is empty', () => {
+    hostComponent.data = [];
+    hostFixture.detectChanges();
+    const noDataRow = hostFixture.debugElement.query(By.css('tr.mat-mdc-no-data-row'));
+    expect(noDataRow).toBeTruthy();
+  });
+
+  it('should show spinner when loading with no data', () => {
+    hostComponent.loading = true;
+    hostComponent.data = [];
+    hostFixture.detectChanges();
     const spinner = hostFixture.debugElement.query(By.css('mat-spinner'));
-    expect(spinner).not.toBeNull();
+    expect(spinner).toBeTruthy();
   });
 
-  it('should show error with retry button when error is set', () => {
-    host.error = 'Falha ao carregar dados';
+  it('should show error state when error is set', () => {
+    hostComponent.error = 'Erro ao carregar dados';
+    hostComponent.data = [];
     hostFixture.detectChanges();
-
-    const el = hostFixture.debugElement.nativeElement;
-    expect(el.textContent).toContain('Falha ao carregar dados');
-    expect(el.textContent).toContain('Tentar novamente');
+    const emptyState = hostFixture.debugElement.query(By.css('app-empty-state'));
+    expect(emptyState).toBeTruthy();
+    expect(emptyState.nativeElement.textContent).toContain('Erro ao carregar dados');
   });
 
-  it('should emit retry event on retry button click', () => {
-    host.error = 'Falha ao carregar dados';
+  it('should show retry button when error is set', () => {
+    hostComponent.error = 'Erro ao carregar';
+    hostComponent.data = [];
     hostFixture.detectChanges();
-
-    const btn = hostFixture.debugElement.query(By.css('button'));
-    btn.nativeElement.click();
-
-    expect(host.retried).toBeTrue();
+    const retryBtn = hostFixture.debugElement.query(By.css('app-empty-state button'));
+    expect(retryBtn).toBeTruthy();
+    expect(retryBtn.nativeElement.textContent.trim()).toContain('Tentar novamente');
   });
 
-  it('should emit emptyAction on CTA click in empty state', () => {
-    host.emptyActionLabel = 'Criar Novo';
-    host.data = [];
+  it('should emit retry event when retry button is clicked', () => {
+    spyOn(hostComponent, 'onRetry');
+    hostComponent.error = 'Erro ao carregar';
+    hostComponent.data = [];
     hostFixture.detectChanges();
-
-    const btn = hostFixture.debugElement.query(By.css('button'));
-    btn.nativeElement.click();
-
-    expect(host.emptyClicked).toBeTrue();
+    const retryBtn = hostFixture.debugElement.query(By.css('app-empty-state button'));
+    retryBtn.nativeElement.click();
+    expect(hostComponent.onRetry).toHaveBeenCalled();
   });
 
-  it('should render mat-paginator', () => {
+  it('should show empty state message when data is empty and no error', () => {
+    hostComponent.emptyMessage = 'Nada aqui ainda';
+    hostComponent.data = [];
     hostFixture.detectChanges();
+    const emptyState = hostFixture.debugElement.query(By.css('app-empty-state'));
+    expect(emptyState).toBeTruthy();
+    expect(emptyState.nativeElement.textContent).toContain('Nada aqui ainda');
+  });
 
-    const paginator = hostFixture.debugElement.query(By.css('mat-paginator'));
-    expect(paginator).not.toBeNull();
+  it('should show empty action button when emptyActionLabel is set', () => {
+    hostComponent.emptyActionLabel = 'Criar Novo';
+    hostComponent.data = [];
+    hostFixture.detectChanges();
+    const actionBtn = hostFixture.debugElement.query(By.css('app-empty-state button'));
+    expect(actionBtn).toBeTruthy();
+    expect(actionBtn.nativeElement.textContent.trim()).toContain('Criar Novo');
+  });
+
+  it('should emit emptyAction when empty action button is clicked', () => {
+    spyOn(hostComponent, 'onEmptyAction');
+    hostComponent.emptyActionLabel = 'Adicionar';
+    hostComponent.data = [];
+    hostFixture.detectChanges();
+    const actionBtn = hostFixture.debugElement.query(By.css('app-empty-state button'));
+    actionBtn.nativeElement.click();
+    expect(hostComponent.onEmptyAction).toHaveBeenCalled();
+  });
+
+  it('should not show empty action button when label is empty', () => {
+    hostComponent.emptyActionLabel = '';
+    hostComponent.data = [];
+    hostFixture.detectChanges();
+    const emptyState = hostFixture.debugElement.query(By.css('app-empty-state'));
+    expect(emptyState).toBeTruthy();
+    const actionBtn = emptyState.query(By.css('button'));
+    expect(actionBtn).toBeFalsy();
+  });
+
+  it('should update data source when data input changes', () => {
+    const dataTable = hostFixture.debugElement.query(By.directive(DataTableComponent)).componentInstance;
+    hostComponent.data = [{ name: 'Test', value: 42 }];
+    hostFixture.detectChanges();
+    expect(dataTable.dataSource.data.length).toBe(1);
+    expect(dataTable.dataSource.data[0].name).toBe('Test');
   });
 });

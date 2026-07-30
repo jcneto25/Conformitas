@@ -1,6 +1,5 @@
 import { Controller, Post, Get, Patch, Body, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -21,7 +20,6 @@ export class AuthController {
 
   @Public()
   @Post('login')
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @ApiOperation({ summary: 'Login com email e senha' })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto.email, dto.senha);
@@ -31,7 +29,7 @@ export class AuthController {
   @Post('mfa/verify')
   @ApiOperation({ summary: 'Verificar código MFA TOTP' })
   verifyMfa(@Body() dto: MfaVerifyDto) {
-    return this.authService.verifyMfa(dto.sessionToken, dto.totpCode);
+    return this.authService.verifyMfa(dto.session_token, dto.totp_code);
   }
 
   @Public()
@@ -66,6 +64,6 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Alterar própria senha (qualquer perfil autenticado)' })
   changePassword(@Req() req: RequestWithUser, @Body() dto: ChangePasswordDto) {
-    return this.authService.changePassword(req.user.sub, dto.senhaAtual, dto.novaSenha);
+    return this.authService.changePassword(req.user.sub, dto.senha_atual, dto.nova_senha);
   }
 }

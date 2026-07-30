@@ -23,6 +23,7 @@ describe('IntegracoesController', () => {
     }).compile();
 
     controller = module.get<IntegracoesController>(IntegracoesController);
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -50,6 +51,46 @@ describe('IntegracoesController', () => {
       const dto = { nome: 'Test', sistemaExterno: 'T', tipo: 'ENTRADA', protocolo: 'REST', status: 'EM_CONFIGURACAO' };
       controller.create(dto as any);
       expect(mockService.create).toHaveBeenCalledWith(dto);
+    });
+  });
+
+  describe('update', () => {
+    it('should call service.update with id and dto', () => {
+      mockService.update.mockResolvedValue({ id: '1', nome: 'Updated' });
+      controller.update('1', { nome: 'Updated' } as any);
+      expect(mockService.update).toHaveBeenCalledWith('1', { nome: 'Updated' });
+    });
+  });
+
+  describe('remove', () => {
+    it('should call service.remove with id', () => {
+      mockService.remove.mockResolvedValue({ id: '1' });
+      controller.remove('1');
+      expect(mockService.remove).toHaveBeenCalledWith('1');
+    });
+  });
+
+  describe('healthCheck', () => {
+    it('should call service.healthCheck with id', () => {
+      mockService.healthCheck.mockResolvedValue({ healthStatus: 'ONLINE' });
+      controller.healthCheck('1');
+      expect(mockService.healthCheck).toHaveBeenCalledWith('1');
+    });
+  });
+
+  describe('healthAll', () => {
+    it('should call service.healthAll', () => {
+      mockService.healthAll.mockResolvedValue([]);
+      controller.healthAll();
+      expect(mockService.healthAll).toHaveBeenCalled();
+    });
+  });
+
+  describe('logs', () => {
+    it('should call service.logs with id', () => {
+      mockService.logs.mockResolvedValue([]);
+      controller.logs('1');
+      expect(mockService.logs).toHaveBeenCalledWith('1');
     });
   });
 });
