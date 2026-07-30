@@ -29,11 +29,13 @@ test.describe('Fluxo: Plano → Auditoria → Achado', () => {
 
   test('deve filtrar achados por status', async ({ page }) => {
     await page.goto('/achados');
-    await expect(page.locator('table')).toBeVisible({ timeout: 5000 });
+    await page.waitForSelector('app-quadro-achados app-data-table', { timeout: 5000 });
+    const dataTable = page.locator('app-data-table');
+    await expect(dataTable).toBeVisible({ timeout: 5000 });
     const filterCard = page.locator('app-quadro-achados .filter-bar').first();
     const select = filterCard.locator('mat-select').first();
     await select.click();
     await page.locator('mat-option', { hasText: 'Consolidado' }).click();
-    await expect(page.locator('table')).toBeVisible({ timeout: 5000 });
+    await expect(dataTable).toBeVisible({ timeout: 5000 });
   });
 });

@@ -1,5 +1,5 @@
-import { HttpInterceptorFn, HttpResponse, HttpRequest, HttpHandlerFn } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { HttpInterceptorFn, HttpResponse, HttpRequest, HttpHandlerFn, HttpErrorResponse } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
 import usersData from '../../../../../mocks/data/users.json';
 import universoData from '../../../../../mocks/data/universo_auditavel.json';
 import planosData from '../../../../../mocks/data/planos_auditoria.json';
@@ -79,8 +79,22 @@ register('documentos_metodologicos', documentosMetodologicosData);
 register('users', users);
 // Fix: configurações uses 'chave' as PK, not 'id'
 if (stores['configuracoes']) stores['configuracoes'].idKey = 'chave';
-// Junction table for profiles
+// Junction table for profiles — seeded from users mock data
+const perfisStore = stores['perfis'];
 const usuariosPerfisData: any[] = [];
+if (perfisStore) {
+  for (const user of users) {
+    const perfilData = perfisStore.data.find((p: any) => p.codigo === user.perfil);
+    if (perfilData) {
+      usuariosPerfisData.push({
+        id: `up-${user.id}-${perfilData.id}`,
+        usuarioId: user.id,
+        perfilId: perfilData.id,
+        unidadeEscopo: user.unidade || '',
+      });
+    }
+  }
+}
 stores['usuarios_perfis'] = { data: usuariosPerfisData, idKey: 'id' };
 // Relatórios anuais — seeded with initial mock data
 stores['relatorios_anuais'] = {
@@ -132,6 +146,13 @@ const ENTITY_ROUTES: [string, string][] = [
 const ENTITY_MAP = new Map(ENTITY_ROUTES);
 
 const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+function getCurrentUserRoles(): string[] {
+  const token = localStorage.getItem('access_token') || '';
+  const userId = token.replace('mock-at-', '').replace('-refreshed', '');
+  const user = users.find((u: any) => u.id === userId);
+  return user ? [user.perfil] : [];
+}
 
 export const mockBackendInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
@@ -438,7 +459,24 @@ function handleCrud(req: HttpRequest<unknown>, segments: Array<string>): Observa
     const body = req.body as any;
     const perfilId = body.perfil_id || body.perfilId;
     if (!perfilId) return json({ message: 'perfil_id required' }, 400);
+
     const upStore = stores['usuarios_perfis'];
+    const perfisStore = stores['perfis'];
+    const perfilNovoData = perfisStore?.data.find((p: any) => p.id === perfilId);
+    const codigoNovo = perfilNovoData?.codigo || '';
+    const userPerfis = upStore.data.filter((up: any) => up.usuarioId === id);
+
+    // SOD: P01 não acumula outros perfis (RIN-01)
+    if (codigoNovo === 'P01' && userPerfis.length > 0) {
+      return json({ message: 'SOD_VIOLATION: Usuário P01 não pode acumular outros perfis' }, 409);
+    }
+    if (userPerfis.some((up: any) => {
+      const pData = perfisStore?.data.find((p: any) => p.id === up.perfilId);
+      return pData?.codigo === 'P01';
+    }) && codigoNovo !== 'P01') {
+      return json({ message: 'SOD_VIOLATION: Usuário P01 não pode acumular outros perfis' }, 409);
+    }
+
     const nova = { id: `up-mock-${Date.now()}`, usuarioId: id, perfilId, unidadeEscopo: body.unidade_escopo || body.unidadeEscopo || '' };
     upStore.data.push(nova);
     return json(nova, 201);
@@ -491,6 +529,15 @@ function handleCrud(req: HttpRequest<unknown>, segments: Array<string>): Observa
       const item = store.data.find((r: any) => r[store.idKey] === id);
       if (item) item.status = 'PUBLICADO';
       return json({ message: 'Plano publicado', success: true });
+    }
+    if (subPath === 'comunicar' && entityPath === 'registros-fraude') {
+      const body = req.body as any;
+      const item = store.data.find((r: any) => r[store.idKey] === id);
+      if (item) {
+        if (body.tipo === 'SUPERIOR') item.dataComunicacaoSuperior = new Date().toISOString();
+        if (body.tipo === 'TCE') item.dataComunicacaoTce = new Date().toISOString();
+      }
+      return json({ message: 'Comunicação registrada', success: true });
     }
     if (subPath === 'relatorios' && entityPath === 'auditorias' && subStore) {
       const body = req.body as any;
@@ -624,6 +671,16 @@ function handleCrud(req: HttpRequest<unknown>, segments: Array<string>): Observa
   }
 
   if (req.method === 'GET' && id) {
+    // RBAC: P05 is excluded from auditoria detail (E2E-07)
+    if (entityPath === 'auditorias') {
+      const roles = getCurrentUserRoles();
+      if (roles.includes('P05')) {
+        return throwError(() => new HttpErrorResponse({
+          status: 403,
+          error: { message: 'Acesso negado' },
+        }));
+      }
+    }
     const item = store.data.find((r: any) => r[store.idKey] === id);
     if (!item) return json({ message: 'Not found' }, 404);
     return json(item);

@@ -2,9 +2,13 @@
 
 Este documento apresenta o plano detalhado de correção dos testes de ponta a ponta (E2E) do frontend que falharam na suíte do Playwright. As falhas foram analisadas cruzando-se os componentes Angular do projeto com os dados do mock de usuários do MSW.
 
+> **Status geral (verificado em 2026-07-30):** ✅ Todas as issues deste plano foram implementadas nos arquivos `web/e2e/*.spec.ts` e no helper `web/e2e/helpers.ts`. Desvios em relação aos patches sugeridos estão anotados em cada seção.
+
 ---
 
 ## 1. Mapeamento de Credenciais de Perfis (RBAC)
+
+> ✅ **Status: Implementado.** Nenhum e-mail fictício antigo (`admin@audin.tjce.gov.br`, `gestor@tjce.gov.br`, `auditor-chefe@audin.tjce.gov.br`, senha `Admin@123456`) permanece nos testes. Foi criado o helper `login()` em `web/e2e/helpers.ts` centralizando a autenticação (incluindo fluxo MFA e limpeza de `localStorage`). Desvio: para P02 usa-se `juliana.alves@mvp.local` (mock-user-004, também perfil P02) em vez de `carlos.pontes@mvp.local` — intenção atendida.
 
 **Problema:** Os testes E2E de navegação de perfis de autenticação estavam tentando fazer login com e-mails fictícios (`admin@audin.tjce.gov.br`, `gestor@tjce.gov.br`) que não constam nos dados mockados de usuários em `mocks/data/users.json`. Isso impedia a correta autenticação e resultava em desvios de rota indevidos (como redirecionamento de volta ao `/dashboard` ou tela de login).
 
@@ -22,6 +26,8 @@ Este documento apresenta o plano detalhado de correção dos testes de ponta a p
 ## 2. Correções Específicas por Arquivo de Teste
 
 ### 2.1. Arquivo: `web/e2e/auth.spec.ts`
+
+> ✅ **Status: Implementado.** Falhas 1 e 2 aplicadas conforme patch. Falha 3 aplicada com desvio: o teste `P05 não deve acessar configurações` valida o redirecionamento para `/dashboard` (comportamento real do guard) em vez do seletor `text=acesso negado, text=403, text=proibido`.
 
 #### Falha 1: `deve exibir tela de login`
 * **Erro:** Busca o título `h2` com texto `/login|entrar/i`. Porém, o `LoginComponent` utiliza a tag `<mat-card-title>` contendo o texto `"Conformitas"`.
@@ -74,6 +80,8 @@ Este documento apresenta o plano detalhado de correção dos testes de ponta a p
 
 ### 2.2. Arquivo: `web/e2e/plano-auditoria-achado.spec.ts`
 
+> ✅ **Status: Implementado.** Falha 1 aplicada conforme patch (`h1:has-text("Auditorias")`). Falha 2 aplicada com desvio: login P02 via `juliana.alves@mvp.local` (mesmo perfil) usando o helper `login()`. Falha 3 aplicada com desvio: a espera estática foi removida e a validação reativa usa `page.locator('table')` com `timeout: 5000` em vez de `app-data-table`.
+
 #### Falha 1: `deve listar auditorias`
 * **Erro:** Violação do *Strict Mode* do Playwright. O seletor `locator('text=Auditorias')` retorna 4 elementos na tela (menu lateral, breadcrumb, título h1 e descrição).
 * **Correção:** Especificar que deve validar o título principal da página (`h1`):
@@ -114,6 +122,8 @@ Este documento apresenta o plano detalhado de correção dos testes de ponta a p
 
 ### 2.3. Arquivo: `web/e2e/recomendacao-monitoramento.spec.ts`
 
+> ✅ **Status: Implementado.** Patch aplicado conforme sugerido (`h1:has-text("Recomendações")`); login do `beforeEach` migrado para o helper `login()` com credencial P01 do mock.
+
 #### Falha 1: `deve listar recomendações`
 * **Erro:** Violação do *Strict Mode* do Playwright. O seletor `locator('text=Recomendações')` retorna 4 elementos (links laterais, breadcrumb e título h1).
 * **Correção:** Direcionar o validador para a tag de título principal (`h1`) da listagem de recomendações:
@@ -126,6 +136,6 @@ Este documento apresenta o plano detalhado de correção dos testes de ponta a p
 
 ## 3. Próximos Passos de Execução
 
-1. Editar os arquivos `.spec.ts` descritos em `web/e2e/` aplicando os patches recomendados acima.
+1. ✅ Editar os arquivos `.spec.ts` descritos em `web/e2e/` aplicando os patches recomendados acima. — **Concluído** (ver status por seção).
 2. Rodar novamente a suíte de testes E2E com `npm run test:e2e` na pasta `web` para validar se todos os 14 testes passam para 100% de sucesso.
 3. Atualizar o relatório consolidado de progresso `docs/testing/COVERAGE_PROGRESS.md` marcando os fluxos E2E concluídos como funcionais.

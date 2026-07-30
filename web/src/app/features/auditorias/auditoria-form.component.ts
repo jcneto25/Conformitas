@@ -36,6 +36,11 @@ import { ValidationService } from '../../shared/services/validation.service';
         <mat-spinner diameter="40" />
       </div>
     } @else {
+      @if (error && !isNew && !auditoria) {
+        <div class="mt-4" role="alert">
+          <p class="text-critical text-center">{{ error }}</p>
+        </div>
+      }
       @if (isNew || editing) {
         <div class="max-w-2xl">
           <mat-card class="border-t-4 border-primary shadow-md rounded-xl overflow-hidden">

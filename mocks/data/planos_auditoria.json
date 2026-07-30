@@ -35,6 +35,30 @@
       "data_aprovacao": "2024-11-29T15:00:00Z",
       "data_publicacao": "2024-12-12T08:00:00Z",
       "criado_por": "mock-user-001"
+    },
+    {
+      "id": "plano-004",
+      "tipo": "PAA",
+      "ano_inicio": 2027,
+      "ano_fim": 2027,
+      "status": "SUBMETIDO",
+      "versao": 1,
+      "data_submissao": "2026-07-30T10:00:00Z",
+      "data_aprovacao": null,
+      "data_publicacao": null,
+      "criado_por": "mock-user-001"
+    },
+    {
+      "id": "plano-005",
+      "tipo": "PALP",
+      "ano_inicio": 2028,
+      "ano_fim": 2031,
+      "status": "RASCUNHO",
+      "versao": 1,
+      "data_submissao": null,
+      "data_aprovacao": null,
+      "data_publicacao": null,
+      "criado_por": "mock-user-001"
     }
   ],
   "itens_plano": [

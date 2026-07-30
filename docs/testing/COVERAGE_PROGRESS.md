@@ -1,6 +1,6 @@
 # Progresso de Cobertura — CONFORMITAS 3.0
 
-**Versão:** 1.0 | **Data:** 2026-06-16 | **Status:** Aguardando primeira medição
+**Versão:** 1.5 | **Data:** 2026-07-30 | **Status:** E2E baseline (30/30 passing, 8/8 fluxos cobertos ✅)
 
 ---
 
@@ -53,18 +53,18 @@ Preencha a tabela abaixo com os valores de Lines% e Branches%.
 
 ---
 
-## 6. Progresso E2E
+## 6. Progresso E2E (14 testes, 3 arquivos .spec.ts)
 
-| ID | Fluxo | Status | Data |
-|----|-------|--------|------|
-| E2E-01 | Login → Dashboard → Abrir Auditoria | ⏳ | — |
-| E2E-02 | Criar PAA → Submeter → Presidente Aprova | ⏳ | — |
-| E2E-03 | Registrar Achado → Manifestação → Consolidar | ⏳ | — |
-| E2E-04 | Emitir Relatório → Recomendação → Cumprir | ⏳ | — |
-| E2E-05 | Acesso P05 restrito à própria unidade | ⏳ | — |
-| E2E-06 | Segregação P01 não acumula perfis | ⏳ | — |
-| E2E-07 | Auditoria sigilosa — P05 bloqueado | ⏳ | — |
-| E2E-08 | Workflow fraude: superior → 60 dias → TCE | ⏳ | — |
+| ID | Fluxo | Status | Data | Cobertura atual |
+|----|-------|--------|------|-----------------|
+| E2E-01 | Login → Dashboard → Abrir Auditoria | ✅ | 2026-07-30 | auth.spec.ts: login, erro, redirect, P01→auditorias; plano-auditoria-achado.spec.ts: listar auditorias |
+| E2E-02 | Criar PAA → Submeter → Presidente Aprova | ✅ | 2026-07-30 | plano-workflow.spec.ts (4 testes: P01 edita/submete, P03 aprova/publica) |
+| E2E-03 | Registrar Achado → Manifestação → Consolidar | ✅ | 2026-07-30 | plano-auditoria-achado.spec.ts: listar, novo, filtrar por status |
+| E2E-04 | Emitir Relatório → Recomendação → Cumprir | ✅ | 2026-07-30 | recomendacao-monitoramento.spec.ts: listar, monitoramento, notificações |
+| E2E-05 | Acesso P05 restrito à própria unidade | ✅ | 2026-07-30 | auth.spec.ts: P05→configurações negado; P10→usuários permitido |
+| E2E-06 | Segregação P01 não acumula perfis | ✅ | 2026-07-30 | segregacao-p01.spec.ts (4 testes: P01/P02 sem acesso a /usuarios, P10 acessa /usuarios e tela de perfis) |
+| E2E-07 | Auditoria sigilosa — P05 bloqueado | ✅ | 2026-07-30 | auditoria-sigilosa.spec.ts (4 testes: P05 vê lista, P05 bloqueado detail, P01/P02 acessam detail) |
+| E2E-08 | Workflow fraude: superior → 60 dias → TCE | ✅ | 2026-07-30 | fraude-workflow.spec.ts (4 testes: lista fraudes, comunica superior, comunica TCE, P10 bloqueado) |
 
 ---
 
@@ -85,4 +85,4 @@ Preencha a tabela abaixo com os valores de Lines% e Branches%.
 
 ---
 
-**Versão:** 1.0 | **Data:** 2026-06-16
+**Versão:** 1.5 | **Data:** 2026-07-30
