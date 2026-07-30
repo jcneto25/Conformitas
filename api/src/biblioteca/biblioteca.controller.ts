@@ -27,10 +27,11 @@ export class BibliotecaController {
   upload(
     @Query('titulo') titulo: string,
     @Query('tipo') tipo: string,
-    @Query('arquivo_path') arquivoPath: string,
+    @Query('arquivoPath') arquivoPath: string,
+    @Query('arquivo_path') arquivoPathLegado: string,
     @Query('categoria') categoria?: string,
   ) {
-    return this.service.upload(titulo, tipo, arquivoPath, categoria);
+    return this.service.upload(titulo, tipo, arquivoPath || arquivoPathLegado, categoria);
   }
 
   @Get()

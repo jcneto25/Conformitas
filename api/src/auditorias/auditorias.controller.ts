@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Query, Req, ParseUUIDPipe, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, Query, Req, ParseUUIDPipe, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
@@ -6,17 +6,12 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes } from '@nestjs/swagg
 import { Request } from 'express';
 import { AuditoriasService } from './auditorias.service';
 import { EvidenciasService } from './evidencias.service';
-import { PapeisTrabalhoService } from './papeis-trabalho.service';
-import { RequisicoesService } from './requisicoes.service';
-import { ComunicadosService } from './comunicados.service';
 import { AbrirAuditoriaUseCase } from './use-cases/abrir-auditoria.use-case';
 import { IniciarExecucaoUseCase } from './use-cases/iniciar-execucao.use-case';
 import { ConcluirAuditoriaUseCase } from './use-cases/concluir-auditoria.use-case';
 import { SuspenderAuditoriaUseCase } from './use-cases/suspender-auditoria.use-case';
 import { CreateAuditoriaDto } from './dto/create-auditoria.dto';
 import { CriarEvidenciaDto } from './dto/criar-evidencia.dto';
-import { CriarPapelTrabalhoDto } from './dto/criar-papel-trabalho.dto';
-import { CriarRequisicaoDto } from './dto/criar-requisicao.dto';
 import { Roles } from '../common/decorators/roles.decorator';
 import { ExigeClassificacao } from '../common/decorators/classificacao.decorator';
 
@@ -33,9 +28,6 @@ export class AuditoriasController {
     private readonly suspenderUseCase: SuspenderAuditoriaUseCase,
     private readonly service: AuditoriasService,
     private readonly evidenciasService: EvidenciasService,
-    private readonly papeisService: PapeisTrabalhoService,
-    private readonly requisicoesService: RequisicoesService,
-    private readonly comunicadosService: ComunicadosService,
   ) {}
 
   @Post('auditorias')
@@ -44,8 +36,10 @@ export class AuditoriasController {
 
   @Get('auditorias')
   @Roles('P01', 'P02', 'P05', 'P10')
-  findAll(@Query('status') status?: string, @Query('unidade') unidade?: string, @Query('search') search?: string, @Req() req?: RequestWithUser) {
-    return this.service.findAll({ status, unidade, search }, req?.user?.unidadeEscopo);
+  findAll(@Query('status') status?: string, @Query('unidade') unidade?: string, @Query('search') search?: string, @Query('page') page?: string, @Query('limit') limit?: string, @Req() req?: RequestWithUser) {
+    const p = page ? parseInt(page, 10) : undefined;
+    const l = limit ? parseInt(limit, 10) : undefined;
+    return this.service.findAll({ status, unidade, search, page: p, limit: l }, req?.user?.unidadeEscopo);
   }
 
   @Get('auditorias/:id')
@@ -56,6 +50,19 @@ export class AuditoriasController {
   @Post('auditorias/:id/iniciar')
   @Roles('P01')
   iniciarExecucao(@Param('id', ParseUUIDPipe) id: string) { return this.iniciarExecucaoUseCase.execute(id); }
+
+  @Patch('auditorias/:id')
+  @Roles('P01')
+  atualizarStatus(@Param('id', ParseUUIDPipe) id: string, @Body() body: { status: string; motivo?: string }) {
+    const statusMap: Record<string, () => any> = {
+      'EM_EXECUCAO': () => this.iniciarExecucaoUseCase.execute(id),
+      'CONCLUIDA': () => this.concluirUseCase.execute(id),
+      'SUSPENSA': () => this.suspenderUseCase.execute(id, body.motivo ?? ''),
+    };
+    const handler = statusMap[body.status];
+    if (!handler) throw new BadRequestException(`Status inválido: ${body.status}`);
+    return handler();
+  }
 
   @Post('auditorias/:id/concluir')
   @Roles('P01')
@@ -86,20 +93,4 @@ export class AuditoriasController {
   @Roles('P01', 'P02', 'P10')
   @ExigeClassificacao({ entidadeTipo: 'auditoria', entidadeIdParam: 'id' })
   listarEvidencias(@Param('id', ParseUUIDPipe) id: string) { return this.evidenciasService.listar(id); }
-
-  @Post('auditorias/:id/papeis-trabalho')
-  @Roles('P02')
-  criarPapelTrabalho(@Req() req: RequestWithUser, @Param('id', ParseUUIDPipe) id: string, @Body() dto: CriarPapelTrabalhoDto) { return this.papeisService.criar(id, dto, req.user.sub); }
-
-  @Get('auditorias/:id/papeis-trabalho')
-  @Roles('P01', 'P02', 'P10')
-  listarPapeisTrabalho(@Param('id', ParseUUIDPipe) id: string) { return this.papeisService.listar(id); }
-
-  @Post('auditorias/:id/requisicoes')
-  @Roles('P02')
-  criarRequisicao(@Param('id', ParseUUIDPipe) id: string, @Body() dto: CriarRequisicaoDto) { return this.requisicoesService.criar(id, dto); }
-
-  @Get('auditorias/:id/requisicoes')
-  @Roles('P01', 'P02', 'P10')
-  listarRequisicoes(@Param('id', ParseUUIDPipe) id: string) { return this.requisicoesService.listar(id); }
 }

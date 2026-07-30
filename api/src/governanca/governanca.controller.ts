@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Param, Body, Query, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, Query, ParseUUIDPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { GovernancaService } from './governanca.service';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -36,7 +36,7 @@ export class GovernancaController {
     return this.service.buscarDeterminacao(id);
   }
 
-  @Put('determinacoes-externas/:id')
+  @Patch('determinacoes-externas/:id')
   @Roles('P01')
   @ApiOperation({ summary: 'Atualizar determinação externa' })
   atualizarDeterminacao(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateDeterminacaoDto) {

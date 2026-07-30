@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Param, Body, Query, Req } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, Query, Req, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AchadosService } from './achados.service';
@@ -53,6 +53,19 @@ export class AchadosController {
   @ApiOperation({ summary: 'Enviar achado para manifestação da unidade auditada' })
   enviarManifestacao(@Param('id') id: string, @Body('prazoDiasUteis') prazoDiasUteis?: number) {
     return this.enviarManifestacaoUseCase.execute(id, prazoDiasUteis);
+  }
+
+  @Patch(':id/status')
+  @Roles('P02')
+  @ApiOperation({ summary: 'Atualizar status do achado (PATCH — compat)' })
+  atualizarStatus(@Param('id') id: string, @Body() body: { status: string; prazoDiasUteis?: number }) {
+    const statusMap: Record<string, () => any> = {
+      'EM_MANIFESTACAO': () => this.enviarManifestacaoUseCase.execute(id, body.prazoDiasUteis),
+      'CONSOLIDADO': () => this.consolidarUseCase.execute(id),
+    };
+    const handler = statusMap[body.status];
+    if (!handler) throw new BadRequestException(`Status inválido: ${body.status}`);
+    return handler();
   }
 
   @Post(':id/consolidar')

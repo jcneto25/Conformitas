@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { PageHeaderComponent } from '../../shared/components/page-header.component';
@@ -22,7 +23,7 @@ const API = environment.apiUrl;
   imports: [
     CommonModule, FormsModule, RouterModule,
     MatCardModule, MatButtonModule, MatIconModule, MatSelectModule,
-    MatFormFieldModule, FormsModule, RouterModule,
+    MatFormFieldModule, MatProgressSpinnerModule, FormsModule, RouterModule,
     PageHeaderComponent, StatusBadgeComponent, DataTableComponent,
   ],
   template: `

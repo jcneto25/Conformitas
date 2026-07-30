@@ -66,7 +66,7 @@ export class EticaController {
 
   // ── Classificação de Documentos ───────────────
 
-  @Put(':entidadeTipo/:id/classificacao')
+  @Patch(':entidadeTipo/:id/classificacao')
   @Roles('P01')
   @ApiOperation({ summary: 'Classificar documento por nível de sigilo (P01)' })
   classificarDocumento(
